@@ -749,14 +749,15 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 12 "myscan.l"
-{ store_token_name("NUMBER",yytext,lineno); }
+{ store_token_name("INTERGER_NUMBER",yytext,lineno); }
 	YY_BREAK
+
 case 3:
 YY_RULE_SETUP
-#line 13 "myscan.l"
+#line 14 "myscan.l"
 ECHO;
 	YY_BREAK
-#line 760 "lex.yy.c"
+#line 761 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1757,4 +1758,4 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 13 "myscan.l"
+#line 14 "myscan.l"
