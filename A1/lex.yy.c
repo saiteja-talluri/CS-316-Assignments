@@ -386,9 +386,9 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[24] =
     {   0,
-        0,    0,   12,    9,    1,   10,    8,    9,    2,    5,
-        7,    7,    7,    3,    0,    2,    7,    7,    7,    4,
-        7,    6,    0
+        0,    0,   12,   10,    1,    2,    9,   10,    3,    6,
+        8,    8,    8,    4,    0,    3,    8,    8,    8,    5,
+        8,    7,    0
     } ;
 
 static yyconst YY_CHAR yy_ec[256] =
@@ -701,9 +701,10 @@ YY_DECL
 		}
 
 	{
-#line 21 "myscan.l"
+#line 22 "myscan.l"
 
-#line 707 "lex.yy.c"
+
+#line 708 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -762,12 +763,20 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 22 "myscan.l"
+#line 24 "myscan.l"
 {}
 	YY_BREAK
 case 2:
+/* rule 2 can match eol */
 YY_RULE_SETUP
 #line 26 "myscan.l"
+{
+				lineno++;
+			}
+	YY_BREAK
+case 3:
+YY_RULE_SETUP
+#line 30 "myscan.l"
 { 
 				cout<<yytext<<endl;
 				store_token_name("NUM",yytext,lineno); 
@@ -775,9 +784,9 @@ YY_RULE_SETUP
 				return INTEGER_NUMBER;
 			}
 	YY_BREAK
-case 3:
+case 4:
 YY_RULE_SETUP
-#line 33 "myscan.l"
+#line 37 "myscan.l"
 { 
 				cout<<yytext<<endl;
 		    	store_token_name("FNUM",yytext,lineno);
@@ -785,54 +794,54 @@ YY_RULE_SETUP
 				return DOUBLE_NUMBER;
 			}
 	YY_BREAK
-case 4:
+case 5:
 YY_RULE_SETUP
-#line 40 "myscan.l"
+#line 44 "myscan.l"
 {
 				cout<<yytext<<endl;
 				store_token_name("INTEGER",yytext,lineno); 
 			   	return INTEGER;
 			}
 	YY_BREAK
-case 5:
+case 6:
 YY_RULE_SETUP
-#line 46 "myscan.l"
+#line 50 "myscan.l"
 {
 				cout<<yytext<<endl;
 				store_token_name("ASSIGN_OP", yytext, lineno);
 				return ASSIGN;
 			}
 	YY_BREAK
-case 6:
+case 7:
 YY_RULE_SETUP
-#line 52 "myscan.l"
+#line 56 "myscan.l"
 { 
 				cout<<yytext<<endl;
 				store_token_name("VOID",yytext,lineno); 
 			   	return VOID;
 			}
 	YY_BREAK
-case 7:
+case 8:
 YY_RULE_SETUP
-#line 58 "myscan.l"
+#line 62 "myscan.l"
 {
 				cout<<yytext<<endl;
 				store_token_name("NAME", yytext, lineno);
 				return NAME;
 			}
 	YY_BREAK
-case 8:
+case 9:
 YY_RULE_SETUP
-#line 64 "myscan.l"
+#line 68 "myscan.l"
 {
 				cout<<yytext<<endl;
 				store_token_name("ARITHOP",yytext,lineno);
 				return yytext[0];
 			}
 	YY_BREAK
-case 9:
+case 10:
 YY_RULE_SETUP
-#line 70 "myscan.l"
+#line 74 "myscan.l"
 {
 				cout<<yytext<<endl;
 				x = yytext[0];
@@ -840,20 +849,12 @@ YY_RULE_SETUP
 				return x;
 			}
 	YY_BREAK
-case 10:
-/* rule 10 can match eol */
-YY_RULE_SETUP
-#line 78 "myscan.l"
-{
-				lineno++;
-			}
-	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 83 "myscan.l"
+#line 81 "myscan.l"
 ECHO;
 	YY_BREAK
-#line 857 "lex.yy.c"
+#line 858 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1854,6 +1855,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 83 "myscan.l"
+#line 81 "myscan.l"
 
 

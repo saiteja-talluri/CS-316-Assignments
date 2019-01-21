@@ -10,6 +10,7 @@ int x;
 digit [0-9]
 operator [-+*/]
 whitespaces [\t ]
+newline	[\n]
 int_number [0-9]+
 double_number {digit}*\.{digit}+
 int_type int
@@ -19,9 +20,12 @@ char .
 assign =
 
 %%
+
 {whitespaces} {}
 
-
+{newline} 	{
+				lineno++;
+			}
 
 {int_number}  { 
 				cout<<yytext<<endl;
@@ -73,11 +77,5 @@ assign =
 				store_token_name("META CHAR",yytext,lineno);
 				return x;
 			}
-
-
-\n 			{
-				lineno++;
-			}
-
 
 %%

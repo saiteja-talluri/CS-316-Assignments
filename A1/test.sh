@@ -4,7 +4,7 @@ testdir="tests"
 
 if [ ! -d "$testdir" ]; 
 then
-	echo "no directory named $testdir"
+	echo "No directory named $testdir"
 	exit
 fi
 

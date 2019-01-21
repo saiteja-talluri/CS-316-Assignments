@@ -60,10 +60,4 @@
 	Token Name: ARITHOP 	Token: - 	 Lineno: 16
 	Token Name: FNUM 	Token: 102.342 	 Lineno: 16
 	Token Name: META CHAR 	Token: ; 	 Lineno: 16
-	Token Name: NAME 	Token: askfj 	 Lineno: 18
-	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 18
-	Token Name: NAME 	Token: jakbsh 	 Lineno: 18
-	Token Name: META CHAR 	Token: ; 	 Lineno: 18
-	Token Name: NAME 	Token: asdj 	 Lineno: 19
-	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 19
-	Token Name: META CHAR 	Token: " 	 Lineno: 19
+	Token Name: META CHAR 	Token: } 	 Lineno: 17
