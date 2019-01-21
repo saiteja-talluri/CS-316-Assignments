@@ -1,0 +1,71 @@
+	Token Name: INTEGER 	Token: int 	 Lineno: 2
+	Token Name: NAME 	Token: c 	 Lineno: 2
+	Token Name: META CHAR 	Token: , 	 Lineno: 2
+	Token Name: NAME 	Token: d 	 Lineno: 2
+	Token Name: META CHAR 	Token: , 	 Lineno: 2
+	Token Name: NAME 	Token: e 	 Lineno: 2
+	Token Name: META CHAR 	Token: , 	 Lineno: 2
+	Token Name: NAME 	Token: f 	 Lineno: 2
+	Token Name: META CHAR 	Token: ; 	 Lineno: 2
+	Token Name: VOID 	Token: void 	 Lineno: 3
+	Token Name: NAME 	Token: main 	 Lineno: 3
+	Token Name: META CHAR 	Token: ( 	 Lineno: 3
+	Token Name: META CHAR 	Token: ) 	 Lineno: 3
+	Token Name: META CHAR 	Token: { 	 Lineno: 4
+	Token Name: INTEGER 	Token: int 	 Lineno: 5
+	Token Name: NAME 	Token: a 	 Lineno: 5
+	Token Name: META CHAR 	Token: , 	 Lineno: 5
+	Token Name: NAME 	Token: b 	 Lineno: 5
+	Token Name: META CHAR 	Token: ; 	 Lineno: 5
+	Token Name: NAME 	Token: a 	 Lineno: 7
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 7
+	Token Name: FNUM 	Token: 221321.284787 	 Lineno: 7
+	Token Name: META CHAR 	Token: ; 	 Lineno: 7
+	Token Name: NAME 	Token: b 	 Lineno: 8
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 8
+	Token Name: FNUM 	Token: 3.2834 	 Lineno: 8
+	Token Name: META CHAR 	Token: ; 	 Lineno: 8
+	Token Name: NAME 	Token: c 	 Lineno: 10
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 10
+	Token Name: NAME 	Token: a 	 Lineno: 10
+	Token Name: ARITHOP 	Token: + 	 Lineno: 10
+	Token Name: NAME 	Token: b 	 Lineno: 10
+	Token Name: META CHAR 	Token: ; 	 Lineno: 10
+	Token Name: NAME 	Token: d 	 Lineno: 11
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 11
+	Token Name: NAME 	Token: a 	 Lineno: 11
+	Token Name: ARITHOP 	Token: - 	 Lineno: 11
+	Token Name: NAME 	Token: b 	 Lineno: 11
+	Token Name: META CHAR 	Token: ; 	 Lineno: 11
+	Token Name: NAME 	Token: e 	 Lineno: 12
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 12
+	Token Name: NAME 	Token: a 	 Lineno: 12
+	Token Name: ARITHOP 	Token: * 	 Lineno: 12
+	Token Name: NAME 	Token: b 	 Lineno: 12
+	Token Name: META CHAR 	Token: ; 	 Lineno: 12
+	Token Name: NAME 	Token: f 	 Lineno: 13
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 13
+	Token Name: NAME 	Token: a 	 Lineno: 13
+	Token Name: ARITHOP 	Token: / 	 Lineno: 13
+	Token Name: NAME 	Token: b 	 Lineno: 13
+	Token Name: META CHAR 	Token: ; 	 Lineno: 13
+	Token Name: NAME 	Token: a 	 Lineno: 15
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 15
+	Token Name: NUM 	Token: 9 	 Lineno: 15
+	Token Name: ARITHOP 	Token: * 	 Lineno: 15
+	Token Name: NUM 	Token: 12039 	 Lineno: 15
+	Token Name: META CHAR 	Token: ; 	 Lineno: 15
+	Token Name: NAME 	Token: c 	 Lineno: 16
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 16
+	Token Name: ARITHOP 	Token: - 	 Lineno: 16
+	Token Name: FNUM 	Token: 102.342 	 Lineno: 16
+	Token Name: META CHAR 	Token: ; 	 Lineno: 16
+	Token Name: NAME 	Token: askfj 	 Lineno: 18
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 18
+	Token Name: NAME 	Token: jakbsh 	 Lineno: 18
+	Token Name: META CHAR 	Token: ; 	 Lineno: 18
+	Token Name: NAME 	Token: asdj 	 Lineno: 19
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 19
+	Token Name: NAME 	Token: kajsd 	 Lineno: 19
+	Token Name: META CHAR 	Token: ; 	 Lineno: 19
+	Token Name: META CHAR 	Token: } 	 Lineno: 21

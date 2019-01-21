@@ -780,7 +780,7 @@ YY_RULE_SETUP
 #line 33 "myscan.l"
 { 
 				cout<<yytext<<endl;
-		    	store_token_name("DOUBLE_NUMBER",yytext,lineno);
+		    	store_token_name("FNUM",yytext,lineno);
 				yylval.double_value = atof(yytext);
 				return DOUBLE_NUMBER;
 			}
