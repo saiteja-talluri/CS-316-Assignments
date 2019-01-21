@@ -4,7 +4,7 @@ void main()
 {
 	int a,b;
 
-	a=2;
+	a= 221321;
 	b=3;
 
 	c=a+b;
@@ -12,4 +12,3 @@ void main()
     e=a*b;
     f=a/b;
 }
-
