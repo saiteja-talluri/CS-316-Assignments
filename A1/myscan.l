@@ -11,7 +11,7 @@ operator [-+*/]
 whitespaces [\t ]
 newline	[\n]
 int_number [0-9]+
-double_number {digit}*\.{digit}+
+double_number {digit}+\.{digit}+
 int_type int
 float_type float
 sl_comment \/[\/]+.*
