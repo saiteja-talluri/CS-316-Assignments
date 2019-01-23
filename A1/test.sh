@@ -14,12 +14,27 @@ for filename in "$testdir"/*.c; do
 	./mysclp -tokens -parse "$filename"
 	mv "$filename.toks" "$filename.mytoks"
 	./sclp -tokens -parse "$filename"
-	DIFF=$(diff "$filename.toks" "$filename.mytoks")
-	if [ "$DIFF" != "" ]
+	DIFF1=$(diff "$filename.toks" "$filename.mytoks")
+
+
+	./mysclp -eval "$filename"
+	mv "$filename.eval" "$filename.myeval"
+	./sclp -eval "$filename"
+	DIFF2=$(diff "$filename.eval" "$filename.myeval")
+
+	if [ "$DIFF1" != "" ]
 	then
-		echo "Failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "-parse -tokens failed on $filename. Did not run further tests (lexicographic ordering)."
 		echo "Showing diff:"
-		echo "$DIFF"
+		echo "$DIFF1"
+		exit
+	fi
+
+	if [ "$DIFF2" != "" ]
+	then
+		echo "-eval failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "Showing diff:"
+		echo "$DIFF1"
 		exit
 	fi
 done

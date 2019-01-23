@@ -15,4 +15,4 @@ clean:
 	rm -f lex.yy.* $(MYSCLP)
 
 testclean:
-	rm -f $(TESTDIR)/*.mytoks $(TESTDIR)/*.toks $(TESTDIR)/*.spim
+	rm -f $(TESTDIR)/*.c.*
