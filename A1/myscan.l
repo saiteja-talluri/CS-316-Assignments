@@ -14,6 +14,7 @@ int_number [0-9]+
 double_number {digit}*\.{digit}+
 int_type int
 float_type float
+sl_comment \/[\/]+.*
 name [a-zA-Z][a-zA-Z0-9]*
 void_kw void
 char .
@@ -49,6 +50,8 @@ assign =
 				store_token_name("FLOAT",yytext,lineno); 
 			   	return FLOAT;
 			}
+
+{sl_comment}	{}
 
 {assign}	{
 				cout<<yytext<<endl;
