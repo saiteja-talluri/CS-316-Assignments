@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string>
 int lineno = 1;
-int x;
 %}
 
 digit [0-9]
@@ -14,6 +13,7 @@ newline	[\n]
 int_number [0-9]+
 double_number {digit}*\.{digit}+
 int_type int
+float_type float
 name [a-zA-Z][a-zA-Z0-9]*
 void_kw void
 char .
@@ -23,9 +23,6 @@ assign =
 
 {whitespaces} {}
 
-{newline} 	{
-				lineno++;
-			}
 
 {int_number}  { 
 				cout<<yytext<<endl;
@@ -41,10 +38,16 @@ assign =
 				return DOUBLE_NUMBER;
 			}
 
-{int_type}		{
+{int_type}	{
 				cout<<yytext<<endl;
 				store_token_name("INTEGER",yytext,lineno); 
 			   	return INTEGER;
+			}
+
+{float_type}	{
+				cout<<yytext<<endl;
+				store_token_name("FLOAT",yytext,lineno); 
+			   	return FLOAT;
 			}
 
 {assign}	{
@@ -62,6 +65,8 @@ assign =
 {name}  	{
 				cout<<yytext<<endl;
 				store_token_name("NAME", yytext, lineno);
+				yylval.string_value = new string;
+				*yylval.string_value = yytext;
 				return NAME;
 			}
 
@@ -73,9 +78,12 @@ assign =
 
 {char}		{
 				cout<<yytext<<endl;
-				x = yytext[0];
 				store_token_name("META CHAR",yytext,lineno);
-				return x;
+				return yytext[0];
+			}
+
+{newline} 	{
+				lineno++;
 			}
 
 %%
