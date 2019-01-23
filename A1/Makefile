@@ -1,5 +1,5 @@
 CC=g++
-SCAN=myscan
+SCAN=scanner
 MYSCLP=mysclp
 TESTDIR=tests
 
