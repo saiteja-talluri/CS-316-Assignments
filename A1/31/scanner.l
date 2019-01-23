@@ -16,6 +16,7 @@ float_type float
 sl_comment \/[\/]+.*
 name [a-zA-Z_][a-zA-Z0-9_]*
 void_kw void
+meta_char [{},;()]
 char .
 assign =
 
@@ -78,10 +79,14 @@ assign =
 				return yytext[0];
 			}
 
-{char}		{
+{meta_char}		{
 				/* cout<<yytext<<endl; */
 				store_token_name("META CHAR",yytext,yylineno);
 				return yytext[0];
+			}
+
+{char}		{
+				/* All other characters are ignored */ 
 			}
 
 {newline} 	{
