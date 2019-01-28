@@ -1,0 +1,7 @@
+cfglp error: File: tests/AreaParam.c, Line: 13: Arithmetic statement data type not compatible
+cfglp error: File: tests/AreaParam.c, Line: 13: Assignment statement data type not compatible
+cfglp error: File: tests/AreaParam.c, Line: 16: Arithmetic statement data type not compatible
+cfglp error: File: tests/AreaParam.c, Line: 16: Arithmetic statement data type not compatible
+cfglp error: File: tests/AreaParam.c, Line: 16: Assignment statement data type not compatible
+cfglp error: File: tests/AreaParam.c, Line: 17: Arithmetic statement data type not compatible
+cfglp error: File: tests/AreaParam.c, Line: 17: Assignment statement data type not compatible

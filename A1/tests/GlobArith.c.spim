@@ -1,0 +1,46 @@
+
+	.data
+a:	.word 0
+b:	.word 0
+
+	.text 			# The .text assembler directive indicates
+	.globl main		# The following is the code (as oppose to data)
+main:				# .globl makes main know to the 
+				# outside of the program.
+# Prologue begins 
+	sw $fp, 0($sp)		# Save the frame pointer
+	sub $fp, $sp, 4		# Update the frame pointer
+
+	sub $sp, $sp, 16		# Make space for the locals
+# Prologue ends
+
+	li $v0, 2
+	sw $v0, 0($fp)
+	li.d $f2, 4.30
+	s.d $f2, -4($fp)
+	lw $v0, a
+	lw $t0, 0($fp)
+	neg $t1, $t0
+	mul $t0, $v0, $t1
+	lw $v0, a
+	add $t1, $t0, $v0
+	lw $v0, a
+	add $t0, $t1, $v0
+	sw $t0, a
+	l.d $f2, b
+	neg.d $f4, $f2
+	l.d $f2, -4($fp)
+	mul.d $f6, $f4, $f2
+	l.d $f2, -4($fp)
+	neg.d $f4, $f2
+	div.d $f2, $f6, $f4
+	l.d $f4, b
+	add.d $f6, $f2, $f4
+	s.d $f6, -4($fp)
+
+# Epilogue Begins
+	add $sp, $sp, 16
+	lw $fp, 0($sp)  
+	jr        $31		# Jump back to the operating system.
+# Epilogue Ends
+

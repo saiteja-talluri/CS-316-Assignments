@@ -52,12 +52,12 @@ for filename in "$testdir"/*.c; do
 		exit
 	fi
 
-	if [ "$DIFF4" != "" ]
-	then
-		echo "spim error message failed on $filename. Did not run further tests (lexicographic ordering)."
-		echo "Showing diff:"
-		echo "$DIFF4"
-		exit
-	fi
+	# if [ "$DIFF4" != "" ]
+	# then
+	# 	echo "spim error message failed on $filename. Did not run further tests (lexicographic ordering)."
+	# 	echo "Showing diff:"
+	# 	echo "$DIFF4"
+	# 	exit
+	# fi
 done
 echo "All tests passed!"
