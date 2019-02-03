@@ -1,5 +1,7 @@
 %{
 	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
 	extern "C" void yyerror(char *s);
 	extern int yylex(void);
 %}
@@ -23,7 +25,7 @@
 
 %left '+' '-'
 %left '*' '/'
-%nonassoc UMINUS
+%right UMINUS
 
 %start program
 
@@ -55,8 +57,8 @@ declaration							:	INTEGER variable_list
 										| FLOAT variable_list
                                         ;
 
-variable_list                       :	NAME 
-										| variable_list ',' NAME
+variable_list                       :	NAME  {INSERT $1 IN SYMBOL TABLE}
+										| variable_list ',' NAME {INSERT $3 IN SYMBOL TABLE}
 										;
 
 
@@ -64,7 +66,7 @@ statement_list	        :	/* empty */
 							|	statement_list assignment_statement
 							;
 
-assignment_statement	:	NAME ASSIGN expression ’;’
+assignment_statement	:	NAME ASSIGN expression ';'
 							;
 
 expression				: 	INTEGER_NUMBER
@@ -76,3 +78,9 @@ expression				: 	INTEGER_NUMBER
 							| expression '/' expression 
 							| '('expression')'
 							;
+%%
+
+int yyerror (char *msg)
+{
+	fprintf (stderr, "%s\n", msg);
+}
