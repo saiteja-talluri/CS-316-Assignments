@@ -85,12 +85,13 @@ assign =
 				return yytext[0];
 			}
 
-{char}		{
-				/* All other characters are ignored */ 
-			}
-
 {newline} 	{
 				yylineno++;
+			}
+
+{char}		{
+				cout<<"Error\n";
+				/* All other characters are ignored */ 
 			}
 
 %%
