@@ -1,5 +1,0 @@
-cfglp error: File: tests/test.c, Line: 5: atal flex scanner internal error--no action foundline 
-cfglp error: File: tests/test.c, Line: 5: fatal flex scanner internal error--no action foundline 
-cfglp error: File: tests/test.c, Line: 5: rror--no action foundline 
-syntax error
-cfglp error: File: tests/test.c, Line: 1: Cannot parse the input program
