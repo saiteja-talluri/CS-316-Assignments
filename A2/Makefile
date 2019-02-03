@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------
 CPP=g++
 SOURCE=lex.yy.c parser.tab.c 
-MYPROGRAM=sclp
+MYPROGRAM=mysclp
 MYLIBRARY=$(CURDIR)
 LDFLAGS=-Wl,-rpath=$(CURDIR)
 FLEX=flex
