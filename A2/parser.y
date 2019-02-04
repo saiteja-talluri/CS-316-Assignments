@@ -40,37 +40,46 @@
 
 %%
 
-program					:	optional_variable_declaration_list procedure_definition
+program					:	global_variable_declaration_list procedure_definition
 							{
-								for(list<Symbol_Table_Entry*>::iterator it = (*$1).begin(); it != (*$1).end(); it++) {
-									(*it)->set_symbol_scope(global);
-									(*global_sym_table).push_symbol(*it);
-								}
 								program_object.set_global_table(*global_sym_table);
 								program_object.set_procedure($2, yylineno);
 							}
-							;
+							; 
 
 procedure_definition	:	VOID NAME '(' ')'
                   	   		'{'
-									optional_variable_declaration_list statement_list
+									local_variable_declaration_list statement_list
         	           		'}' 
 							{	
 								$$ = new Procedure(void_data_type,*$2, yylineno);
-								for(list<Symbol_Table_Entry*>::iterator it = (*$6).begin(); it != (*$6).end(); it++) {
-									(*it)->set_symbol_scope(local);
-									(*local_sym_table).push_symbol(*it);
-								}
 								(*$$).set_local_list((*local_sym_table));
 								(*$$).set_ast_list(*($7));
 							}
         	           		;
 
 
+global_variable_declaration_list	: 	optional_variable_declaration_list
+										{
+											for(list<Symbol_Table_Entry*>::iterator it = (*$1).begin(); it != (*$1).end(); it++) {
+												(*it)->set_symbol_scope(global);
+												(*global_sym_table).push_symbol(*it);
+											}
+										}
+										;
+
+local_variable_declaration_list		: 	optional_variable_declaration_list
+										{
+											for(list<Symbol_Table_Entry*>::iterator it = (*$1).begin(); it != (*$1).end(); it++) {
+												(*it)->set_symbol_scope(local);
+												(*local_sym_table).push_symbol(*it);
+											}
+										}
+										;
+								
 optional_variable_declaration_list	:	/* empty */ 
 										{
 											$$ = new list<Symbol_Table_Entry *>();
-											printf("Hello");
 										}
 										|	variable_declaration_list
 										{
@@ -134,7 +143,8 @@ statement_list	        :	/* empty */
 							}
 							|	statement_list assignment_statement
 							{
-								(*$$).push_back($2);
+								(*$1).push_back($2);
+								$$ = $1;
 							}
 							;
 
@@ -149,7 +159,6 @@ assignment_statement	:	NAME ASSIGN expression ';'
 									$$ = new Assignment_Ast(lhs,$3,yylineno);
 								}
 								else{
-									printf("Hello");
 									exit(1);
 								}
 							}
@@ -172,7 +181,6 @@ expression				: 	INTEGER_NUMBER
 									$$ = new Name_Ast(*$1, (*global_sym_table).get_symbol_table_entry(*$1), yylineno);
 								}
 								else{
-									printf("Hello");
 									exit(1);
 								}
 							}
