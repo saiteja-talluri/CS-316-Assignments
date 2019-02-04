@@ -4,11 +4,9 @@
 	#include <string.h>
 	extern "C" void yyerror(char *s);
 	extern int yylex(void);
-	list<Symbol_Table_Entry> entry_list;
-	Symbol_Table global_sym_table;
-	Symbol_Table local_sym_table;
-	Procedure main_proc = Procedure(void_data_type,"main", 0); /* TODO: Need to get the line number some how */ 
-	list<Ast *>  our_ast_list;
+	extern int yylineno;
+	Symbol_Table* global_sym_table = new Symbol_Table();
+	Symbol_Table* local_sym_table = new Symbol_Table();
 %}
 
 %union {
@@ -29,7 +27,10 @@
 %token <string_value> NAME
 %token BBNUM  RETURN  INTEGER  FLOAT  ASSIGN  VOID  UMINUS
 
-%type <symbol_entry_list> variable_list
+%type <symbol_entry_list> variable_list	declaration	variable_declaration variable_declaration_list optional_variable_declaration_list
+%type <procedure> procedure_definition
+%type <ast>	assignment_statement expression
+%type <ast_list> statement_list
 
 %left '+' '-'
 %left '*' '/'
@@ -41,12 +42,12 @@
 
 program					:	optional_variable_declaration_list procedure_definition
 							{
-								for(list<Symbol_Table_Entry>::iterator it = entry_list.begin(); it != entry_list.end(); it++) {
-									it->set_symbol_scope(global);
-									global_sym_table.push_symbol(&(*it));
+								for(list<Symbol_Table_Entry*>::iterator it = (*$1).begin(); it != (*$1).end(); it++) {
+									(*it)->set_symbol_scope(global);
+									(*global_sym_table).push_symbol(*it);
 								}
-								program_object.set_global_table(global_sym_table);
-								program_object.set_procedure(&main_proc, 0); /* TODO : Need to get the line number some how */
+								program_object.set_global_table(*global_sym_table);
+								program_object.set_procedure($2, yylineno);
 							}
 							;
 
@@ -55,68 +56,145 @@ procedure_definition	:	VOID NAME '(' ')'
 									optional_variable_declaration_list statement_list
         	           		'}' 
 							{	
-								for(list<Symbol_Table_Entry>::iterator it = entry_list.begin(); it != entry_list.end(); it++) {
-									it->set_symbol_scope(local);
-									local_sym_table.push_symbol(&(*it));
+								$$ = new Procedure(void_data_type,*$2, yylineno);
+								for(list<Symbol_Table_Entry*>::iterator it = (*$6).begin(); it != (*$6).end(); it++) {
+									(*it)->set_symbol_scope(local);
+									(*local_sym_table).push_symbol(*it);
 								}
-								main_proc.set_local_list(local_sym_table);
-								main_proc.set_ast_list(our_ast_list);
+								(*$$).set_local_list((*local_sym_table));
+								(*$$).set_ast_list(*($7));
 							}
         	           		;
 
 
 optional_variable_declaration_list	:	/* empty */ 
+										{
+											$$ = new list<Symbol_Table_Entry *>();
+											printf("Hello");
+										}
 										|	variable_declaration_list
+										{
+											$$ = $1;
+										}
 										;
 
-variable_declaration_list			:	variable_declaration 
+variable_declaration_list			:	variable_declaration
+										{
+											$$ = $1;
+										}
 										|	variable_declaration_list variable_declaration
+										{
+											for(list<Symbol_Table_Entry*>::iterator it = (*$2).begin(); it != (*$2).end(); it++) {
+												(*($1)).push_back(*it);
+											}
+											$$ = $1;
+										}
 										;
 
 variable_declaration				:	declaration ';'
+										{
+											$$ = $1;
+										}
 										;
 
 declaration							:	INTEGER variable_list
 										{
-											for(list<Symbol_Table_Entry>::iterator it = entry_list.begin(); it != entry_list.end(); it++) {
-												it->set_data_type(int_data_type);
+											for(list<Symbol_Table_Entry*>::iterator it = (*$2).begin(); it != (*$2).end(); it++) {
+												(*it)->set_data_type(int_data_type);
 											}
+											$$ = $2;
 										}
 										| FLOAT variable_list 
-										{
-											for(list<Symbol_Table_Entry>::iterator it = entry_list.begin(); it != entry_list.end(); it++) {
-												it->set_data_type(double_data_type);
+										{	
+											for(list<Symbol_Table_Entry*>::iterator it = (*$2).begin(); it != (*$2).end(); it++) {
+												(*it)->set_data_type(double_data_type);
 											}
+											$$ = $2;
 										}
                                         ;
 
 variable_list                       :	NAME	
 										{
-											Symbol_Table_Entry x = Symbol_Table_Entry(*$1,int_data_type,0);
-											entry_list.push_back(x);
-										} /* TODO: Line number needs to be added */
+											$$ = new list<Symbol_Table_Entry *>();
+											Symbol_Table_Entry* x = new Symbol_Table_Entry(*$1,int_data_type,yylineno);
+											(*$$).push_back(x);
+										}
 										| variable_list ',' NAME
 										{
-											Symbol_Table_Entry x = Symbol_Table_Entry(*$3,int_data_type,0);
-											entry_list.push_back(x);
-										} /* TODO: Line number needs to be added */
+											Symbol_Table_Entry* x = new Symbol_Table_Entry(*$3,int_data_type,yylineno);
+											(*$1).push_back(x);
+											$$ = $1;
+										}
 										;
 
 
 statement_list	        :	/* empty */ 
+							{
+								$$ = new list<Ast *>();
+							}
 							|	statement_list assignment_statement
+							{
+								(*$$).push_back($2);
+							}
 							;
 
 assignment_statement	:	NAME ASSIGN expression ';'
+							{
+								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*$1)){
+									Ast* lhs = new Name_Ast(*$1, (*local_sym_table).get_symbol_table_entry(*$1), yylineno);
+									$$ = new Assignment_Ast(lhs,$3,yylineno);
+								}
+								else if(!(*global_sym_table).is_empty() && (*global_sym_table).variable_in_symbol_list_check(*$1)){
+									Ast* lhs = new Name_Ast(*$1, (*global_sym_table).get_symbol_table_entry(*$1), yylineno);
+									$$ = new Assignment_Ast(lhs,$3,yylineno);
+								}
+								else{
+									printf("Hello");
+									exit(1);
+								}
+							}
 							;
 
-expression				: 	INTEGER_NUMBER
+expression				: 	INTEGER_NUMBER	
+							{
+								$$ = new Number_Ast<int>($1, int_data_type, yylineno);
+							}
 							| DOUBLE_NUMBER 
-							| NAME 
+							{
+								$$ = new Number_Ast<double>($1, double_data_type, yylineno);
+							}
+							| NAME
+							{
+								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*($1))){
+									$$ = new Name_Ast(*$1, (*local_sym_table).get_symbol_table_entry(*$1), yylineno);
+								}
+								else if(!(*global_sym_table).is_empty() && (*global_sym_table).variable_in_symbol_list_check(*$1)){
+									$$ = new Name_Ast(*$1, (*global_sym_table).get_symbol_table_entry(*$1), yylineno);
+								}
+								else{
+									printf("Hello");
+									exit(1);
+								}
+							}
 							| expression '+' expression 
+							{
+								$$ = new Plus_Ast($1, $3, yylineno);
+							}
 							| expression '*' expression 
+							{
+								$$ = new Mult_Ast($1, $3, yylineno);
+							}
 							| expression '-' expression 
+							{
+								$$ = new Minus_Ast($1, $3, yylineno);
+							}
 							| expression '/' expression 
+							{
+								$$ = new Divide_Ast($1, $3, yylineno);
+							}
 							| '('expression')'
+							{
+								$$ = $2;
+							}
 							;
 %%

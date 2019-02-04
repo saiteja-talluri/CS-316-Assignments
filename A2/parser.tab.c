@@ -69,13 +69,11 @@
 	#include <string.h>
 	extern "C" void yyerror(char *s);
 	extern int yylex(void);
-	list<Symbol_Table_Entry> entry_list;
-	Symbol_Table global_sym_table;
-	Symbol_Table local_sym_table;
-	Procedure main_proc = Procedure(void_data_type,"main", 0); /* TODO: Need to get the line number some how */ 
-	list<Ast *>  our_ast_list;
+	extern int yylineno;
+	Symbol_Table* global_sym_table = new Symbol_Table();
+	Symbol_Table* local_sym_table = new Symbol_Table();
 
-#line 79 "parser.tab.c" /* yacc.c:339  */
+#line 77 "parser.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -128,7 +126,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 14 "parser.y" /* yacc.c:355  */
+#line 12 "parser.y" /* yacc.c:355  */
 
 	int integer_value;
 	double double_value;
@@ -141,7 +139,7 @@ union YYSTYPE
 	Procedure * procedure;
 	list<Symbol_Table_Entry *> * symbol_entry_list;
 
-#line 145 "parser.tab.c" /* yacc.c:355  */
+#line 143 "parser.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -158,7 +156,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 162 "parser.tab.c" /* yacc.c:358  */
+#line 160 "parser.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -456,9 +454,9 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    42,    42,    53,    68,    69,    72,    73,    76,    79,
-      85,    93,    98,   106,   107,   110,   113,   114,   115,   116,
-     117,   118,   119,   120
+       0,    43,    43,    54,    71,    75,    81,    85,    94,   100,
+     107,   116,   122,   132,   135,   141,   158,   162,   166,   179,
+     183,   187,   191,   195
 };
 #endif
 
@@ -1255,71 +1253,228 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 43 "parser.y" /* yacc.c:1646  */
+#line 44 "parser.y" /* yacc.c:1646  */
     {
-								for(list<Symbol_Table_Entry>::iterator it = entry_list.begin(); it != entry_list.end(); it++) {
-									it->set_symbol_scope(global);
-									global_sym_table.push_symbol(&(*it));
+								for(list<Symbol_Table_Entry*>::iterator it = (*(yyvsp[-1].symbol_entry_list)).begin(); it != (*(yyvsp[-1].symbol_entry_list)).end(); it++) {
+									(*it)->set_symbol_scope(global);
+									(*global_sym_table).push_symbol(*it);
 								}
-								program_object.set_global_table(global_sym_table);
-								program_object.set_procedure(&main_proc, 0); /* TODO : Need to get the line number some how */
+								program_object.set_global_table(*global_sym_table);
+								program_object.set_procedure((yyvsp[0].procedure), yylineno);
 							}
-#line 1268 "parser.tab.c" /* yacc.c:1646  */
+#line 1266 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 57 "parser.y" /* yacc.c:1646  */
+#line 58 "parser.y" /* yacc.c:1646  */
     {	
-								for(list<Symbol_Table_Entry>::iterator it = entry_list.begin(); it != entry_list.end(); it++) {
-									it->set_symbol_scope(local);
-									local_sym_table.push_symbol(&(*it));
+								(yyval.procedure) = new Procedure(void_data_type,*(yyvsp[-6].string_value), yylineno);
+								for(list<Symbol_Table_Entry*>::iterator it = (*(yyvsp[-2].symbol_entry_list)).begin(); it != (*(yyvsp[-2].symbol_entry_list)).end(); it++) {
+									(*it)->set_symbol_scope(local);
+									(*local_sym_table).push_symbol(*it);
 								}
-								main_proc.set_local_list(local_sym_table);
-								main_proc.set_ast_list(our_ast_list);
+								(*(yyval.procedure)).set_local_list((*local_sym_table));
+								(*(yyval.procedure)).set_ast_list(*((yyvsp[-1].ast_list)));
 							}
-#line 1281 "parser.tab.c" /* yacc.c:1646  */
+#line 1280 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 4:
+#line 71 "parser.y" /* yacc.c:1646  */
+    {
+											(yyval.symbol_entry_list) = new list<Symbol_Table_Entry *>();
+											printf("Hello");
+										}
+#line 1289 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 5:
+#line 76 "parser.y" /* yacc.c:1646  */
+    {
+											(yyval.symbol_entry_list) = (yyvsp[0].symbol_entry_list);
+										}
+#line 1297 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 6:
+#line 82 "parser.y" /* yacc.c:1646  */
+    {
+											(yyval.symbol_entry_list) = (yyvsp[0].symbol_entry_list);
+										}
+#line 1305 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 7:
+#line 86 "parser.y" /* yacc.c:1646  */
+    {
+											for(list<Symbol_Table_Entry*>::iterator it = (*(yyvsp[0].symbol_entry_list)).begin(); it != (*(yyvsp[0].symbol_entry_list)).end(); it++) {
+												(*((yyvsp[-1].symbol_entry_list))).push_back(*it);
+											}
+											(yyval.symbol_entry_list) = (yyvsp[-1].symbol_entry_list);
+										}
+#line 1316 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 8:
+#line 95 "parser.y" /* yacc.c:1646  */
+    {
+											(yyval.symbol_entry_list) = (yyvsp[-1].symbol_entry_list);
+										}
+#line 1324 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 80 "parser.y" /* yacc.c:1646  */
+#line 101 "parser.y" /* yacc.c:1646  */
     {
-											for(list<Symbol_Table_Entry>::iterator it = entry_list.begin(); it != entry_list.end(); it++) {
-												it->set_data_type(int_data_type);
+											for(list<Symbol_Table_Entry*>::iterator it = (*(yyvsp[0].symbol_entry_list)).begin(); it != (*(yyvsp[0].symbol_entry_list)).end(); it++) {
+												(*it)->set_data_type(int_data_type);
 											}
+											(yyval.symbol_entry_list) = (yyvsp[0].symbol_entry_list);
 										}
-#line 1291 "parser.tab.c" /* yacc.c:1646  */
+#line 1335 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 86 "parser.y" /* yacc.c:1646  */
-    {
-											for(list<Symbol_Table_Entry>::iterator it = entry_list.begin(); it != entry_list.end(); it++) {
-												it->set_data_type(double_data_type);
+#line 108 "parser.y" /* yacc.c:1646  */
+    {	
+											for(list<Symbol_Table_Entry*>::iterator it = (*(yyvsp[0].symbol_entry_list)).begin(); it != (*(yyvsp[0].symbol_entry_list)).end(); it++) {
+												(*it)->set_data_type(double_data_type);
 											}
+											(yyval.symbol_entry_list) = (yyvsp[0].symbol_entry_list);
 										}
-#line 1301 "parser.tab.c" /* yacc.c:1646  */
+#line 1346 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 94 "parser.y" /* yacc.c:1646  */
+#line 117 "parser.y" /* yacc.c:1646  */
     {
-											Symbol_Table_Entry x = Symbol_Table_Entry(*(yyvsp[0].string_value),int_data_type,0);
-											entry_list.push_back(x);
+											(yyval.symbol_entry_list) = new list<Symbol_Table_Entry *>();
+											Symbol_Table_Entry* x = new Symbol_Table_Entry(*(yyvsp[0].string_value),int_data_type,yylineno);
+											(*(yyval.symbol_entry_list)).push_back(x);
 										}
-#line 1310 "parser.tab.c" /* yacc.c:1646  */
+#line 1356 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 99 "parser.y" /* yacc.c:1646  */
+#line 123 "parser.y" /* yacc.c:1646  */
     {
-											Symbol_Table_Entry x = Symbol_Table_Entry(*(yyvsp[0].string_value),int_data_type,0);
-											entry_list.push_back(x);
+											Symbol_Table_Entry* x = new Symbol_Table_Entry(*(yyvsp[0].string_value),int_data_type,yylineno);
+											(*(yyvsp[-2].symbol_entry_list)).push_back(x);
+											(yyval.symbol_entry_list) = (yyvsp[-2].symbol_entry_list);
 										}
-#line 1319 "parser.tab.c" /* yacc.c:1646  */
+#line 1366 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 13:
+#line 132 "parser.y" /* yacc.c:1646  */
+    {
+								(yyval.ast_list) = new list<Ast *>();
+							}
+#line 1374 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 14:
+#line 136 "parser.y" /* yacc.c:1646  */
+    {
+								(*(yyval.ast_list)).push_back((yyvsp[0].ast));
+							}
+#line 1382 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 15:
+#line 142 "parser.y" /* yacc.c:1646  */
+    {
+								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*(yyvsp[-3].string_value))){
+									Ast* lhs = new Name_Ast(*(yyvsp[-3].string_value), (*local_sym_table).get_symbol_table_entry(*(yyvsp[-3].string_value)), yylineno);
+									(yyval.ast) = new Assignment_Ast(lhs,(yyvsp[-1].ast),yylineno);
+								}
+								else if(!(*global_sym_table).is_empty() && (*global_sym_table).variable_in_symbol_list_check(*(yyvsp[-3].string_value))){
+									Ast* lhs = new Name_Ast(*(yyvsp[-3].string_value), (*global_sym_table).get_symbol_table_entry(*(yyvsp[-3].string_value)), yylineno);
+									(yyval.ast) = new Assignment_Ast(lhs,(yyvsp[-1].ast),yylineno);
+								}
+								else{
+									printf("Hello");
+									exit(1);
+								}
+							}
+#line 1401 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 16:
+#line 159 "parser.y" /* yacc.c:1646  */
+    {
+								(yyval.ast) = new Number_Ast<int>((yyvsp[0].integer_value), int_data_type, yylineno);
+							}
+#line 1409 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 17:
+#line 163 "parser.y" /* yacc.c:1646  */
+    {
+								(yyval.ast) = new Number_Ast<double>((yyvsp[0].double_value), double_data_type, yylineno);
+							}
+#line 1417 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 18:
+#line 167 "parser.y" /* yacc.c:1646  */
+    {
+								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*((yyvsp[0].string_value)))){
+									(yyval.ast) = new Name_Ast(*(yyvsp[0].string_value), (*local_sym_table).get_symbol_table_entry(*(yyvsp[0].string_value)), yylineno);
+								}
+								else if(!(*global_sym_table).is_empty() && (*global_sym_table).variable_in_symbol_list_check(*(yyvsp[0].string_value))){
+									(yyval.ast) = new Name_Ast(*(yyvsp[0].string_value), (*global_sym_table).get_symbol_table_entry(*(yyvsp[0].string_value)), yylineno);
+								}
+								else{
+									printf("Hello");
+									exit(1);
+								}
+							}
+#line 1434 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 19:
+#line 180 "parser.y" /* yacc.c:1646  */
+    {
+								(yyval.ast) = new Plus_Ast((yyvsp[-2].ast), (yyvsp[0].ast), yylineno);
+							}
+#line 1442 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 20:
+#line 184 "parser.y" /* yacc.c:1646  */
+    {
+								(yyval.ast) = new Mult_Ast((yyvsp[-2].ast), (yyvsp[0].ast), yylineno);
+							}
+#line 1450 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 21:
+#line 188 "parser.y" /* yacc.c:1646  */
+    {
+								(yyval.ast) = new Minus_Ast((yyvsp[-2].ast), (yyvsp[0].ast), yylineno);
+							}
+#line 1458 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 22:
+#line 192 "parser.y" /* yacc.c:1646  */
+    {
+								(yyval.ast) = new Divide_Ast((yyvsp[-2].ast), (yyvsp[0].ast), yylineno);
+							}
+#line 1466 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 23:
+#line 196 "parser.y" /* yacc.c:1646  */
+    {
+								(yyval.ast) = (yyvsp[-1].ast);
+							}
+#line 1474 "parser.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1323 "parser.tab.c" /* yacc.c:1646  */
+#line 1478 "parser.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1547,4 +1702,4 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 122 "parser.y" /* yacc.c:1906  */
+#line 200 "parser.y" /* yacc.c:1906  */
