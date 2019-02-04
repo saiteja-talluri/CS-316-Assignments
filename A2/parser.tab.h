@@ -63,7 +63,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 9 "parser.y" /* yacc.c:1909  */
+#line 14 "parser.y" /* yacc.c:1909  */
 
 	int integer_value;
 	double double_value;
@@ -74,8 +74,9 @@ union YYSTYPE
 	Symbol_Table_Entry * symbol_entry;
 	Basic_Block * basic_block;
 	Procedure * procedure;
+	list<Symbol_Table_Entry *> * symbol_entry_list;
 
-#line 79 "parser.tab.h" /* yacc.c:1909  */
+#line 80 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

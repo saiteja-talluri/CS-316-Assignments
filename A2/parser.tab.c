@@ -69,8 +69,13 @@
 	#include <string.h>
 	extern "C" void yyerror(char *s);
 	extern int yylex(void);
+	list<Symbol_Table_Entry> entry_list;
+	Symbol_Table global_sym_table;
+	Symbol_Table local_sym_table;
+	Procedure main_proc = Procedure(void_data_type,"main", 0); /* TODO: Need to get the line number some how */ 
+	list<Ast *>  our_ast_list;
 
-#line 74 "parser.tab.c" /* yacc.c:339  */
+#line 79 "parser.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -123,7 +128,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 9 "parser.y" /* yacc.c:355  */
+#line 14 "parser.y" /* yacc.c:355  */
 
 	int integer_value;
 	double double_value;
@@ -134,8 +139,9 @@ union YYSTYPE
 	Symbol_Table_Entry * symbol_entry;
 	Basic_Block * basic_block;
 	Procedure * procedure;
+	list<Symbol_Table_Entry *> * symbol_entry_list;
 
-#line 139 "parser.tab.c" /* yacc.c:355  */
+#line 145 "parser.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -152,7 +158,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 156 "parser.tab.c" /* yacc.c:358  */
+#line 162 "parser.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -450,9 +456,9 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    34,    34,    37,    45,    46,    49,    50,    53,    56,
-      57,    60,    61,    65,    66,    69,    72,    73,    74,    75,
-      76,    77,    78,    79
+       0,    42,    42,    53,    68,    69,    72,    73,    76,    79,
+      85,    93,    98,   106,   107,   110,   113,   114,   115,   116,
+     117,   118,   119,   120
 };
 #endif
 
@@ -1249,31 +1255,71 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 35 "parser.y" /* yacc.c:1646  */
-    {}
-#line 1255 "parser.tab.c" /* yacc.c:1646  */
+#line 43 "parser.y" /* yacc.c:1646  */
+    {
+								for(list<Symbol_Table_Entry>::iterator it = entry_list.begin(); it != entry_list.end(); it++) {
+									it->set_symbol_scope(global);
+									global_sym_table.push_symbol(&(*it));
+								}
+								program_object.set_global_table(global_sym_table);
+								program_object.set_procedure(&main_proc, 0); /* TODO : Need to get the line number some how */
+							}
+#line 1268 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 42 "parser.y" /* yacc.c:1646  */
-    {}
-#line 1261 "parser.tab.c" /* yacc.c:1646  */
+#line 57 "parser.y" /* yacc.c:1646  */
+    {	
+								for(list<Symbol_Table_Entry>::iterator it = entry_list.begin(); it != entry_list.end(); it++) {
+									it->set_symbol_scope(local);
+									local_sym_table.push_symbol(&(*it));
+								}
+								main_proc.set_local_list(local_sym_table);
+								main_proc.set_ast_list(our_ast_list);
+							}
+#line 1281 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 9:
+#line 80 "parser.y" /* yacc.c:1646  */
+    {
+											for(list<Symbol_Table_Entry>::iterator it = entry_list.begin(); it != entry_list.end(); it++) {
+												it->set_data_type(int_data_type);
+											}
+										}
+#line 1291 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 10:
+#line 86 "parser.y" /* yacc.c:1646  */
+    {
+											for(list<Symbol_Table_Entry>::iterator it = entry_list.begin(); it != entry_list.end(); it++) {
+												it->set_data_type(double_data_type);
+											}
+										}
+#line 1301 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 60 "parser.y" /* yacc.c:1646  */
-    {INSERT (yyvsp[0].string_value) IN SYMBOL TABLE}
-#line 1267 "parser.tab.c" /* yacc.c:1646  */
+#line 94 "parser.y" /* yacc.c:1646  */
+    {
+											Symbol_Table_Entry x = Symbol_Table_Entry(*(yyvsp[0].string_value),int_data_type,0);
+											entry_list.push_back(x);
+										}
+#line 1310 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 61 "parser.y" /* yacc.c:1646  */
-    {INSERT (yyvsp[0].string_value) IN SYMBOL TABLE}
-#line 1273 "parser.tab.c" /* yacc.c:1646  */
+#line 99 "parser.y" /* yacc.c:1646  */
+    {
+											Symbol_Table_Entry x = Symbol_Table_Entry(*(yyvsp[0].string_value),int_data_type,0);
+											entry_list.push_back(x);
+										}
+#line 1319 "parser.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1277 "parser.tab.c" /* yacc.c:1646  */
+#line 1323 "parser.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1501,10 +1547,4 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 81 "parser.y" /* yacc.c:1906  */
-
-
-int yyerror (char *msg)
-{
-	fprintf (stderr, "%s\n", msg);
-}
+#line 122 "parser.y" /* yacc.c:1906  */
