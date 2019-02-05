@@ -227,7 +227,7 @@ expression				: 	INTEGER_NUMBER
 									exit(1);
 								}
 							}
-							| expression '*' end_expression
+							| expression '*' expression
 							{
 								if((*$1).get_data_type() == (*$3).get_data_type())
 								{
@@ -239,7 +239,7 @@ expression				: 	INTEGER_NUMBER
 									exit(1);
 								}
 							}
-							| expression '/' end_expression
+							| expression '/' expression
 							{
 								if((*$1).get_data_type() == (*$3).get_data_type())
 								{
@@ -253,7 +253,8 @@ expression				: 	INTEGER_NUMBER
 							}
 							| '-' expression
 							{
-								$$ = new Uminus_Ast($2,NULL,yylineno);
+								$$ = new UMinus_Ast($2,NULL,yylineno);
+								(*$$).set_data_type((*$2).get_data_type());
 							}
 							| '('expression')'
 							{
