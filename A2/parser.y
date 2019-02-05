@@ -29,7 +29,7 @@
 
 %type <symbol_entry_list> variable_list	declaration	variable_declaration variable_declaration_list optional_variable_declaration_list
 %type <procedure> procedure_definition
-%type <ast>	assignment_statement expression
+%type <ast>	assignment_statement expression sub_expression end_expression
 %type <ast_list> statement_list
 
 %left '+' '-'
@@ -165,7 +165,35 @@ assignment_statement	:	NAME ASSIGN expression ';'
 							}
 							;
 
-expression				: 	INTEGER_NUMBER	
+expression				: 	expression '+' sub_expression
+							{
+								$$ = new Plus_Ast($1, $3, yylineno);
+							}
+							| expression '-' sub_expression
+							{
+								$$ = new Minus_Ast($1, $3, yylineno);
+							}
+							| sub_expression
+							{
+								$$ = $1;
+							}
+							;
+
+sub_expression			:	sub_expression '*' end_expression
+							{
+								$$ = new Mult_Ast($1, $3, yylineno);
+							}
+							| sub_expression '/' end_expression
+							{
+								$$ = new Divide_Ast($1, $3, yylineno);	
+							}
+							| end_expression
+							{
+								$$ = $1;
+							}
+							;
+
+end_expression			: 	INTEGER_NUMBER	
 							{
 								$$ = new Number_Ast<int>($1, int_data_type, yylineno);
 							}
@@ -185,22 +213,6 @@ expression				: 	INTEGER_NUMBER
 									yyerror("Error : Variable is not present in the symbol table\n");
 									exit(1);
 								}
-							}
-							| expression '+' expression 
-							{
-								$$ = new Plus_Ast($1, $3, yylineno);
-							}
-							| expression '*' expression 
-							{
-								$$ = new Mult_Ast($1, $3, yylineno);
-							}
-							| expression '-' expression 
-							{
-								$$ = new Minus_Ast($1, $3, yylineno);
-							}
-							| expression '/' expression 
-							{
-								$$ = new Divide_Ast($1, $3, yylineno);
 							}
 							| '('expression')'
 							{
