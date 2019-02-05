@@ -455,8 +455,8 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint16 yyrline[] =
 {
        0,    43,    43,    51,    64,    73,    83,    86,    92,    96,
-     105,   111,   118,   127,   133,   143,   146,   153,   186,   199,
-     211,   217,   229,   241,   247,   251,   255,   268
+     105,   111,   118,   127,   133,   143,   146,   153,   184,   197,
+     209,   215,   227,   239,   245,   249,   253,   266
 };
 #endif
 
@@ -1406,10 +1406,9 @@ yyreduce:
 									if((*lhs1).get_data_type() == (*(yyvsp[-1].ast)).get_data_type())
 									{
 										(yyval.ast) = new Assignment_Ast(lhs1,(yyvsp[-1].ast),yylineno);
-										(*(yyval.ast)).set_data_type((*lhs1).get_data_type());
 									}
 									else{
-										yyerror("Error : Data Type Mismatch");
+										yyerror("Error : Assignment statement data type not compatible");
 										exit(1);
 									}
 								}
@@ -1418,23 +1417,22 @@ yyreduce:
 									if((*lhs2).get_data_type() == (*(yyvsp[-1].ast)).get_data_type())
 									{
 										(yyval.ast) = new Assignment_Ast(lhs2,(yyvsp[-1].ast),yylineno);
-										(*(yyval.ast)).set_data_type((*lhs2).get_data_type());
 									}
 									else{
-										yyerror("Error : Data Type Mismatch");
+										yyerror("Error : Assignment statement data type not compatible");
 										exit(1);
 									}
 								}
 								else{
-									yyerror("Error : LHS variable of the assignment operator is not present in the symbol table");
+									yyerror("Error : Variable has not been declared");
 									exit(1);
 								}
 							}
-#line 1434 "parser.tab.c" /* yacc.c:1646  */
+#line 1432 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 187 "parser.y" /* yacc.c:1646  */
+#line 185 "parser.y" /* yacc.c:1646  */
     {
 								if((*(yyvsp[-2].ast)).get_data_type() == (*(yyvsp[0].ast)).get_data_type())
 								{
@@ -1442,16 +1440,16 @@ yyreduce:
 									(*(yyval.ast)).set_data_type((*(yyvsp[-2].ast)).get_data_type());
 								}
 								else{
-									yyerror("Error : Data Type Mismatch");
+									yyerror("Error : Arithmetic statement data type not compatible");
 									exit(1);
 								}
 
 							}
-#line 1451 "parser.tab.c" /* yacc.c:1646  */
+#line 1449 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 200 "parser.y" /* yacc.c:1646  */
+#line 198 "parser.y" /* yacc.c:1646  */
     {
 								if((*(yyvsp[-2].ast)).get_data_type() == (*(yyvsp[0].ast)).get_data_type())
 								{
@@ -1459,23 +1457,23 @@ yyreduce:
 									(*(yyval.ast)).set_data_type((*(yyvsp[-2].ast)).get_data_type());
 								}
 								else{
-									yyerror("Error : Data Type Mismatch");
+									yyerror("Error : Arithmetic statement data type not compatible");
 									exit(1);
 								}
 							}
-#line 1467 "parser.tab.c" /* yacc.c:1646  */
+#line 1465 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 212 "parser.y" /* yacc.c:1646  */
+#line 210 "parser.y" /* yacc.c:1646  */
     {
 								(yyval.ast) = (yyvsp[0].ast);
 							}
-#line 1475 "parser.tab.c" /* yacc.c:1646  */
+#line 1473 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 218 "parser.y" /* yacc.c:1646  */
+#line 216 "parser.y" /* yacc.c:1646  */
     {
 								if((*(yyvsp[-2].ast)).get_data_type() == (*(yyvsp[0].ast)).get_data_type())
 								{
@@ -1483,15 +1481,15 @@ yyreduce:
 									(*(yyval.ast)).set_data_type((*(yyvsp[-2].ast)).get_data_type());
 								}
 								else{
-									yyerror("Error : Data Type Mismatch");
+									yyerror("Error : Arithmetic statement data type not compatible");
 									exit(1);
 								}
 							}
-#line 1491 "parser.tab.c" /* yacc.c:1646  */
+#line 1489 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 230 "parser.y" /* yacc.c:1646  */
+#line 228 "parser.y" /* yacc.c:1646  */
     {
 								if((*(yyvsp[-2].ast)).get_data_type() == (*(yyvsp[0].ast)).get_data_type())
 								{
@@ -1499,39 +1497,39 @@ yyreduce:
 									(*(yyval.ast)).set_data_type((*(yyvsp[-2].ast)).get_data_type());
 								}
 								else{
-									yyerror("Error : Data Type Mismatch");
+									yyerror("Error : Arithmetic statement data type not compatible");
 									exit(1);
 								}	
 							}
-#line 1507 "parser.tab.c" /* yacc.c:1646  */
+#line 1505 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 242 "parser.y" /* yacc.c:1646  */
+#line 240 "parser.y" /* yacc.c:1646  */
     {
 								(yyval.ast) = (yyvsp[0].ast);
 							}
-#line 1515 "parser.tab.c" /* yacc.c:1646  */
+#line 1513 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 248 "parser.y" /* yacc.c:1646  */
+#line 246 "parser.y" /* yacc.c:1646  */
     {
 								(yyval.ast) = new Number_Ast<int>((yyvsp[0].integer_value), int_data_type, yylineno);
 							}
-#line 1523 "parser.tab.c" /* yacc.c:1646  */
+#line 1521 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 252 "parser.y" /* yacc.c:1646  */
+#line 250 "parser.y" /* yacc.c:1646  */
     {
 								(yyval.ast) = new Number_Ast<double>((yyvsp[0].double_value), double_data_type, yylineno);
 							}
-#line 1531 "parser.tab.c" /* yacc.c:1646  */
+#line 1529 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 256 "parser.y" /* yacc.c:1646  */
+#line 254 "parser.y" /* yacc.c:1646  */
     {
 								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*((yyvsp[0].string_value)))){
 									(yyval.ast) = new Name_Ast(*(yyvsp[0].string_value), (*local_sym_table).get_symbol_table_entry(*(yyvsp[0].string_value)), yylineno);
@@ -1540,23 +1538,23 @@ yyreduce:
 									(yyval.ast) = new Name_Ast(*(yyvsp[0].string_value), (*global_sym_table).get_symbol_table_entry(*(yyvsp[0].string_value)), yylineno);
 								}
 								else{
-									yyerror("Error : Variable is not present in the symbol table");
+									yyerror("Error : Variable has not been declared");
 									exit(1);
 								}
 							}
-#line 1548 "parser.tab.c" /* yacc.c:1646  */
+#line 1546 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 269 "parser.y" /* yacc.c:1646  */
+#line 267 "parser.y" /* yacc.c:1646  */
     {
 								(yyval.ast) = (yyvsp[-1].ast);
 							}
-#line 1556 "parser.tab.c" /* yacc.c:1646  */
+#line 1554 "parser.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1560 "parser.tab.c" /* yacc.c:1646  */
+#line 1558 "parser.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1784,4 +1782,4 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 273 "parser.y" /* yacc.c:1906  */
+#line 271 "parser.y" /* yacc.c:1906  */

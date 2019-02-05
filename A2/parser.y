@@ -157,7 +157,6 @@ assignment_statement	:	NAME ASSIGN expression ';'
 									if((*lhs1).get_data_type() == (*$3).get_data_type())
 									{
 										$$ = new Assignment_Ast(lhs1,$3,yylineno);
-										(*$$).set_data_type((*lhs1).get_data_type());
 									}
 									else{
 										yyerror("Error : Assignment statement data type not compatible");
@@ -169,7 +168,6 @@ assignment_statement	:	NAME ASSIGN expression ';'
 									if((*lhs2).get_data_type() == (*$3).get_data_type())
 									{
 										$$ = new Assignment_Ast(lhs2,$3,yylineno);
-										(*$$).set_data_type((*lhs2).get_data_type());
 									}
 									else{
 										yyerror("Error : Assignment statement data type not compatible");
