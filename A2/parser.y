@@ -2,7 +2,7 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <string.h>
-	extern "C" void yyerror(char *s);
+	extern "C" void yyerror(const char *s);
 	extern int yylex(void);
 	extern int yylineno;
 	Symbol_Table* global_sym_table = new Symbol_Table();
@@ -29,7 +29,7 @@
 
 %type <symbol_entry_list> variable_list	declaration	variable_declaration variable_declaration_list optional_variable_declaration_list
 %type <procedure> procedure_definition
-%type <ast>	assignment_statement expression sub_expression end_expression
+%type <ast>	assignment_statement expression
 %type <ast_list> statement_list
 
 %left '+' '-'
@@ -181,68 +181,7 @@ assignment_statement	:	NAME ASSIGN expression ';'
 							}
 							;
 
-expression				: 	expression '+' sub_expression
-							{
-								if((*$1).get_data_type() == (*$3).get_data_type())
-								{
-									$$ = new Plus_Ast($1, $3, yylineno);
-									(*$$).set_data_type((*$1).get_data_type());
-								}
-								else{
-									yyerror("Error : Arithmetic statement data type not compatible");
-									exit(1);
-								}
-
-							}
-							| expression '-' sub_expression
-							{
-								if((*$1).get_data_type() == (*$3).get_data_type())
-								{
-									$$ = new Minus_Ast($1, $3, yylineno);
-									(*$$).set_data_type((*$1).get_data_type());
-								}
-								else{
-									yyerror("Error : Arithmetic statement data type not compatible");
-									exit(1);
-								}
-							}
-							| sub_expression
-							{
-								$$ = $1;
-							}
-							;
-
-sub_expression			:	sub_expression '*' end_expression
-							{
-								if((*$1).get_data_type() == (*$3).get_data_type())
-								{
-									$$ = new Mult_Ast($1, $3, yylineno);
-									(*$$).set_data_type((*$1).get_data_type());
-								}
-								else{
-									yyerror("Error : Arithmetic statement data type not compatible");
-									exit(1);
-								}
-							}
-							| sub_expression '/' end_expression
-							{
-								if((*$1).get_data_type() == (*$3).get_data_type())
-								{
-									$$ = new Divide_Ast($1, $3, yylineno);
-									(*$$).set_data_type((*$1).get_data_type());
-								}
-								else{
-									yyerror("Error : Arithmetic statement data type not compatible");
-									exit(1);
-								}	
-							}
-							| end_expression
-							{
-								$$ = $1;
-							}
-							;
-
-end_expression			: 	INTEGER_NUMBER	
+expression				: 	INTEGER_NUMBER	
 							{
 								$$ = new Number_Ast<int>($1, int_data_type, yylineno);
 							}
@@ -262,6 +201,59 @@ end_expression			: 	INTEGER_NUMBER
 									yyerror("Error : Variable has not been declared");
 									exit(1);
 								}
+							}
+							| expression '+' expression
+							{
+								if((*$1).get_data_type() == (*$3).get_data_type())
+								{
+									$$ = new Plus_Ast($1, $3, yylineno);
+									(*$$).set_data_type((*$1).get_data_type());
+								}
+								else{
+									yyerror("Error : Arithmetic statement data type not compatible");
+									exit(1);
+								}
+
+							}
+							| expression '-' expression
+							{
+								if((*$1).get_data_type() == (*$3).get_data_type())
+								{
+									$$ = new Minus_Ast($1, $3, yylineno);
+									(*$$).set_data_type((*$1).get_data_type());
+								}
+								else{
+									yyerror("Error : Arithmetic statement data type not compatible");
+									exit(1);
+								}
+							}
+							| expression '*' end_expression
+							{
+								if((*$1).get_data_type() == (*$3).get_data_type())
+								{
+									$$ = new Mult_Ast($1, $3, yylineno);
+									(*$$).set_data_type((*$1).get_data_type());
+								}
+								else{
+									yyerror("Error : Arithmetic statement data type not compatible");
+									exit(1);
+								}
+							}
+							| expression '/' end_expression
+							{
+								if((*$1).get_data_type() == (*$3).get_data_type())
+								{
+									$$ = new Divide_Ast($1, $3, yylineno);
+									(*$$).set_data_type((*$1).get_data_type());
+								}
+								else{
+									yyerror("Error : Arithmetic statement data type not compatible");
+									exit(1);
+								}	
+							}
+							| '-' expression
+							{
+								$$ = new Uminus_Ast($2,NULL,yylineno);
 							}
 							| '('expression')'
 							{

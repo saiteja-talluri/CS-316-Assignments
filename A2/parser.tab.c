@@ -67,7 +67,7 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <string.h>
-	extern "C" void yyerror(char *s);
+	extern "C" void yyerror(const char *s);
 	extern int yylex(void);
 	extern int yylineno;
 	Symbol_Table* global_sym_table = new Symbol_Table();
