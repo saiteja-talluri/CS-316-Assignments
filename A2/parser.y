@@ -125,13 +125,13 @@ declaration							:	INTEGER variable_list
 variable_list                       :	NAME	
 										{
 											$$ = new list<Symbol_Table_Entry *>();
-											Symbol_Table_Entry* x = new Symbol_Table_Entry(*$1,int_data_type,yylineno);
-											(*$$).push_back(x);
+											Symbol_Table_Entry* a = new Symbol_Table_Entry(*$1,int_data_type,yylineno);
+											(*$$).push_back(a);
 										}
 										| variable_list ',' NAME
 										{
-											Symbol_Table_Entry* x = new Symbol_Table_Entry(*$3,int_data_type,yylineno);
-											(*$1).push_front(x);
+											Symbol_Table_Entry* b = new Symbol_Table_Entry(*$3,int_data_type,yylineno);
+											(*$1).push_front(b);
 											$$ = $1;
 										}
 										;
@@ -151,14 +151,15 @@ statement_list	        :	/* empty */
 assignment_statement	:	NAME ASSIGN expression ';'
 							{
 								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*$1)){
-									Ast* lhs = new Name_Ast(*$1, (*local_sym_table).get_symbol_table_entry(*$1), yylineno);
-									$$ = new Assignment_Ast(lhs,$3,yylineno);
+									Ast* lhs1 = new Name_Ast(*$1, (*local_sym_table).get_symbol_table_entry(*$1), yylineno);
+									$$ = new Assignment_Ast(lhs1,$3,yylineno);
 								}
 								else if(!(*global_sym_table).is_empty() && (*global_sym_table).variable_in_symbol_list_check(*$1)){
-									Ast* lhs = new Name_Ast(*$1, (*global_sym_table).get_symbol_table_entry(*$1), yylineno);
-									$$ = new Assignment_Ast(lhs,$3,yylineno);
+									Ast* lhs2 = new Name_Ast(*$1, (*global_sym_table).get_symbol_table_entry(*$1), yylineno);
+									$$ = new Assignment_Ast(lhs2,$3,yylineno);
 								}
 								else{
+									yyerror("Error : LHS variable of the assignment operator is not present in the symbol table\n");
 									exit(1);
 								}
 							}
@@ -181,6 +182,7 @@ expression				: 	INTEGER_NUMBER
 									$$ = new Name_Ast(*$1, (*global_sym_table).get_symbol_table_entry(*$1), yylineno);
 								}
 								else{
+									yyerror("Error : Variable is not present in the symbol table\n");
 									exit(1);
 								}
 							}
