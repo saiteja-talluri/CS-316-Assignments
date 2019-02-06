@@ -65,7 +65,10 @@ global_variable_declaration_list	: 	optional_variable_declaration_list
 										{
 											for(list<Symbol_Table_Entry*>::iterator it = (*$1).begin(); it != (*$1).end(); it++) {
 												(*it)->set_symbol_scope(global);
-												(*global_sym_table).push_symbol(*it);
+												Symbol_Table x;
+												x.push_symbol(*it);
+												x.set_table_scope(global);
+												(*global_sym_table).append_list(x,yylineno);
 											}
 										}
 										;
@@ -74,7 +77,10 @@ local_variable_declaration_list		: 	optional_variable_declaration_list
 										{
 											for(list<Symbol_Table_Entry*>::iterator it = (*$1).begin(); it != (*$1).end(); it++) {
 												(*it)->set_symbol_scope(local);
-												(*local_sym_table).push_symbol(*it);
+												Symbol_Table x;
+												x.push_symbol(*it);
+												x.set_table_scope(local);
+												(*local_sym_table).append_list(x,yylineno);
 											}
 										}
 										;
