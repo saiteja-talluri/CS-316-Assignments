@@ -86,7 +86,7 @@ assign =
 			}
 
 {newline} 	{
-				yylineno++;
+				
 			}
 
 {char}		{

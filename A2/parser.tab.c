@@ -452,11 +452,11 @@ static const yytype_uint8 yytranslate[] =
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint16 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
        0,    43,    43,    51,    64,    73,    83,    86,    92,    96,
-     105,   111,   118,   127,   133,   143,   146,   153,   184,   188,
-     192,   205,   218,   230,   242,   254,   259
+     105,   111,   118,   127,   133,   143,   146,   153,   172,   176,
+     180,   193,   199,   205,   211,   217,   223
 };
 #endif
 
@@ -1405,52 +1405,40 @@ yyreduce:
     {
 								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*(yyvsp[-3].string_value))){
 									Ast* lhs1 = new Name_Ast(*(yyvsp[-3].string_value), (*local_sym_table).get_symbol_table_entry(*(yyvsp[-3].string_value)), yylineno);
-									if((*lhs1).get_data_type() == (*(yyvsp[-1].ast)).get_data_type())
-									{
-										(yyval.ast) = new Assignment_Ast(lhs1,(yyvsp[-1].ast),yylineno);
-									}
-									else{
-										yyerror("Error : Assignment statement data type not compatible");
-										exit(1);
-									}
+									(yyval.ast) = new Assignment_Ast(lhs1,(yyvsp[-1].ast),yylineno);
+									(*(yyval.ast)).check_ast();
 								}
 								else if(!(*global_sym_table).is_empty() && (*global_sym_table).variable_in_symbol_list_check(*(yyvsp[-3].string_value))){
 									Ast* lhs2 = new Name_Ast(*(yyvsp[-3].string_value), (*global_sym_table).get_symbol_table_entry(*(yyvsp[-3].string_value)), yylineno);
-									if((*lhs2).get_data_type() == (*(yyvsp[-1].ast)).get_data_type())
-									{
-										(yyval.ast) = new Assignment_Ast(lhs2,(yyvsp[-1].ast),yylineno);
-									}
-									else{
-										yyerror("Error : Assignment statement data type not compatible");
-										exit(1);
-									}
+									(yyval.ast) = new Assignment_Ast(lhs2,(yyvsp[-1].ast),yylineno);
+									(*(yyval.ast)).check_ast();
 								}
 								else{
 									yyerror("Error : Variable has not been declared");
 									exit(1);
 								}
 							}
-#line 1434 "parser.tab.c" /* yacc.c:1646  */
+#line 1422 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 185 "parser.y" /* yacc.c:1646  */
+#line 173 "parser.y" /* yacc.c:1646  */
     {
 								(yyval.ast) = new Number_Ast<int>((yyvsp[0].integer_value), int_data_type, yylineno);
 							}
-#line 1442 "parser.tab.c" /* yacc.c:1646  */
+#line 1430 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 189 "parser.y" /* yacc.c:1646  */
+#line 177 "parser.y" /* yacc.c:1646  */
     {
 								(yyval.ast) = new Number_Ast<double>((yyvsp[0].double_value), double_data_type, yylineno);
 							}
-#line 1450 "parser.tab.c" /* yacc.c:1646  */
+#line 1438 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 193 "parser.y" /* yacc.c:1646  */
+#line 181 "parser.y" /* yacc.c:1646  */
     {
 								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*((yyvsp[0].string_value)))){
 									(yyval.ast) = new Name_Ast(*(yyvsp[0].string_value), (*local_sym_table).get_symbol_table_entry(*(yyvsp[0].string_value)), yylineno);
@@ -1463,93 +1451,69 @@ yyreduce:
 									exit(1);
 								}
 							}
-#line 1467 "parser.tab.c" /* yacc.c:1646  */
+#line 1455 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 206 "parser.y" /* yacc.c:1646  */
+#line 194 "parser.y" /* yacc.c:1646  */
     {
-								if((*(yyvsp[-2].ast)).get_data_type() == (*(yyvsp[0].ast)).get_data_type())
-								{
-									(yyval.ast) = new Plus_Ast((yyvsp[-2].ast), (yyvsp[0].ast), yylineno);
-									(*(yyval.ast)).set_data_type((*(yyvsp[-2].ast)).get_data_type());
-								}
-								else{
-									yyerror("Error : Arithmetic statement data type not compatible");
-									exit(1);
-								}
-
+								(yyval.ast) = new Plus_Ast((yyvsp[-2].ast), (yyvsp[0].ast), yylineno);
+								(*(yyval.ast)).check_ast();
+								(*(yyval.ast)).set_data_type((*(yyvsp[-2].ast)).get_data_type());
 							}
-#line 1484 "parser.tab.c" /* yacc.c:1646  */
+#line 1465 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 219 "parser.y" /* yacc.c:1646  */
+#line 200 "parser.y" /* yacc.c:1646  */
     {
-								if((*(yyvsp[-2].ast)).get_data_type() == (*(yyvsp[0].ast)).get_data_type())
-								{
-									(yyval.ast) = new Minus_Ast((yyvsp[-2].ast), (yyvsp[0].ast), yylineno);
-									(*(yyval.ast)).set_data_type((*(yyvsp[-2].ast)).get_data_type());
-								}
-								else{
-									yyerror("Error : Arithmetic statement data type not compatible");
-									exit(1);
-								}
+								(yyval.ast) = new Minus_Ast((yyvsp[-2].ast), (yyvsp[0].ast), yylineno);
+								(*(yyval.ast)).check_ast();
+								(*(yyval.ast)).set_data_type((*(yyvsp[-2].ast)).get_data_type());
 							}
-#line 1500 "parser.tab.c" /* yacc.c:1646  */
+#line 1475 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 231 "parser.y" /* yacc.c:1646  */
+#line 206 "parser.y" /* yacc.c:1646  */
     {
-								if((*(yyvsp[-2].ast)).get_data_type() == (*(yyvsp[0].ast)).get_data_type())
-								{
-									(yyval.ast) = new Mult_Ast((yyvsp[-2].ast), (yyvsp[0].ast), yylineno);
-									(*(yyval.ast)).set_data_type((*(yyvsp[-2].ast)).get_data_type());
-								}
-								else{
-									yyerror("Error : Arithmetic statement data type not compatible");
-									exit(1);
-								}
+								(yyval.ast) = new Mult_Ast((yyvsp[-2].ast), (yyvsp[0].ast), yylineno);
+								(*(yyval.ast)).check_ast();
+								(*(yyval.ast)).set_data_type((*(yyvsp[-2].ast)).get_data_type());
 							}
-#line 1516 "parser.tab.c" /* yacc.c:1646  */
+#line 1485 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 243 "parser.y" /* yacc.c:1646  */
+#line 212 "parser.y" /* yacc.c:1646  */
     {
-								if((*(yyvsp[-2].ast)).get_data_type() == (*(yyvsp[0].ast)).get_data_type())
-								{
-									(yyval.ast) = new Divide_Ast((yyvsp[-2].ast), (yyvsp[0].ast), yylineno);
-									(*(yyval.ast)).set_data_type((*(yyvsp[-2].ast)).get_data_type());
-								}
-								else{
-									yyerror("Error : Arithmetic statement data type not compatible");
-									exit(1);
-								}	
+								(yyval.ast) = new Plus_Ast((yyvsp[-2].ast), (yyvsp[0].ast), yylineno);
+								(*(yyval.ast)).check_ast();
+								(*(yyval.ast)).set_data_type((*(yyvsp[-2].ast)).get_data_type());
 							}
-#line 1532 "parser.tab.c" /* yacc.c:1646  */
+#line 1495 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 255 "parser.y" /* yacc.c:1646  */
+#line 218 "parser.y" /* yacc.c:1646  */
     {
 								(yyval.ast) = new UMinus_Ast((yyvsp[0].ast),NULL,yylineno);
+								(*(yyval.ast)).check_ast();
 								(*(yyval.ast)).set_data_type((*(yyvsp[0].ast)).get_data_type());
 							}
-#line 1541 "parser.tab.c" /* yacc.c:1646  */
+#line 1505 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 260 "parser.y" /* yacc.c:1646  */
+#line 224 "parser.y" /* yacc.c:1646  */
     {
 								(yyval.ast) = (yyvsp[-1].ast);
 							}
-#line 1549 "parser.tab.c" /* yacc.c:1646  */
+#line 1513 "parser.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1553 "parser.tab.c" /* yacc.c:1646  */
+#line 1517 "parser.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1777,4 +1741,4 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 264 "parser.y" /* yacc.c:1906  */
+#line 228 "parser.y" /* yacc.c:1906  */

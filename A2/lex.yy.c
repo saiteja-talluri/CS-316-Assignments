@@ -905,7 +905,7 @@ case 12:
 YY_RULE_SETUP
 #line 88 "scanner.l"
 {
-				yylineno++;
+				
 			}
 	YY_BREAK
 case 13:

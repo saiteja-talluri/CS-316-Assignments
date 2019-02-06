@@ -154,25 +154,13 @@ assignment_statement	:	NAME ASSIGN expression ';'
 							{
 								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*$1)){
 									Ast* lhs1 = new Name_Ast(*$1, (*local_sym_table).get_symbol_table_entry(*$1), yylineno);
-									if((*lhs1).get_data_type() == (*$3).get_data_type())
-									{
-										$$ = new Assignment_Ast(lhs1,$3,yylineno);
-									}
-									else{
-										yyerror("Error : Assignment statement data type not compatible");
-										exit(1);
-									}
+									$$ = new Assignment_Ast(lhs1,$3,yylineno);
+									(*$$).check_ast();
 								}
 								else if(!(*global_sym_table).is_empty() && (*global_sym_table).variable_in_symbol_list_check(*$1)){
 									Ast* lhs2 = new Name_Ast(*$1, (*global_sym_table).get_symbol_table_entry(*$1), yylineno);
-									if((*lhs2).get_data_type() == (*$3).get_data_type())
-									{
-										$$ = new Assignment_Ast(lhs2,$3,yylineno);
-									}
-									else{
-										yyerror("Error : Assignment statement data type not compatible");
-										exit(1);
-									}
+									$$ = new Assignment_Ast(lhs2,$3,yylineno);
+									(*$$).check_ast();
 								}
 								else{
 									yyerror("Error : Variable has not been declared");
@@ -204,56 +192,32 @@ expression				: 	INTEGER_NUMBER
 							}
 							| expression '+' expression
 							{
-								if((*$1).get_data_type() == (*$3).get_data_type())
-								{
-									$$ = new Plus_Ast($1, $3, yylineno);
-									(*$$).set_data_type((*$1).get_data_type());
-								}
-								else{
-									yyerror("Error : Arithmetic statement data type not compatible");
-									exit(1);
-								}
-
+								$$ = new Plus_Ast($1, $3, yylineno);
+								(*$$).check_ast();
+								(*$$).set_data_type((*$1).get_data_type());
 							}
 							| expression '-' expression
 							{
-								if((*$1).get_data_type() == (*$3).get_data_type())
-								{
-									$$ = new Minus_Ast($1, $3, yylineno);
-									(*$$).set_data_type((*$1).get_data_type());
-								}
-								else{
-									yyerror("Error : Arithmetic statement data type not compatible");
-									exit(1);
-								}
+								$$ = new Minus_Ast($1, $3, yylineno);
+								(*$$).check_ast();
+								(*$$).set_data_type((*$1).get_data_type());
 							}
 							| expression '*' expression
 							{
-								if((*$1).get_data_type() == (*$3).get_data_type())
-								{
-									$$ = new Mult_Ast($1, $3, yylineno);
-									(*$$).set_data_type((*$1).get_data_type());
-								}
-								else{
-									yyerror("Error : Arithmetic statement data type not compatible");
-									exit(1);
-								}
+								$$ = new Mult_Ast($1, $3, yylineno);
+								(*$$).check_ast();
+								(*$$).set_data_type((*$1).get_data_type());
 							}
 							| expression '/' expression
 							{
-								if((*$1).get_data_type() == (*$3).get_data_type())
-								{
-									$$ = new Divide_Ast($1, $3, yylineno);
-									(*$$).set_data_type((*$1).get_data_type());
-								}
-								else{
-									yyerror("Error : Arithmetic statement data type not compatible");
-									exit(1);
-								}	
+								$$ = new Plus_Ast($1, $3, yylineno);
+								(*$$).check_ast();
+								(*$$).set_data_type((*$1).get_data_type());
 							}
 							| '-' expression
 							{
 								$$ = new UMinus_Ast($2,NULL,yylineno);
+								(*$$).check_ast();
 								(*$$).set_data_type((*$2).get_data_type());
 							}
 							| '('expression')'
