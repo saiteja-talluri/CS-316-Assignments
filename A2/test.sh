@@ -15,9 +15,9 @@ for filename in "$testdir"/*.c; do
 	mv "$filename.eval" "$filename.myeval"
 	mv "$filename.ast" "$filename.myast"
 	./sclp -ast -eval "$filename"
-	DIFF2=$(diff "$filename.eval" "$filename.myeval")
 	DIFF1=$(diff "$filename.ast" "$filename.myast")
-
+	DIFF2=$(diff "$filename.eval" "$filename.myeval")
+	
 	./mysclp "$filename" 2>"$filename.myerr"
 	mv "$filename.spim" "$filename.myspim"
 	./sclp "$filename" 2>"$filename.err"
