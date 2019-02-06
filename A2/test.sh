@@ -14,11 +14,9 @@ for filename in "$testdir"/*.c; do
 	./mysclp -ast -eval "$filename"
 	mv "$filename.eval" "$filename.myeval"
 	mv "$filename.ast" "$filename.myast"
-	# mv "$filename.eval" "filename.myeval"
 	./sclp -ast -eval "$filename"
 	DIFF2=$(diff "$filename.eval" "$filename.myeval")
 	DIFF1=$(diff "$filename.ast" "$filename.myast")
-	# DIFF3=$(diff "$filename.eval" "$filename.myeval")
 
 	./mysclp "$filename" 2>"$filename.myerr"
 	mv "$filename.spim" "$filename.myspim"
@@ -52,7 +50,7 @@ for filename in "$testdir"/*.c; do
 
 	if [ "$DIFF4" != "" ]
 	then
-		echo "spim error message failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "error message comparison failed on $filename. Did not run further tests (lexicographic ordering)."
 		echo "Showing diff:"
 		echo "$DIFF4"
 		exit
