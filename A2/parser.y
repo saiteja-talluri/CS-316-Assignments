@@ -68,7 +68,7 @@ global_variable_declaration_list	: 	optional_variable_declaration_list
 												Symbol_Table x;
 												x.push_symbol(*it);
 												x.set_table_scope(global);
-												(*global_sym_table).append_list(x,yylineno);
+												(*global_sym_table).append_list(x, (*it)->get_lineno());
 											}
 										}
 										;
@@ -80,7 +80,7 @@ local_variable_declaration_list		: 	optional_variable_declaration_list
 												Symbol_Table x;
 												x.push_symbol(*it);
 												x.set_table_scope(local);
-												(*local_sym_table).append_list(x,yylineno);
+												(*local_sym_table).append_list(x, (*it)->get_lineno());
 											}
 										}
 										;
@@ -158,7 +158,7 @@ statement_list	        :	/* empty */
 
 assignment_statement	:	NAME ASSIGN expression ';'
 							{
-								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*$1)){
+								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*$1)){ 
 									Ast* lhs1 = new Name_Ast(*$1, (*local_sym_table).get_symbol_table_entry(*$1), yylineno);
 									$$ = new Assignment_Ast(lhs1,$3,yylineno);
 									(*$$).check_ast();
@@ -169,7 +169,7 @@ assignment_statement	:	NAME ASSIGN expression ';'
 									(*$$).check_ast();
 								}
 								else{
-									yyerror("Error : Variable has not been declared");
+									yyerror("cs316: Error: Variable has not been declared");
 									exit(1);
 								}
 							}
@@ -192,7 +192,7 @@ expression				: 	INTEGER_NUMBER
 									$$ = new Name_Ast(*$1, (*global_sym_table).get_symbol_table_entry(*$1), yylineno);
 								}
 								else{
-									yyerror("Error : Variable has not been declared");
+									yyerror("cs316: Error : Variable has not been declared");
 									exit(1);
 								}
 							}

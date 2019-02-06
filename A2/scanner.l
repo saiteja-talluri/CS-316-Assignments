@@ -90,7 +90,7 @@ assign =
 			}
 
 {char}		{
-				cout<<"Error\n";
+				cout<<"cs316: Error\n";
 				/* All other characters are ignored */ 
 			}
 
