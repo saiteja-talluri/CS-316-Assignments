@@ -11,22 +11,24 @@ fi
 make
 
 for filename in "$testdir"/*.c; do
-	./mysclp -ast "$filename"
-	mv "$filename.spim" "$filename.myspim"
+	./mysclp -ast -eval "$filename"
+	mv "$filename.eval" "$filename.myeval"
 	mv "$filename.ast" "$filename.myast"
-	./sclp -ast "$filename"
-	DIFF1=$(diff "$filename.spim" "$filename.spim")
-	DIFF2=$(diff "$filename.ast" "$filename.ast")
+	# mv "$filename.eval" "filename.myeval"
+	./sclp -ast -eval "$filename"
+	DIFF2=$(diff "$filename.eval" "$filename.myeval")
+	DIFF1=$(diff "$filename.ast" "$filename.myast")
+	# DIFF3=$(diff "$filename.eval" "$filename.myeval")
 
 	./mysclp "$filename" 2>"$filename.myerr"
 	mv "$filename.spim" "$filename.myspim"
 	./sclp "$filename" 2>"$filename.err"
-	# DIFF3=$(diff "$filename.spim" "$filename.myspim")
+	DIFF3=$(diff "$filename.spim" "$filename.myspim")
 	DIFF4=$(diff "$filename.err" "$filename.myerr")
 
 	if [ "$DIFF1" != "" ]
 	then
-		echo "spim code comparison failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "ast comparison failed on $filename. Did not run further tests (lexicographic ordering)."
 		echo "Showing diff:"
 		echo "$DIFF1"
 		exit
@@ -34,19 +36,19 @@ for filename in "$testdir"/*.c; do
 
 	if [ "$DIFF2" != "" ]
 	then
-		echo "-ast failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "eval comparison failed on $filename. Did not run further tests (lexicographic ordering)."
 		echo "Showing diff:"
 		echo "$DIFF2"
 		exit
 	fi
 
-	# if [ "$DIFF3" != "" ]
-	# then
-	# 	echo "spimcode failed on $filename. Did not run further tests (lexicographic ordering)."
-	# 	echo "Showing diff:"
-	# 	echo "$DIFF3"
-	# 	exit
-	# fi
+	if [ "$DIFF3" != "" ]
+	then
+		echo "spim code comparison failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "Showing diff:"
+		echo "$DIFF3"
+		exit
+	fi
 
 	if [ "$DIFF4" != "" ]
 	then

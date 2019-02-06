@@ -216,11 +216,11 @@ expression				: 	INTEGER_NUMBER
 							}
 							| expression '/' expression
 							{
-								$$ = new Plus_Ast($1, $3, yylineno);
+								$$ = new Divide_Ast($1, $3, yylineno);
 								(*$$).check_ast();
 								(*$$).set_data_type((*$1).get_data_type());
 							}
-							| '-' expression
+							| '-' expression %prec UMINUS
 							{
 								$$ = new UMinus_Ast($2,NULL,yylineno);
 								(*$$).check_ast();

@@ -912,7 +912,7 @@ case 13:
 YY_RULE_SETUP
 #line 92 "scanner.l"
 {
-				cout<<"Error\n";
+				cout<<"cs316: Error\n";
 				/* All other characters are ignored */ 
 			}
 	YY_BREAK
