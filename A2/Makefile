@@ -7,6 +7,7 @@ LDFLAGS=-Wl,-rpath=$(CURDIR)
 FLEX=flex
 ALLHEADERS=allheaders.h
 BISON=bison
+TESTDIR=tests
 #-----------------------------------------------------------------------------
 
 all: $(MYPROGRAM)
@@ -21,3 +22,6 @@ parser.tab.c parser.tab.h : parser.y
 
 clean:
 	rm -f $(MYPROGRAM)
+
+testclean:
+	rm -f $(TESTDIR)/*.c.*
