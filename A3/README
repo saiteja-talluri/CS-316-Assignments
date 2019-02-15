@@ -2,7 +2,7 @@ This directory contains the following files:
 
 - allheaders.h.gch which is a pre-compiled header file.
 - libsclpshared.so which is a shared object file.
-- sclp which is the reference implementstion
+- sclp which is the reference implementation
 - test1.c is a simple test file.
 - Makefile which contains the commands to build your implementation.
 - Besides, the following header files are provided ONLY for telling you the
