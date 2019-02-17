@@ -1,6 +1,5 @@
 %{
 #include "parser.tab.h"
-#include "storetokens.hh"
 #include <stdlib.h>
 #include <string>
 %}

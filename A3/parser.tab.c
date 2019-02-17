@@ -1383,7 +1383,7 @@ yyreduce:
 #line 140 "parser.y" /* yacc.c:1646  */
     {
 											Symbol_Table_Entry* b = new Symbol_Table_Entry(*(yyvsp[0].string_value),int_data_type,yylineno);
-											(*(yyvsp[-2].symbol_entry_list)).push_front(b);
+											(*(yyvsp[-2].symbol_entry_list)).push_back(b); /* TODO: Clarify from the TA */
 											(yyval.symbol_entry_list) = (yyvsp[-2].symbol_entry_list);
 										}
 #line 1390 "parser.tab.c" /* yacc.c:1646  */

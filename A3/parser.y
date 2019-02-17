@@ -139,7 +139,7 @@ variable_list                       :	NAME
 										| variable_list ',' NAME
 										{
 											Symbol_Table_Entry* b = new Symbol_Table_Entry(*$3,int_data_type,yylineno);
-											(*$1).push_front(b);
+											(*$1).push_back(b); /* TODO: Clarify from the TA */
 											$$ = $1;
 										}
 										;
