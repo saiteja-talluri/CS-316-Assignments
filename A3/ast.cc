@@ -25,6 +25,7 @@ bool Ast::check_ast(){}
 Symbol_Table_Entry & Ast::get_symbol_entry(){}
 
 
+//TODO:figure out how to print further error messages without emiting spim code or doing eval.
 
 Assignment_Ast::Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs, int line){
     lhs = temp_lhs;
