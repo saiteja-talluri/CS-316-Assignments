@@ -1,4 +1,5 @@
 #include "ast.hh"
+#include <stdlib.h> //to use exit()
 template class Number_Ast<double>;
 template class Number_Ast<int>;
 
@@ -14,7 +15,10 @@ void Ast::set_data_type(Data_Type dt){
     node_data_type = dt;
 }
 
-bool Ast::is_value_zero(){}
+bool Ast::is_value_zero() {
+    return false;
+    //TODO: I'm writing this to mitigate errors in check_ast.
+}
 
 bool Ast::check_ast(){}
 
@@ -36,13 +40,17 @@ Assignment_Ast::~Assignment_Ast(){
 }
 
 bool Assignment_Ast::check_ast(){
+    // cerr<<"assgn check_ast "<<lhs->get_data_type()<<" "<<rhs->get_data_type()<<endl;
     if((lhs->get_data_type() == rhs->get_data_type()) || rhs->is_value_zero()){
+        //This is wrong. What if rhs is not a number? is_value_zero will return true
         node_data_type = lhs->get_data_type();
         return true;
     }
     else{
-        cout << "cs316: Error: Data Type not compatabile in the assignment\n";
+        cerr << "cs316: Error: Line "<<lineno<<": Data Type not compatabile in the assignment\n";
+        exit(EXIT_FAILURE);
         return false;
+        //should exit here right?
     }
 }
 
@@ -127,12 +135,15 @@ void Arithmetic_Expr_Ast::set_data_type(Data_Type dt){
 }
 
 bool Arithmetic_Expr_Ast::check_ast(){
+    // cerr<<"arith check "<<lhs->get_data_type()<<" "<<rhs->get_data_type()<<endl;
     if(ast_num_child == binary_arity){
         if((lhs->get_data_type() == rhs->get_data_type()) || rhs->is_value_zero()){
             node_data_type = lhs->get_data_type();
             return true;
         }
         else{
+            cerr << "cs316: Error: Line "<<lineno<<": Data Type not compatabile in arithmetic expression\n";
+            exit(EXIT_FAILURE);
             return false;
         }
     }

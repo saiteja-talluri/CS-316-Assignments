@@ -1,7 +1,6 @@
 testdir="tests"
 
 
-
 if [ ! -d "$testdir" ]; 
 then
 	echo "No directory named $testdir"
@@ -10,11 +9,15 @@ fi
 
 make
 
+nodiff=true
+stopondiff=false
+#ignore these for now
+
 for filename in "$testdir"/*.c; do
-	./mysclp -ast -eval "$filename"
+	./mysclp -ast -eval "$filename" 2> /dev/null
 	mv "$filename.eval" "$filename.myeval"
 	mv "$filename.ast" "$filename.myast"
-	./sclp -ast -eval "$filename"
+	./sclp -ast -eval "$filename" 2> /dev/null
 	DIFF1=$(diff "$filename.ast" "$filename.myast")
 	DIFF2=$(diff "$filename.eval" "$filename.myeval")
 	
@@ -50,10 +53,13 @@ for filename in "$testdir"/*.c; do
 
 	if [ "$DIFF4" != "" ]
 	then
-		echo "error message comparison failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "error message comparison failed on $filename. "
 		echo "Showing diff:"
 		echo "$DIFF4"
-		exit
+		echo "Continuing with further tests."
+		echo ""
+		echo ""
+		# exit
 	fi
 done
 echo "All tests passed!"

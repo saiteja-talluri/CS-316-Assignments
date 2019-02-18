@@ -1,8 +1,8 @@
 int a,b,c;
 void main() {
 	int x;
-	int __;
-	// x = 1;
-	x = 1;
+	float y;
+	y = 0;
+	x = y;
 
 }
