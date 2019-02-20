@@ -6,5 +6,5 @@ void main()
         b = 3;
         c = 4;
 
-	a = a--b;
+	a = -(c * b);
 }
