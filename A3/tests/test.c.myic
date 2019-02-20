@@ -1,4 +1,0 @@
-  Procedure: main
-  Intermediate Code Statements
-	iLoad.d:    	f2 <- 30.00
-	store.d:    	x <- f2
