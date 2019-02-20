@@ -1,0 +1,13 @@
+Evaluating Program
+   Global Variables (before evaluating):
+         Removing : 0
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         a : undefined
+
+
+
+      Local Variables (after evaluating):
+         a : undefined
+   Global Variables (after evaluating):
+         Removing : 0

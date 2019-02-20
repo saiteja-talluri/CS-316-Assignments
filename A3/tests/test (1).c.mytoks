@@ -1,0 +1,26 @@
+	Token Name: VOID 	Token: void 	 Lineno: 1
+	Token Name: NAME 	Token: main 	 Lineno: 1
+	Token Name: META CHAR 	Token: ( 	 Lineno: 1
+	Token Name: META CHAR 	Token: ) 	 Lineno: 1
+	Token Name: META CHAR 	Token: { 	 Lineno: 2
+	Token Name: INTEGER 	Token: int 	 Lineno: 3
+	Token Name: NAME 	Token: a 	 Lineno: 3
+	Token Name: META CHAR 	Token: ; 	 Lineno: 3
+	Token Name: FLOAT 	Token: float 	 Lineno: 4
+	Token Name: NAME 	Token: b 	 Lineno: 4
+	Token Name: META CHAR 	Token: ; 	 Lineno: 4
+	Token Name: FLOAT 	Token: float 	 Lineno: 5
+	Token Name: NAME 	Token: c 	 Lineno: 5
+	Token Name: META CHAR 	Token: ; 	 Lineno: 5
+	Token Name: NAME 	Token: a 	 Lineno: 7
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 7
+	Token Name: NUM 	Token: 3 	 Lineno: 7
+	Token Name: META CHAR 	Token: ; 	 Lineno: 7
+	Token Name: NAME 	Token: b 	 Lineno: 8
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 8
+	Token Name: FNUM 	Token: 2.4 	 Lineno: 8
+	Token Name: META CHAR 	Token: ; 	 Lineno: 8
+	Token Name: NAME 	Token: c 	 Lineno: 9
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 9
+	Token Name: NUM 	Token: 3 	 Lineno: 9
+	Token Name: META CHAR 	Token: ; 	 Lineno: 9

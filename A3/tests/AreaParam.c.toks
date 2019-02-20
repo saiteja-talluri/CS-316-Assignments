@@ -1,0 +1,61 @@
+	Token Name: FLOAT 	Token: float 	 Lineno: 2
+	Token Name: NAME 	Token: area 	 Lineno: 2
+	Token Name: META CHAR 	Token: ; 	 Lineno: 2
+	Token Name: FLOAT 	Token: float 	 Lineno: 3
+	Token Name: NAME 	Token: perimeter 	 Lineno: 3
+	Token Name: META CHAR 	Token: ; 	 Lineno: 3
+	Token Name: VOID 	Token: void 	 Lineno: 5
+	Token Name: NAME 	Token: main 	 Lineno: 5
+	Token Name: META CHAR 	Token: ( 	 Lineno: 5
+	Token Name: META CHAR 	Token: ) 	 Lineno: 5
+	Token Name: META CHAR 	Token: { 	 Lineno: 6
+	Token Name: FLOAT 	Token: float 	 Lineno: 7
+	Token Name: NAME 	Token: x 	 Lineno: 7
+	Token Name: META CHAR 	Token: , 	 Lineno: 7
+	Token Name: NAME 	Token: y 	 Lineno: 7
+	Token Name: META CHAR 	Token: ; 	 Lineno: 7
+	Token Name: NAME 	Token: x 	 Lineno: 8
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 8
+	Token Name: FNUM 	Token: 3.0 	 Lineno: 8
+	Token Name: META CHAR 	Token: ; 	 Lineno: 8
+	Token Name: NAME 	Token: y 	 Lineno: 9
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 9
+	Token Name: FNUM 	Token: 9.9 	 Lineno: 9
+	Token Name: META CHAR 	Token: ; 	 Lineno: 9
+	Token Name: NAME 	Token: area 	 Lineno: 12
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 12
+	Token Name: NAME 	Token: x 	 Lineno: 12
+	Token Name: ARITHOP 	Token: * 	 Lineno: 12
+	Token Name: NAME 	Token: y 	 Lineno: 12
+	Token Name: META CHAR 	Token: ; 	 Lineno: 12
+	Token Name: NAME 	Token: perimeter 	 Lineno: 13
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 13
+	Token Name: NUM 	Token: 2 	 Lineno: 13
+	Token Name: ARITHOP 	Token: * 	 Lineno: 13
+	Token Name: META CHAR 	Token: ( 	 Lineno: 13
+	Token Name: NAME 	Token: x 	 Lineno: 13
+	Token Name: ARITHOP 	Token: + 	 Lineno: 13
+	Token Name: NAME 	Token: y 	 Lineno: 13
+	Token Name: META CHAR 	Token: ) 	 Lineno: 13
+	Token Name: META CHAR 	Token: ; 	 Lineno: 13
+	Token Name: NAME 	Token: area 	 Lineno: 16
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 16
+	Token Name: NUM 	Token: 22 	 Lineno: 16
+	Token Name: ARITHOP 	Token: * 	 Lineno: 16
+	Token Name: NAME 	Token: x 	 Lineno: 16
+	Token Name: ARITHOP 	Token: * 	 Lineno: 16
+	Token Name: NAME 	Token: x 	 Lineno: 16
+	Token Name: ARITHOP 	Token: / 	 Lineno: 16
+	Token Name: NUM 	Token: 7 	 Lineno: 16
+	Token Name: META CHAR 	Token: ; 	 Lineno: 16
+	Token Name: NAME 	Token: perimeter 	 Lineno: 17
+	Token Name: ASSIGN_OP 	Token: = 	 Lineno: 17
+	Token Name: NUM 	Token: 2 	 Lineno: 17
+	Token Name: ARITHOP 	Token: * 	 Lineno: 17
+	Token Name: NUM 	Token: 22 	 Lineno: 17
+	Token Name: ARITHOP 	Token: * 	 Lineno: 17
+	Token Name: NAME 	Token: x 	 Lineno: 17
+	Token Name: ARITHOP 	Token: / 	 Lineno: 17
+	Token Name: NUM 	Token: 7 	 Lineno: 17
+	Token Name: META CHAR 	Token: ; 	 Lineno: 17
+	Token Name: META CHAR 	Token: } 	 Lineno: 18

@@ -1,0 +1,20 @@
+Program:
+   Procedure: main, Return Type: void
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 2)
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 3)
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 4)
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Arith: UMINUS
+               LHS (
+            Arith: MULT
+               LHS (Name : c)
+               RHS (Name : b)))

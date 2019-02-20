@@ -1,0 +1,8 @@
+Program:
+
+Global Declarations:
+   Procedure: main, Return Type: void
+   Local Declarartions
+   Name: aType : Double Entity Type: VAR (No offset assigned yet)
+   Name: bType : Double Entity Type: VAR (No offset assigned yet)
+   Name: cType : Double Entity Type: VAR (No offset assigned yet)

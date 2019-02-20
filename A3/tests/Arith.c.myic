@@ -1,0 +1,14 @@
+  Procedure: main
+  Intermediate Code Statements
+	iLoad:    	v0 <- 2
+	store:    	f <- v0
+	iLoad:    	v0 <- 8
+	store:    	g <- v0
+	iLoad:    	v0 <- 1111111111
+	store:    	a <- v0
+	load:    	v0 <- a
+	load:    	t0 <- f
+	add:    	t1 <- v0 , t0
+	load:    	v0 <- g
+	sub:    	t0 <- t1 , v0
+	store:    	a <- t0

@@ -1,0 +1,36 @@
+Evaluating Program
+   Global Variables (before evaluating):
+         a : 0
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         c : undefined
+
+
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 2)
+         c : 2
+
+
+         Asgn:
+            LHS (Name : d)
+            RHS (Num : 4.30)
+         d : 4.30
+
+
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Arith: PLUS
+               LHS (
+            Arith: PLUS
+               LHS (
+            Arith: MULT
+               LHS (Name : a)
+               RHS (
+            Arith: UMINUS
+               LHS (Name : c)))
+               RHS (Name : a))
+               RHS (Name : a))
+         a : 0
+
