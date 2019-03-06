@@ -26,15 +26,31 @@
 %token <double_value> DOUBLE_NUMBER
 %token <string_value> NAME
 %token BBNUM  RETURN  INTEGER  FLOAT  ASSIGN  VOID  UMINUS
+%token WHILE IF DO 
+%token EQUAL LESS_THAN GREATER_THAN LESS_THAN_EQUAL GREATEAR_THAN_EQUAL NOT_EQUAL
+%token AND OR NOT
 
 %type <symbol_entry_list> variable_list	declaration	variable_declaration variable_declaration_list optional_variable_declaration_list
 %type <procedure> procedure_definition
-%type <ast>	assignment_statement expression
+%type <ast>	assignment_statement arith_expression log_expression rel_expression iteration_statement
+
 %type <ast_list> statement_list
 
+
+
+%right ASSIGN
+%right '?'
+%left OR
+%left AND
+%left EQUAL NOT_EQUAL
+%left LESS_THAN GREATER_THAN LESS_THAN_EQUAL GREATEAR_THAN_EQUAL
 %left '+' '-'
 %left '*' '/'
 %right UMINUS
+%right NOT
+
+
+
 
 %start program
 
@@ -154,9 +170,90 @@ statement_list	        :	/* empty */
 								(*$1).push_back($2);
 								$$ = $1;
 							}
+							|	statement_list control_statement /*added control statement */
+							{
+								(*$1).push_back($2);
+								$$ = $1;
+							}
 							;
 
-assignment_statement	:	NAME ASSIGN expression ';'
+control_statement		:	iteration_statement /*while, do-while*/
+							{
+								$$ = $1;
+							}
+							|	selection_statement /*if then else*/
+							{
+								$$ = $1;
+							}
+							;
+
+
+iteration_statement		:	WHILE '(' log_expression ')' 
+							'{'
+							statement_list
+							'}'
+							{
+								x = new Sequence_Ast(yylineno);
+								for(list<Ast*>::iterator it = (*$6).begin(); it != (*$6).end(); it++) {
+									x->ast_push_back(*it);
+								}
+								$$ = new Iteration_Statement_Ast($3, x, yylineno, 0); /*last arg is bool do_form */
+							}
+							|	DO '{' statement_list '}' WHILE '(' log_expression ')'
+							{
+								x = new Sequence_Ast(yylineno);
+								for(list<Ast*>::iterator it = (*$3).begin(); it != (*$3).end(); it++) {
+									x->ast_push_back(*it);
+								}
+								$$ = new Iteration_Statement_Ast($7, x, yylineno, 1); /*last arg is bool do_form */	
+							}
+							;
+
+
+
+log_expression			:	rel_expression AND rel_expression
+							{
+								$$ = new Logical_Expr_Ast($1, _logical_and, $3, yylineno);
+							}
+							|	rel_expression OR rel_expression
+							{
+								$$ = new Logical_Expr_Ast($1, _logical_or, $3, yylineno);
+							}
+							|	NOT rel_expression
+							{
+								$$ = new Logical_Expr_Ast($2, _logical_not, NULL, yylineno);
+							}
+							;
+
+rel_expression			:	arith_expression EQUAL arith_expression
+							{
+								$$ = new Relational_Expr_Ast($1, equalto, $3, yylineno);
+							}
+							|	arith_expression NOT_EQUAL arith_expression
+							{
+								$$ = new Relational_Expr_Ast($1, not_equalto, $3, yylineno);
+							}
+							|	arith_expression LESS_THAN arith_expression
+							{
+								$$ = new Relational_Expr_Ast($1, less_than, $3, yylineno);
+							}
+							|	arith_expression LESS_THAN_EQUAL arith_expression
+							{
+								$$ = new Relational_Expr_Ast($1, less_equalto, $3, yylineno);
+							}	
+							|	arith_expression GREATER_THAN arith_expression
+							{
+								$$ = new Relational_Expr_Ast($1, greater_than, $3, yylineno);
+							}
+							|	arith_expression GREATER_THAN_EQUAL arith_expression
+							{
+								$$ = new Relational_Expr_Ast($1, greater_equalto, $3, yylineno);
+							}
+							;
+
+
+
+assignment_statement	:	NAME ASSIGN arith_expression ';'
 							{
 								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*$1)){ 
 									Ast* lhs1 = new Name_Ast(*$1, (*local_sym_table).get_symbol_table_entry(*$1), yylineno);
@@ -175,7 +272,7 @@ assignment_statement	:	NAME ASSIGN expression ';'
 							}
 							;
 
-expression				: 	INTEGER_NUMBER	
+arith_expression		: 	INTEGER_NUMBER	
 							{
 								$$ = new Number_Ast<int>($1, int_data_type, yylineno);
 							}
@@ -196,37 +293,37 @@ expression				: 	INTEGER_NUMBER
 									exit(1);
 								}
 							}
-							| expression '+' expression
+							| arith_expression '+' arith_expression
 							{
 								$$ = new Plus_Ast($1, $3, yylineno);
 								(*$$).check_ast();
 								(*$$).set_data_type((*$1).get_data_type());
 							}
-							| expression '-' expression
+							| arith_expression '-' arith_expression
 							{
 								$$ = new Minus_Ast($1, $3, yylineno);
 								(*$$).check_ast();
 								(*$$).set_data_type((*$1).get_data_type());
 							}
-							| expression '*' expression
+							| arith_expression '*' arith_expression
 							{
 								$$ = new Mult_Ast($1, $3, yylineno);
 								(*$$).check_ast();
 								(*$$).set_data_type((*$1).get_data_type());
 							}
-							| expression '/' expression
+							| arith_expression '/' arith_expression
 							{
 								$$ = new Divide_Ast($1, $3, yylineno);
 								(*$$).check_ast();
 								(*$$).set_data_type((*$1).get_data_type());
 							}
-							| '-' expression %prec UMINUS
+							| '-' arith_expression %prec UMINUS
 							{
 								$$ = new UMinus_Ast($2,NULL,yylineno);
 								(*$$).check_ast();
 								(*$$).set_data_type((*$2).get_data_type());
 							}
-							| '('expression')'
+							| '('arith_expression')'
 							{
 								$$ = $2;
 							}

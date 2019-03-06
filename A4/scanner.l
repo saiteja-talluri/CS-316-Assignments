@@ -16,16 +16,15 @@ float_type float
 sl_comment \/[\/]+.*
 name [a-zA-Z_][a-zA-Z0-9_]*
 void_kw void
-meta_char [{},;()]
+meta_char [{},;()?:]
+/*what about colon?*/
 char .
 assign =
 
 /*control expressions*/
-while_stmt while
-if_stmt if
-do-while_stmt do-while
-q_mark ?
-colon :
+while_kw while
+if_kw if
+do_kw do
 
 /*relational operators*/
 eq ==
@@ -92,6 +91,75 @@ not !
 				*yylval.string_value = yytext;
 				return NAME;
 			}
+
+
+/*control keywords*/
+
+{while_kw}	{
+				store_token_name("WHILE", yytext, yylineno);
+				return WHILE;
+			}
+
+{if_kw}		{
+				store_token_name("IF", yytext, yylineno);
+				return IF;
+			}
+
+{do_kw}		{
+				store_token_name("DO", yytext, yylineno);
+				return DO;
+			}
+
+/*relops*/
+
+{eq}		{
+				store_token_name("EQUAL", yytext, yylineno);
+				return EQUAL;
+			}
+
+{lt}		{
+				store_token_name("LESS_THAN", yytext, yylineno);
+				return LESS_THAN;
+			}
+
+{gt}		{
+				store_token_name("GREATER_THAN", yytext, yylineno);
+				return GREATER_THAN;
+			}
+
+{lte}		{
+				store_token_name("LESS_THAN_EQUAL", yytext, yylineno);
+				return LESS_THAN_EQUAL;
+			}
+
+{gte}		{
+				store_token_name("GREATER_THAN_EQUAL", yytext, yylineno);
+				return GREATER_THAN_EQUAL;
+			}
+
+{neq}		{
+				store_token_name("NOT_EQUAL", yytext, yylineno);
+				return NOT_EQUAL;
+			}
+
+/*logical ops*/
+{and}		{
+				store_token_name("AND", yytext, yylineno);
+				return AND;
+			}
+
+{or}		{
+				store_token_name("OR", yytext, yylineno);
+				return OR;
+			}
+
+{not}		{
+				store_token_name("NOT", yytext, yylineno);
+				return NOT;
+			}
+
+
+
 
 {operator} 	{
 				/* cout<<yytext<<endl; */
