@@ -55,3 +55,38 @@ For the AST you need to create objects of the following classes:
         - Sequence_Statement_Ast
 
 You will need to submit ONLY the scanner.l, parser.y, ast.cc, local-environment.cc, and ast-eval.cc files.
+
+
+
+###################################################
+Conditional expression e1?e2:e3, while, do-while, if, and if-else statements are allowed.
+Other statements such as for, switch, and goto are not supported. 
+(You may support them for bonus marks).
+
+The boolean conditions controlling the control flow consist of the six relational operators 
+(<, <=, >, >=, ==, and !=) and three logical operators   (&&, ||, and !). 
+This requires supporting relational expressions which can only take arithmetic 
+expressions as operands to (internally) compute values true and false. Unlike C, arithmetic 
+expressions cannot be used as boolean expressions (or operands) of boolean expressions; 
+only relational expression can be used as boolean expressions or their operands.
+The above design decision has been motivated by a cleaner type system that avoids mixing values 
+without introducing a bool type.
+
+The right hand sides of assignment statements continue to remain arithmetic expressions only. 
+Further, values of int and float type are not allowed to be mixed.
+C++ style comments beginning with // and stretching upto the end of a line are supported.
+Type declaration statement now may contain a comma separated list.
+
+checklist:
+> 1. Enhance your implementation of A3 by adding new rules in the scanner and parser
+
+
+relational expressions
+single line comments
+
+> 2. Add code to construct the ASTs for the new constructs.
+
+> 3. Add code to evaluate ASTs. For your convenience, the code for evaluating a program and 
+ a procedure has been provided to you.
+
+
