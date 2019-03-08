@@ -14,7 +14,7 @@
 
 #define END_OF_PROG -3	
 // Used by goto_ast and basic_block
-aasddfgvgfb 
+
 using namespace std;
 
 class Ast;

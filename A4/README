@@ -91,3 +91,6 @@ single line comments
  a procedure has been provided to you.
 
 
+NOTE: (write quirks of reference implementation here)
+a condition in a while block can be followed by another block *unenclosed* by braces.
+But do must be followed by braces.

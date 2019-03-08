@@ -54,7 +54,21 @@ extern int yydebug;
     FLOAT = 264,
     ASSIGN = 265,
     VOID = 266,
-    UMINUS = 267
+    UMINUS = 267,
+    WHILE = 268,
+    IF = 269,
+    DO = 270,
+    ELSE = 271,
+    EQUAL = 272,
+    LESS_THAN = 273,
+    GREATER_THAN = 274,
+    LESS_THAN_EQUAL = 275,
+    GREATER_THAN_EQUAL = 276,
+    NOT_EQUAL = 277,
+    AND = 278,
+    OR = 279,
+    NOT = 280,
+    GREATEAR_THAN_EQUAL = 281
   };
 #endif
 
@@ -76,7 +90,7 @@ union YYSTYPE
 	Procedure * procedure;
 	list<Symbol_Table_Entry *> * symbol_entry_list;
 
-#line 80 "parser.tab.h" /* yacc.c:1909  */
+#line 94 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

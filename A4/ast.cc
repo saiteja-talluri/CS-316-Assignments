@@ -232,6 +232,23 @@ void UMinus_Ast::print(ostream & file_buffer){
 }
 
 
+Conditional_Expression_Ast::Conditional_Expression_Ast(Ast* cond, Ast* l, Ast* r, int line){
+    lhs = l;
+    rhs = r;
+    cond = cond;
+    ast_num_child = ternary_arity;
+}
+
+Conditional_Expression_Ast::~Conditional_Expression_Ast(){
+    /* TODO */
+}
+
+void Conditional_Expression_Ast::print(ostream & file_buffer){
+    /* TODO */
+}
+
+
+
 Return_Ast::Return_Ast(int line){
     lineno = line;
     ast_num_child = zero_arity;
@@ -240,3 +257,132 @@ Return_Ast::Return_Ast(int line){
 Return_Ast::~Return_Ast(){}
 
 void Return_Ast::print(ostream & file_buffer){}
+
+
+Relational_Expr_Ast::Relational_Expr_Ast(Ast * lhs, Relational_Op rop, Ast * rhs, int line){
+    lhs_condition = lhs;
+    rhs_condition = rhs;
+    rel_op = rop;
+    lineno = line;
+    ast_num_child = binary_arity;
+}
+
+Relational_Expr_Ast::~Relational_Expr_Ast(){
+    /* TODO */
+}
+
+Data_Type Relational_Expr_Ast::get_data_type(){
+    return node_data_type;
+}
+
+void Relational_Expr_Ast::set_data_type(Data_Type dt){
+    node_data_type = dt;
+}
+
+bool Relational_Expr_Ast::check_ast(){
+    /* TODO */
+}
+
+void Relational_Expr_Ast::print(ostream & file_buffer){
+    /* TODO */
+}
+
+Logical_Expr_Ast::Logical_Expr_Ast(Ast * lhs, Logical_Op bop, Ast * rhs, int line){
+    lhs_op = lhs;
+    rhs_op = rhs;
+    bool_op = bop;
+    lineno = line;
+    ast_num_child = binary_arity;
+}
+
+Logical_Expr_Ast::~Logical_Expr_Ast(){
+    /* TODO */
+}
+
+Data_Type Logical_Expr_Ast::get_data_type(){
+    return node_data_type;
+}
+
+void Logical_Expr_Ast::set_data_type(Data_Type dt){
+    node_data_type = dt;
+}
+
+bool Logical_Expr_Ast::check_ast(){
+    /* TODO */
+}
+
+void Logical_Expr_Ast::print(ostream & file_buffer){
+    /* TODO */
+}
+
+Selection_Statement_Ast::Selection_Statement_Ast(Ast * cond,Ast* then_part, Ast* else_part, int line){
+    cond = cond;
+    then_part = then_part;
+    else_part = else_part;
+    lineno = line;
+    ast_num_child = ternary_arity;
+}
+
+Selection_Statement_Ast::~Selection_Statement_Ast(){
+    /* TODO */
+}
+
+Data_Type Selection_Statement_Ast::get_data_type(){
+    return node_data_type;
+}
+
+void Selection_Statement_Ast::set_data_type(Data_Type dt){
+    node_data_type = dt;
+}
+
+bool Selection_Statement_Ast::check_ast(){
+    /* TODO */
+}
+
+void Selection_Statement_Ast::print(ostream & file_buffer){
+    /* TODO */
+}
+
+Iteration_Statement_Ast::Iteration_Statement_Ast(Ast * cond, Ast* body, int line, bool do_form){
+    cond = cond;
+    body = body;
+    is_do_form = do_form;
+    lineno = line;
+    ast_num_child = binary_arity;
+}
+
+Iteration_Statement_Ast::~Iteration_Statement_Ast(){
+    /* TODO */
+}
+
+Data_Type Iteration_Statement_Ast::get_data_type(){
+    return node_data_type;
+}
+
+void Iteration_Statement_Ast::set_data_type(Data_Type dt){
+    node_data_type = dt;
+}
+
+bool Iteration_Statement_Ast::check_ast(){
+    /* TODO */
+}
+
+void Iteration_Statement_Ast::print(ostream & file_buffer){
+    /* TODO */
+}
+
+Sequence_Ast::Sequence_Ast(int line){
+    lineno = line;
+}
+
+Sequence_Ast::~Sequence_Ast(){
+    /* TODO */
+}
+
+void Sequence_Ast::ast_push_back(Ast * ast){
+    statement_list.push_back(ast);
+}
+
+void Sequence_Ast::print(ostream & file_buffer){
+    /* TODO */
+}

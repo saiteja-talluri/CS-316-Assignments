@@ -26,13 +26,15 @@
 %token <double_value> DOUBLE_NUMBER
 %token <string_value> NAME
 %token BBNUM  RETURN  INTEGER  FLOAT  ASSIGN  VOID  UMINUS
-%token WHILE IF DO 
-%token EQUAL LESS_THAN GREATER_THAN LESS_THAN_EQUAL GREATEAR_THAN_EQUAL NOT_EQUAL
+%token WHILE IF DO ELSE
+%token EQUAL LESS_THAN GREATER_THAN LESS_THAN_EQUAL GREATER_THAN_EQUAL NOT_EQUAL
 %token AND OR NOT
 
 %type <symbol_entry_list> variable_list	declaration	variable_declaration variable_declaration_list optional_variable_declaration_list
 %type <procedure> procedure_definition
-%type <ast>	assignment_statement arith_expression log_expression rel_expression iteration_statement
+%type <ast>	assignment_statement arith_expression 
+%type <ast> log_expression rel_expression iteration_statement control_statement 
+%type <ast> selection_statement matched_statement matched_statement2 unmatched_statement
 
 %type <ast_list> statement_list
 
@@ -188,20 +190,43 @@ control_statement		:	iteration_statement /*while, do-while*/
 							;
 
 
+
+/*
+while() {
+	stmts;
+}
+or 
+while()
+stmt;
+or
+do() {
+	stmts;
+}
+*/
 iteration_statement		:	WHILE '(' log_expression ')' 
 							'{'
 							statement_list
 							'}'
 							{
-								x = new Sequence_Ast(yylineno);
+								Sequence_Ast *x = new Sequence_Ast(yylineno);
 								for(list<Ast*>::iterator it = (*$6).begin(); it != (*$6).end(); it++) {
 									x->ast_push_back(*it);
 								}
 								$$ = new Iteration_Statement_Ast($3, x, yylineno, 0); /*last arg is bool do_form */
 							}
-							|	DO '{' statement_list '}' WHILE '(' log_expression ')'
+							|	WHILE '(' log_expression ')' assignment_statement
 							{
-								x = new Sequence_Ast(yylineno);
+								Sequence_Ast *x = new Sequence_Ast(yylineno);
+								x->ast_push_back($5);
+							}
+							|	WHILE '(' log_expression ')' control_statement
+							{
+								Sequence_Ast *x = new Sequence_Ast(yylineno);
+								x->ast_push_back($5);
+							}
+							|	DO '{' statement_list '}' WHILE '(' log_expression ')' ';'
+							{
+								Sequence_Ast *x = new Sequence_Ast(yylineno);
 								for(list<Ast*>::iterator it = (*$3).begin(); it != (*$3).end(); it++) {
 									x->ast_push_back(*it);
 								}
@@ -210,6 +235,95 @@ iteration_statement		:	WHILE '(' log_expression ')'
 							;
 
 
+/*
+if-then-else
+with or without braces
+
+
+*/
+
+selection_statement		:	IF '(' log_expression ')'
+							'{' statement_list '}'
+							{
+								Sequence_Ast *x = new Sequence_Ast(yylineno);
+								for(list<Ast*>::iterator it = (*$6).begin(); it != (*$6).end(); it++) {
+									x->ast_push_back(*it);
+								}
+								$$ = new Selection_Statement_Ast($3, x, NULL, yylineno);
+							}
+							|	IF '(' log_expression ')'
+							'{' statement_list '}'
+							ELSE '{' statement_list '}'
+							{
+								Sequence_Ast *x = new Sequence_Ast(yylineno);
+								for(list<Ast*>::iterator it = (*$6).begin(); it != (*$6).end(); it++) {
+									x->ast_push_back(*it);
+								}
+
+								Sequence_Ast *y = new Sequence_Ast(yylineno);
+								for(list<Ast*>::iterator it = (*$10).begin(); it != (*$10).end(); it++) {
+									y->ast_push_back(*it);
+								}
+
+								$$ = new Selection_Statement_Ast($3, x, y, yylineno);
+							}
+
+							/*
+							|	matched_statement
+							{
+								$$ = $1;
+							}
+							|	unmatched_statement 
+							{
+								$$ = $1;
+							}
+							
+
+matched_statement		:	IF '(' log_expression ')' matched_statement2 ELSE matched_statement2
+							{
+								$$ = new Selection_Statement_Ast($2, $3, $5, yylineno);
+							}
+
+							*/
+/*
+selection_statement		:	matched_statement
+							{
+								$$ = $1;
+							}
+							| unmatched_statement
+							{
+								$$ = $1;
+							}
+
+
+matched_statement		:	IF log_expression matched_statement2 ELSE matched_statement2
+							{
+								$$ = new Selection_Statement_Ast($2, $3, $5, yylineno);
+							}
+
+matched_statement2		:	matched_statement
+							{
+								$$ = $1;
+							}
+							|	statement_list
+							{
+								x = new Sequence_Ast(yylineno);
+								for(list<Ast*>::iterator it = (*$1).begin(); it != (*$1).end(); it++) {
+									x->ast_push_back(*it);
+								}
+								$$ = x;
+							}
+
+unmatched_statement		:	IF log_expression selection_statement 
+							{
+								$$ = new Selection_Statement_Ast($2, $3, NULL, yylineno);
+							}
+							|	IF log_expression matched_statement else unmatched_statement
+							{
+								$$ = new Selection_Statement_Ast($2, $3, $5, yylineno);	
+							}
+
+*/
 
 log_expression			:	rel_expression AND rel_expression
 							{
@@ -254,6 +368,7 @@ rel_expression			:	arith_expression EQUAL arith_expression
 
 
 assignment_statement	:	NAME ASSIGN arith_expression ';'
+				
 							{
 								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*$1)){ 
 									Ast* lhs1 = new Name_Ast(*$1, (*local_sym_table).get_symbol_table_entry(*$1), yylineno);
@@ -263,7 +378,9 @@ assignment_statement	:	NAME ASSIGN arith_expression ';'
 								else if(!(*global_sym_table).is_empty() && (*global_sym_table).variable_in_symbol_list_check(*$1)){
 									Ast* lhs2 = new Name_Ast(*$1, (*global_sym_table).get_symbol_table_entry(*$1), yylineno);
 									$$ = new Assignment_Ast(lhs2,$3,yylineno);
-									(*$$).check_ast();
+									(*$$
+									
+									).check_ast();
 								}
 								else{
 									yyerror("cs316: Error: Variable has not been declared");
@@ -322,6 +439,11 @@ arith_expression		: 	INTEGER_NUMBER
 								$$ = new UMinus_Ast($2,NULL,yylineno);
 								(*$$).check_ast();
 								(*$$).set_data_type((*$2).get_data_type());
+							}
+							/*ternary operator*/
+							|	log_expression '?' arith_expression ':' arith_expression
+							{
+								$$ = new Conditional_Expression_Ast($1, $3, $5, yylineno);
 							}
 							| '('arith_expression')'
 							{

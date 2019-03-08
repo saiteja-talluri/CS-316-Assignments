@@ -25,6 +25,7 @@ assign =
 while_kw while
 if_kw if
 do_kw do
+else_kw else
 
 /*relational operators*/
 eq ==
@@ -84,16 +85,8 @@ not !
 			   	return VOID;
 			}
 
-{name}  	{
-				/* cout<<yytext<<endl; */
-				store_token_name("NAME", yytext, yylineno);
-				yylval.string_value = new string;
-				*yylval.string_value = yytext;
-				return NAME;
-			}
 
-
-/*control keywords*/
+ /* control keywords */
 
 {while_kw}	{
 				store_token_name("WHILE", yytext, yylineno);
@@ -109,8 +102,21 @@ not !
 				store_token_name("DO", yytext, yylineno);
 				return DO;
 			}
+{else_kw}	{
+				store_token_name("ELSE", yytext, yylineno);
+			}
 
-/*relops*/
+
+
+{name}  	{
+				/* cout<<yytext<<endl; */
+				store_token_name("NAME", yytext, yylineno);
+				yylval.string_value = new string;
+				*yylval.string_value = yytext;
+				return NAME;
+			}
+			
+ /*relops*/
 
 {eq}		{
 				store_token_name("EQUAL", yytext, yylineno);
@@ -142,13 +148,13 @@ not !
 				return NOT_EQUAL;
 			}
 
-/*logical ops*/
+ /*logical ops*/
 {and}		{
 				store_token_name("AND", yytext, yylineno);
 				return AND;
 			}
 
-{or}		{
+"||"		{
 				store_token_name("OR", yytext, yylineno);
 				return OR;
 			}
