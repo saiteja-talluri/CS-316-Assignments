@@ -1,111 +1,98 @@
+#include "local-environment.hh"
+
+int Eval_Result::get_int_value() {}
+void Eval_Result::set_value(int value) {}
+double Eval_Result::get_double_value() {}
+void Eval_Result::set_value(double value) {}
+
+bool Eval_Result::is_variable_defined() {}
+void Eval_Result::set_variable_status(bool def) {}
+void Eval_Result::set_result_enum(Result_Enum) {}
 
 
-// #ifndef LOCAL_ENVIRONMENT_HH
-// #define LOCAL_ENVIRONMENT_HH
+int Eval_Result_Value::get_int_value() {}
+void Eval_Result_Value::set_value(int value) {}
+double Eval_Result_Value::get_double_value() {}
+void Eval_Result_Value::set_value(double value) {}
 
-// #include<string>
-// #include<map>
+bool Eval_Result_Value::is_variable_defined() {}
+void Eval_Result_Value::set_variable_status(bool def) {}
+void Eval_Result_Value::set_result_enum(Result_Enum) {}
 
-// #define VAR_SPACE "         "
 
-// using namespace std;
 
-// typedef enum
-// {
-// 	int_result,
-// 	void_result,
-// 	double_result
-// } Result_Enum;
 
-// class Eval_Result;
-// class Local_Environment;
 
-// class Eval_Result 
-// {
-// protected:
-// 	Result_Enum result_type;
+Eval_Result_Value_Int::Eval_Result_Value_Int() {}
 
-// public:
-// 	virtual int get_int_value();
-// 	virtual void set_value(int value);
-// 	virtual double get_double_value();
-// 	virtual void set_value(double value);
-	
-// 	virtual bool is_variable_defined();
-// 	virtual void set_variable_status(bool def);
+Eval_Result_Value_Int::~Eval_Result_Value_Int() {}
 
-// 	virtual void set_result_enum(Result_Enum) = 0;
-// 	virtual Result_Enum get_result_enum() = 0;
-// };
+int Eval_Result_Value_Int::get_int_value() {
+    return value;
+}
 
-// class Eval_Result_Value:public Eval_Result
-// {
-// public:
-// 	virtual void set_value(int number);
-// 	virtual void set_value(double number);
-// 	virtual int get_int_value();
-// 	virtual double get_double_value();
+void Eval_Result_Value_Int::set_value(int value) {
+    value = value;
+}
 
-// 	virtual bool is_variable_defined() = 0;
-// 	virtual void set_variable_status(bool def) = 0;
+void Eval_Result_Value_Int::set_value(double value) {
+    //????
+    value = (int)value;
+}
 
-// 	virtual void set_result_enum(Result_Enum res) = 0;
-// 	virtual Result_Enum get_result_enum() = 0;
-// };
+void Eval_Result_Value_Int::set_variable_status(bool def) {
+    defined = def;
+}
 
-// class Eval_Result_Value_Int:public Eval_Result_Value
-// {
-// 	int value;
-// 	bool defined;
-// public:
-// 	Eval_Result_Value_Int();
-// 	~Eval_Result_Value_Int();
+bool Eval_Result_Value_Int::is_variable_defined() {
+    return defined;
+}
 
-// 	void set_value(int number);
-// 	void set_value(double number);
-// 	int get_int_value();
+void Eval_Result_Value_Int::set_result_enum(Result_Enum res) {
+    result_type = res;
+}
 
-// 	void set_variable_status(bool def);
-// 	bool is_variable_defined();
+Result_Enum Eval_Result_Value_Int::get_result_enum() {
+    return result_type;
+}
 
-// 	void set_result_enum(Result_Enum res);
-// 	Result_Enum get_result_enum();
-// };
 
-// class Eval_Result_Value_Double:public Eval_Result_Value
-// {
-// 	double value;
-// 	bool defined;
-// public:
-// 	Eval_Result_Value_Double();
-// 	~Eval_Result_Value_Double();
 
-// 	void set_value(double number);
-// 	void set_value(int number);
-// 	double get_double_value();
 
-// 	void set_variable_status(bool def);
-// 	bool is_variable_defined();
 
-// 	void set_result_enum(Result_Enum res);
-// 	Result_Enum get_result_enum();
-// };
 
-// class Local_Environment
-// {
-// 	map<string, Eval_Result *> variable_table;
+Eval_Result_Value_Double::Eval_Result_Value_Double() {}
 
-// public:
-// 	Local_Environment();
-// 	~Local_Environment();
+Eval_Result_Value_Double::~Eval_Result_Value_Double() {
+    //???
+}
 
-// 	void print(ostream & file_buffer);
-// 	bool is_variable_defined(string name);
-// 	Eval_Result * get_variable_value(string name);
-// 	void put_variable_value(Eval_Result & value, string name);
-// 	bool does_variable_exist(string name);
-// };
+double Eval_Result_Value_Double::get_double_value() {
+    return value;
+}
 
-// extern Local_Environment interpreter_global_table;
+void Eval_Result_Value_Double::set_value(int value) {
+    // ???
+    value = (double)value;
+}
 
-// #endif
+void Eval_Result_Value_Double::set_value(double value) {
+    value = value;
+}
+
+void Eval_Result_Value_Double::set_variable_status(bool def) {
+    defined = def;
+}
+
+bool Eval_Result_Value_Double::is_variable_defined() {
+    return defined;
+}
+
+void Eval_Result_Value_Double::set_result_enum(Result_Enum res) {
+    result_type = res;
+}
+
+Result_Enum Eval_Result_Value_Double::get_result_enum() {
+    return result_type;
+}
+
