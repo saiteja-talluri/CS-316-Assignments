@@ -1,4 +1,5 @@
 #include "local-environment.hh"
+#include <iostream>
 
 int Eval_Result::get_int_value() {}
 void Eval_Result::set_value(int value) {}
@@ -95,4 +96,44 @@ void Eval_Result_Value_Double::set_result_enum(Result_Enum res) {
 Result_Enum Eval_Result_Value_Double::get_result_enum() {
     return result_type;
 }
+
+
+
+Local_Environment::Local_Environment() {}
+Local_Environment::~Local_Environment() {}
+
+void Local_Environment::print(ostream& fb) {
+    for(map<string, Eval_Result* >::iterator it = variable_table.begin(); it != variable_table.end(); it++) {
+        fb << it->first ;
+        fb << " " ;
+        // fb << *(it->second);
+        fb << "\n";
+    }
+}
+
+bool Local_Environment::does_variable_exist(string name) {
+    for(map<string, Eval_Result* >::iterator it = variable_table.begin(); it != variable_table.end(); it++) {
+        if(it->first == name) return true;
+    }
+    return false;
+}
+
+Eval_Result *Local_Environment::get_variable_value(string name) {
+    for(map<string, Eval_Result* >::iterator it = variable_table.begin(); it != variable_table.end(); it++) {
+        if(it->first == name) return it->second;
+    }
+    return NULL;
+}
+
+void Local_Environment::put_variable_value(Eval_Result & value, string name) {
+    variable_table[name] = &value;
+}
+
+bool Local_Environment::is_variable_defined(string name) {
+    for(map<string, Eval_Result* >::iterator it = variable_table.begin(); it != variable_table.end(); it++) {
+        if(it->first == name && it->second != NULL) return true;
+    }
+    return false;
+}
+
 
