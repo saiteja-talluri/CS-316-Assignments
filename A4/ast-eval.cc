@@ -1,6 +1,8 @@
 #include "symbol-table.hh"
 #include "ast.hh"
 #include "local-environment.hh"
+template class Number_Ast<double>;
+template class Number_Ast<int>;
 
 
 void Ast::print_value(Local_Environment & eval_env, ostream & file_buffer) {
@@ -120,11 +122,6 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
     /* TODO: */
 }
 
-
-Eval_Result & Sequence_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
-    /* TODO: */
-}
-
 Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
     /* TODO: */
 }
@@ -139,6 +136,12 @@ Eval_Result & Selection_Statement_Ast::evaluate(Local_Environment & eval_env, os
 
 Eval_Result & Iteration_Statement_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
     /* TODO: */
+}
+
+Eval_Result & Sequence_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+    for(list<Ast*>::iterator it = statement_list.begin(); it != statement_list.end(); it++) {
+        (*it)->evaluate(eval_env,file_buffer);
+    }
 }
 
 void Symbol_Table::create(Local_Environment & local_global_variables_table){

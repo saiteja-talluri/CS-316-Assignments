@@ -276,7 +276,7 @@ void Relational_Expr_Ast::set_data_type(Data_Type dt){
 
 bool Relational_Expr_Ast::check_ast(){
     if(lhs_condition->get_data_type() == rhs_condition->get_data_type()){
-        node_data_type = lhs->get_data_type();
+        node_data_type = lhs_condition->get_data_type();
         return true;
     }
     else{
@@ -332,8 +332,8 @@ void Logical_Expr_Ast::set_data_type(Data_Type dt){
 
 bool Logical_Expr_Ast::check_ast(){ /* TODO : Check it again */
     if(bool_op == _logical_not){
-        if(rhs_condition->check_ast()){
-            node_data_type = rhs->get_data_type();
+        if(rhs_op->check_ast()){
+            node_data_type = rhs_op->get_data_type();
             return true;
         }
         else{
@@ -343,8 +343,8 @@ bool Logical_Expr_Ast::check_ast(){ /* TODO : Check it again */
         }
     }
     else{
-        if(rhs_condition->get_data_type == lhs_condition->get_data_type()){
-            node_data_type = lhs->get_data_type();
+        if(rhs_op->get_data_type() == lhs_op->get_data_type()){
+            node_data_type = lhs_op->get_data_type();
             return true;
         }
         else{
@@ -370,15 +370,15 @@ void Logical_Expr_Ast::print(ostream & file_buffer){
     if(bool_op == _logical_not)
     {
         file_buffer << "\n            RHS (";
-        rhs_condition->print(file_buffer);
+        rhs_op->print(file_buffer);
         file_buffer <<")";
     }
     else
     {
         file_buffer <<  "\n            LHS (";
-        lhs_condition->print(file_buffer);
+        lhs_op->print(file_buffer);
         file_buffer << ")\n            RHS (";
-        rhs_condition->print(file_buffer);
+        rhs_op->print(file_buffer);
         file_buffer <<")";
     }
 }
