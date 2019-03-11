@@ -173,6 +173,22 @@ Eval_Result & Conditional_Expression_Ast::evaluate(Local_Environment & eval_env,
     Eval_Result *res;
     Eval_Result *lhs_res = &(lhs->evaluate(eval_env, file_buffer));
     Eval_Result *rhs_res = &(rhs->evaluate(eval_env, file_buffer));
+    Eval_Result *cond_res = &(cond->evaluate(eval_env, file_buffer));
+    if(get_data_type() == int_data_type) {
+        res = new Eval_Result_Value_Int();
+        if(cond->get_int_value() == 1)
+            res->set_value(lhs_res->get_int_value());
+        else
+            res->set_value(rhs_res->get_int_value());
+    }
+    else {
+        res = new Eval_Result_Value_Double();
+        if(cond->get_int_value() == 1)
+            res->set_value(lhs_res->get_double_value());
+        else
+            res->set_value(rhs_res->get_double_value());
+    }
+    return *res;
 }
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
@@ -180,7 +196,94 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 }
 
 Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
-    /* TODO: */
+    Eval_Result *res;
+    Eval_Result *lhs_res = &(left_condition->evaluate(eval_env, file_buffer));
+    Eval_Result *rhs_res = &(right_condition->evaluate(eval_env, file_buffer));
+
+    if(get_data_type() == int_data_type) {
+        res = new Eval_Result_Value_Int();
+        res->set_value(0);
+
+        if (rel_op == less_equalto)
+        {
+            if(lhs_res->get_int_value() <= rhs_res->get_int_value())
+                res->set_value(1);
+        }
+        else if (rel_op == less_than)
+        {
+            if(lhs_res->get_int_value() < rhs_res->get_int_value())
+                res->set_value(1);
+        }
+        else if (rel_op == greater_than)
+        {
+            if(lhs_res->get_int_value() > rhs_res->get_int_value())
+                res->set_value(1);
+        }
+        else if (rel_op == greater_equalto)
+        {
+            if(lhs_res->get_int_value() >= rhs_res->get_int_value())
+                res->set_value(1);
+        }
+        else if(rel_op == equalto)
+        {
+            if(lhs_res->get_int_value() == rhs_res->get_int_value())
+                res->set_value(1);
+        }
+        else if (rel_op == not_equalto)
+        {
+            if(lhs_res->get_int_value() != rhs_res->get_int_value())
+                res->set_value(1);
+        }
+        else{
+            cerr << "cs316: Error: Line "<<lineno<<": Unknown Symbol Encountered\n";
+            exit(EXIT_FAILURE);
+        }
+    }
+    
+    else if(get_data_type() == double_data_type) {
+        res = new Eval_Result_Value_Int();
+        res->set_value(0);
+
+        if (rel_op == less_equalto)
+        {
+            if(lhs_res->get_double_value() <= rhs_res->get_double_value())
+                res->set_value(1);
+        }
+        else if (rel_op == less_than)
+        {
+            if(lhs_res->get_double_value() < rhs_res->get_double_value())
+                res->set_value(1);
+        }
+        else if (rel_op == greater_than)
+        {
+            if(lhs_res->get_double_value() > rhs_res->get_double_value())
+                res->set_value(1);
+        }
+        else if (rel_op == greater_equalto)
+        {
+            if(lhs_res->get_double_value() >= rhs_res->get_double_value())
+                res->set_value(1);
+        }
+        else if(rel_op == equalto)
+        {
+            if(lhs_res->get_double_value() == rhs_res->get_double_value())
+                res->set_value(1);
+        }
+        else if (rel_op == not_equalto)
+        {
+            if(lhs_res->get_double_value() != rhs_res->get_double_value())
+                res->set_value(1);
+        }
+        else{
+            cerr << "cs316: Error: Line "<<lineno<<": Unknown Symbol Encountered\n";
+            exit(EXIT_FAILURE);
+        }
+    }
+    else {
+        cerr << "cs316: Error: Line "<<lineno<<": Unknown data type encountered\n";
+        exit(EXIT_FAILURE);
+    }
+    return *res;
 }
 
 Eval_Result & Logical_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
