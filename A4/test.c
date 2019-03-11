@@ -1,7 +1,8 @@
 void main(){
 	int i,k,l;
-	float j;
+	int j;
 	i = 4;
+	j = 5;
 	do
     {
         i = i + 1 + 2+3+4+5;

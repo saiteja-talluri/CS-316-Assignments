@@ -74,16 +74,9 @@ Eval_Result & Number_Ast<T>::evaluate(Local_Environment & eval_env, ostream & fi
 }
 
 Eval_Result & Plus_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
-    /* TODO: */
     Eval_Result *res;
-    
-    file_buffer << "Arith: PLUS\n";
-    file_buffer << "LHS ( ";
-    Eval_Result *lhs_res = lhs->evaluate(eval_env, file_buffer);
-    file_buffer << "\n";
-    file_buffer << "RHS ";
-    Eval_Result *rhs_res = rhs->evaluate(eval_env, file_buffer);
-    file_buffer << ")\n";
+    Eval_Result *lhs_res = &(lhs->evaluate(eval_env, file_buffer));
+    Eval_Result *rhs_res = &(rhs->evaluate(eval_env, file_buffer));
     if(get_data_type() == int_data_type) {
         res = new Eval_Result_Value_Int();
         res->set_value(lhs_res->get_int_value() + rhs_res->get_int_value());
@@ -92,30 +85,85 @@ Eval_Result & Plus_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
         res = new Eval_Result_Value_Double();
         res->set_value(lhs_res->get_double_value() + rhs_res->get_double_value());
     }
-
     return *res;
-
 }
 
 Eval_Result & Minus_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
-    /* TODO: */   
+    Eval_Result *res;
+    Eval_Result *lhs_res = &(lhs->evaluate(eval_env, file_buffer));
+    Eval_Result *rhs_res = &(rhs->evaluate(eval_env, file_buffer));
+    if(get_data_type() == int_data_type) {
+        res = new Eval_Result_Value_Int();
+        res->set_value(lhs_res->get_int_value() - rhs_res->get_int_value());
+    }
+    else {
+        res = new Eval_Result_Value_Double();
+        res->set_value(lhs_res->get_double_value() - rhs_res->get_double_value());
+    }
+    return *res;
 }
 
 Eval_Result & Divide_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
-    /* TODO: */
+    Eval_Result *res;
+    Eval_Result *lhs_res = &(lhs->evaluate(eval_env, file_buffer));
+    Eval_Result *rhs_res = &(rhs->evaluate(eval_env, file_buffer));
+    if(get_data_type() == int_data_type) {
+        res = new Eval_Result_Value_Int();
+        if(rhs_res->get_int_value() == 0)
+        {
+            cerr << "cs316: Error: Line "<<lineno<<": Divide by zero\n";
+            exit(EXIT_FAILURE);
+        }
+        else{
+             res->set_value(lhs_res->get_int_value()/rhs_res->get_int_value());
+        }
+    }
+    else {
+        if(rhs_res->get_int_value() == 0)
+        {
+            cerr << "cs316: Error: Line "<<lineno<<": Divide by zero\n";
+            exit(EXIT_FAILURE);
+        }
+        res = new Eval_Result_Value_Double();
+        res->set_value(lhs_res->get_double_value()/rhs_res->get_double_value());
+    }
+    return *res;
 }
 
 Eval_Result & Mult_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
-    /* TODO: */
+    Eval_Result *res;
+    Eval_Result *lhs_res = &(lhs->evaluate(eval_env, file_buffer));
+    Eval_Result *rhs_res = &(rhs->evaluate(eval_env, file_buffer));
+    if(get_data_type() == int_data_type) {
+        res = new Eval_Result_Value_Int();
+        res->set_value(lhs_res->get_int_value()*rhs_res->get_int_value());
+    }
+    else {
+        res = new Eval_Result_Value_Double();
+        res->set_value(lhs_res->get_double_value()*rhs_res->get_double_value());
+    }
+    return *res;
 }
 
 
 Eval_Result & UMinus_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
-    /* TODO: */
+    Eval_Result *res;
+    Eval_Result *lhs_res = &(lhs->evaluate(eval_env, file_buffer));
+    if(get_data_type() == int_data_type) {
+        res = new Eval_Result_Value_Int();
+        res->set_value((-1)*lhs_res->get_int_value());
+    }
+    else {
+        res = new Eval_Result_Value_Double();
+        res->set_value((-1.0)*lhs_res->get_int_value());
+    }
+    return *res;
 }
 
 Eval_Result & Conditional_Expression_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
-    /* TODO: */
+    Eval_Result *res;
+    Eval_Result *lhs_res = &(lhs->evaluate(eval_env, file_buffer));
+    Eval_Result *rhs_res = &(rhs->evaluate(eval_env, file_buffer));
 }
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
@@ -127,15 +175,70 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 }
 
 Eval_Result & Logical_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
-    /* TODO: */
+    Eval_Result *res = new Eval_Result_Value_Int();
+    Eval_Result *lhs_res;
+    Eval_Result *rhs_res = &(rhs_op->evaluate(eval_env, file_buffer));
+    res->set_value(0);
+
+    if (bool_op == _logical_not)
+    {
+        if(!(rhs_res->get_int_value()))
+            res->set_value(1);
+    }
+    else if (bool_op == _logical_and)
+    {
+        lhs_res = &(lhs_op->evaluate(eval_env, file_buffer));
+        if(lhs_res->get_int_value() && rhs_res->get_int_value())
+            res->set_value(1);
+    }
+    else if (bool_op == _logical_or)
+    {
+        if(lhs_res->get_int_value() || rhs_res->get_int_value())
+            res->set_value(1);
+    }
+    else{
+        cerr << "cs316: Error: Line "<<lineno<<": Unknown Boolean Operator Encountered\n";
+        exit(EXIT_FAILURE);
+    }
+    return *res;
 }
 
 Eval_Result & Selection_Statement_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
-    /* TODO: */
+    Eval_Result *res = new Eval_Result_Value_Int();
+    Eval_Result *cond_res = &(cond->evaluate(eval_env, file_buffer));
+
+    if (cond_res->get_int_value() == 1)
+    {
+        res = &(then_part->evaluate(eval_env, file_buffer));
+    }
+    else if(cond_res->get_int_value() == 1)
+    {
+        res = &(else_part->evaluate(eval_env, file_buffer));
+    }
+    else{
+        cerr << "cs316: Error: Line "<<lineno<<": Unknown Error in Selection Statement Encountered\n";
+        exit(EXIT_FAILURE);
+    }
+    return *res;
 }
 
 Eval_Result & Iteration_Statement_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
-    /* TODO: */
+    if(is_do_form)
+    {
+        Eval_Result *lhs_res;
+        do {
+            body->evaluate(eval_env, file_buffer);
+            lhs_res = &(cond->evaluate(eval_env, file_buffer));
+        } while(lhs_res->get_int_value() == 1);
+    }
+    else
+    {
+        Eval_Result *lhs_res = &(cond->evaluate(eval_env, file_buffer));
+        while(lhs_res->get_int_value() == 1){
+            body->evaluate(eval_env, file_buffer);
+            lhs_res = &(cond->evaluate(eval_env, file_buffer));
+        }
+    }
 }
 
 Eval_Result & Sequence_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
