@@ -3,9 +3,8 @@ void main(){
 	int j;
 	i = 4;
 	j = 5;
-	
-    while(i>1)
-	{
-		
-	}
+
+	do{
+		i = i + 1;
+	}while(i < 5);
 }

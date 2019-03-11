@@ -35,13 +35,13 @@ int Eval_Result_Value_Int::get_int_value() {
 void Eval_Result_Value_Int::set_value(int value) {
     result_type = int_result;
     defined = true;
-    value = value;
+    this->value = value;
 }
 
 void Eval_Result_Value_Int::set_value(double value) {
     result_type = int_result;
     defined = true;
-    value = (int)value;
+    this->value = (int)value;
 }
 
 void Eval_Result_Value_Int::set_variable_status(bool def) {
@@ -77,13 +77,13 @@ double Eval_Result_Value_Double::get_double_value() {
 void Eval_Result_Value_Double::set_value(int value) {
     result_type = double_result;
     defined = true;
-    value = (double)value;
+    this->value = (double)value;
 }
 
 void Eval_Result_Value_Double::set_value(double value) {
     result_type = double_result;
     defined = true;
-    value = value;
+    this->value = value;
 }
 
 void Eval_Result_Value_Double::set_variable_status(bool def) {

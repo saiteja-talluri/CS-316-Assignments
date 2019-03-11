@@ -208,6 +208,7 @@ iteration_statement		:	WHILE '(' log_expression ')'
 							statement_list
 							'}'
 							{
+
 								if((*$6).empty()) /*body empty */
 								{
 									yyerror("cs316: Error: Block of statements cannot be empty");
@@ -218,6 +219,8 @@ iteration_statement		:	WHILE '(' log_expression ')'
 									x->ast_push_back(*it);
 								}
 								$$ = new Iteration_Statement_Ast($3, x, yylineno, 0); /*last arg is bool do_form */
+
+								/* $$->print(cout); */
 							}
 							|	WHILE '(' log_expression ')' assignment_statement
 							{
@@ -353,7 +356,7 @@ log_expression			:	log_expression AND log_expression
 							}
 							|	NOT log_expression
 							{
-								$$ = new Logical_Expr_Ast($2, _logical_not, NULL, yylineno);
+								$$ = new Logical_Expr_Ast(NULL, _logical_not, $2, yylineno);
 							}
 							|	rel_expression
 							{

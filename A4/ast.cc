@@ -229,7 +229,7 @@ void UMinus_Ast::print(ostream & file_buffer){
 Conditional_Expression_Ast::Conditional_Expression_Ast(Ast* cond, Ast* l, Ast* r, int line){
     lhs = l;
     rhs = r;
-    cond = cond;
+    this->cond = cond;
     ast_num_child = ternary_arity;
 }
 
@@ -287,7 +287,7 @@ bool Relational_Expr_Ast::check_ast(){
 }
 
 void Relational_Expr_Ast::print(ostream & file_buffer){
-    file_buffer << "\n         Condition: ";
+    file_buffer << "\n            Condition: ";
     if (rel_op == less_equalto)
         file_buffer << "LE";
     else if (rel_op == less_than)
@@ -304,9 +304,9 @@ void Relational_Expr_Ast::print(ostream & file_buffer){
         cerr << "cs316: Error: Line "<<lineno<<": Unknown Symbol Encountered\n";
         exit(EXIT_FAILURE);
     }
-    file_buffer <<  "\n            LHS (";
+    file_buffer <<  "\n               LHS (";
     lhs_condition->print(file_buffer);
-    file_buffer << ")\n            RHS (";
+    file_buffer << ")\n               RHS (";
     rhs_condition->print(file_buffer);
     file_buffer <<")";
 }
@@ -356,7 +356,7 @@ bool Logical_Expr_Ast::check_ast(){ /* TODO : Check it again */
 }
 
 void Logical_Expr_Ast::print(ostream & file_buffer){
-    file_buffer << "\n         Condition: ";
+    file_buffer << "\n            Condition: ";
     if (bool_op == _logical_not)
         file_buffer << "NOT";
     else if (bool_op == _logical_and)
@@ -369,15 +369,15 @@ void Logical_Expr_Ast::print(ostream & file_buffer){
     }
     if(bool_op == _logical_not)
     {
-        file_buffer << "\n            RHS (";
+        file_buffer << "\n               RHS (";
         rhs_op->print(file_buffer);
         file_buffer <<")";
     }
     else
     {
-        file_buffer <<  "\n            LHS (";
+        file_buffer <<  "\n               LHS (";
         lhs_op->print(file_buffer);
-        file_buffer << ")\n            RHS (";
+        file_buffer << ")\n               RHS (";
         rhs_op->print(file_buffer);
         file_buffer <<")";
     }
@@ -385,9 +385,9 @@ void Logical_Expr_Ast::print(ostream & file_buffer){
 
 Selection_Statement_Ast::Selection_Statement_Ast(Ast * cond,Ast* then_part, Ast* else_part, int line){
     node_data_type = void_data_type;
-    cond = cond;
-    then_part = then_part;
-    else_part = else_part;
+    this->cond = cond;
+    this->then_part = then_part;
+    this->else_part = else_part;
     lineno = line;
     ast_num_child = ternary_arity;
 }
@@ -441,8 +441,8 @@ void Selection_Statement_Ast::print(ostream & file_buffer){
 
 Iteration_Statement_Ast::Iteration_Statement_Ast(Ast * cond, Ast* body, int line, bool do_form){
     node_data_type = void_data_type;
-    cond = cond;
-    body = body;
+    this->cond = cond;
+    this->body = body;
     is_do_form = do_form;
     lineno = line;
     ast_num_child = binary_arity;
@@ -469,17 +469,19 @@ bool Iteration_Statement_Ast::check_ast(){
 }
 
 void Iteration_Statement_Ast::print(ostream & file_buffer){
+
     if(is_do_form){
         file_buffer <<"\n          DO (";
         body->print(file_buffer);
-        file_buffer << ")\n         WHILE CONDITION (";
+        file_buffer << ")\n          WHILE CONDITION (";
         cond->print(file_buffer);
         file_buffer <<")";
     }
     else{
-        file_buffer << "\n         WHILE :\n         CONDITION (";
+        file_buffer << "\n         WHILE :";
+        file_buffer << "\n         CONDITION (";
         cond->print(file_buffer);
-        file_buffer <<")\n          BODY (";
+        file_buffer <<")\n         BODY (";
         body->print(file_buffer);
         file_buffer <<")";
     }
