@@ -22,11 +22,20 @@ Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & f
     /* TODO: */
     string lhs = this->lhs->get_symbol_entry().get_variable_name();
     
-    file_buffer<<"Asgn:\n";
-    file_buffer<<"\tLHS (Name : "<<lhs<<")\n";
-    file_buffer<<"\tRHS (NUM : ";
-    Eval_Result *rhs = this->rhs->evaluate(eval_env, file_buffer);
+    file_buffer << AST_SPACE << "Asgn:\n";
+    file_buffer << AST_NODE_SPACE <<"LHS (";
+    this->lhs->print(file_buffer);
+    file_buffer << ")";
+
+    file_buffer << AST_NODE_SPACE <<"RHS (";
+    this->rhs->print(file_buffer);
+    file_buffer << ")";
+
+    Eval_Result *rhs = &this->rhs->evaluate(eval_env, file_buffer);
     eval_env.put_variable_value(*rhs, lhs);
+
+    file_buffer << AST_SPACE;
+    this->lhs->print_value(eval_env, file_buffer);
     return *rhs;
 }
 
@@ -57,19 +66,19 @@ void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result
 Eval_Result & Name_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
     /* TODO: what is expected here? */
     
-    print_value(eval_env, file_buffer);
+    // print_value(eval_env, file_buffer);
     return get_value_of_evaluation(eval_env);
 }
 
 template <class T>
 Eval_Result & Number_Ast<T>::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
     /* TODO: */
-    Eval_Result *res
+    Eval_Result *res;
     if(get_data_type() == int_data_type)
         res = new Eval_Result_Value_Int();
     else if(get_data_type() == double_data_type)
         res = new Eval_Result_Value_Double();
-    eval_env.put_variable_value(constant, *res);
+    res->set_value(constant);
     return *res;
 }
 
