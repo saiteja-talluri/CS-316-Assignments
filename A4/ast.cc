@@ -1,11 +1,19 @@
 #include "ast.hh"
+#include "local-environment.hh"
 #include <stdlib.h> //to use exit()
 template class Number_Ast<double>;
 template class Number_Ast<int>;
 
+#include "symbol-table.hh"
+
+
+
+
 Ast::Ast(){}
 
 Ast::~Ast(){}
+
+int Ast::labelCounter;
 
 Data_Type Ast::get_data_type(){
     return node_data_type;
@@ -24,8 +32,17 @@ bool Ast::check_ast(){}
 
 Symbol_Table_Entry & Ast::get_symbol_entry(){}
 
+void Ast::print_value(Local_Environment & eval_env, ostream & file_buffer) {
+    /* TODO: */
+}
 
-//TODO:figure out how to print further error messages without emiting spim code or doing eval.
+Eval_Result & Ast::get_value_of_evaluation(Local_Environment & eval_env) {
+    /* TODO: */
+}
+
+void Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result) {
+    /* TODO: */
+}
 
 Assignment_Ast::Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs, int line){
     lhs = temp_lhs;
@@ -41,9 +58,7 @@ Assignment_Ast::~Assignment_Ast(){
 }
 
 bool Assignment_Ast::check_ast(){
-    // cerr<<"assgn check_ast "<<lhs->get_data_type()<<" "<<rhs->get_data_type()<<endl;
     if((lhs->get_data_type() == rhs->get_data_type()) || rhs->is_value_zero()){
-        //This is wrong. What if rhs is not a number? is_value_zero will return true
         node_data_type = lhs->get_data_type();
         return true;
     }
@@ -51,7 +66,7 @@ bool Assignment_Ast::check_ast(){
         cerr << "cs316: Error: Line "<<lineno<<": Data Type not compatabile in the assignment\n";
         exit(EXIT_FAILURE);
         return false;
-        //should exit here right?
+        //Should exit here right?
     }
 }
 
@@ -63,6 +78,17 @@ void Assignment_Ast::print(ostream & file_buffer){
     file_buffer <<")";
 }
 
+Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
+    /* TODO: */
+    string lhs = this->lhs->get_symbol_entry().get_variable_name();
+    
+    file_buffer<<"Asgn:\n";
+    file_buffer<<"\tLHS (Name : "<<lhs<<")\n";
+    file_buffer<<"\tRHS (NUM : ";
+    Eval_Result *rhs = this->rhs->evaluate(eval_env, file_buffer);
+    eval_env.put_variable_value(*rhs, lhs);
+    return *rhs;
+}
 
 
 Name_Ast::Name_Ast(string & name, Symbol_Table_Entry & var_entry, int line){
@@ -89,6 +115,36 @@ void Name_Ast::print(ostream & file_buffer){
     file_buffer << "Name : " << variable_symbol_entry->get_variable_name();
 }
 
+void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer) {
+    string name = this->variable_symbol_entry->get_variable_name();
+    if(eval_env.get_variable_value(name)->get_result_enum() == int_result)
+        file_buffer << name << " : " << eval_env.get_variable_value(name)->get_int_value();
+    else
+        file_buffer << name << " : " << eval_env.get_variable_value(name)->get_double_value();
+    file_buffer<<"\n";
+}
+
+Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env) {
+    string name = this->variable_symbol_entry->get_variable_name();
+    // if(eval_env.is_variable_defined(name)) {
+    return *eval_env.get_variable_value(name);
+    // }
+}
+
+void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result) {
+    string name = this->variable_symbol_entry->get_variable_name();
+    if(eval_env.does_variable_exist(name)) {
+        eval_env.put_variable_value(result, name);
+    }
+    
+}
+
+Eval_Result & Name_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
+    /* TODO: what is expected here? */
+    
+    print_value(eval_env, file_buffer);
+    return get_value_of_evaluation(eval_env);
+}
 
 
 template <class T>
@@ -124,6 +180,17 @@ void Number_Ast<T>::print(ostream & file_buffer){
     file_buffer << "Num : " << constant;
 }
 
+template <class T>
+Eval_Result & Number_Ast<T>::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
+    /* TODO: */
+    Eval_Result *res
+    if(get_data_type() == int_data_type)
+        res = new Eval_Result_Value_Int();
+    else if(get_data_type() == double_data_type)
+        res = new Eval_Result_Value_Double();
+    eval_env.put_variable_value(constant, *res);
+    return *res;
+}
 
 
 Data_Type Arithmetic_Expr_Ast::get_data_type(){
@@ -169,6 +236,29 @@ void Plus_Ast::print(ostream & file_buffer){
     file_buffer <<")";
 }
 
+Eval_Result & Plus_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
+    /* TODO: */
+    Eval_Result *res;
+    
+    file_buffer << "Arith: PLUS\n";
+    file_buffer << "LHS ( ";
+    Eval_Result *lhs_res = lhs->evaluate(eval_env, file_buffer);
+    file_buffer << "\n";
+    file_buffer << "RHS ";
+    Eval_Result *rhs_res = rhs->evaluate(eval_env, file_buffer);
+    file_buffer << ")\n";
+    if(get_data_type() == int_data_type) {
+        res = new Eval_Result_Value_Int();
+        res->set_value(lhs_res->get_int_value() + rhs_res->get_int_value());
+    }
+    else {
+        res = new Eval_Result_Value_Double();
+        res->set_value(lhs_res->get_double_value() + rhs_res->get_double_value());
+    }
+
+    return *res;
+
+}
 
 Minus_Ast::Minus_Ast(Ast * l, Ast * r, int line){
     lhs = l;
@@ -185,6 +275,11 @@ void Minus_Ast::print(ostream & file_buffer){
     file_buffer <<")";
 }
 
+Eval_Result & Minus_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
+    /* TODO: */
+
+    
+}
 
 Divide_Ast::Divide_Ast(Ast * l, Ast * r, int line){
     lhs = l;
@@ -199,6 +294,10 @@ void Divide_Ast::print(ostream & file_buffer){
     file_buffer << ")\n               RHS (";
     rhs->print(file_buffer);
     file_buffer <<")";
+}
+
+Eval_Result & Divide_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
+    /* TODO: */
 }
 
 
@@ -217,6 +316,10 @@ void Mult_Ast::print(ostream & file_buffer){
     file_buffer <<")";
 }
 
+Eval_Result & Mult_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
+    /* TODO: */
+}
+
 
 UMinus_Ast::UMinus_Ast(Ast * l, Ast * r, int line){
     lhs = l;
@@ -231,6 +334,10 @@ void UMinus_Ast::print(ostream & file_buffer){
     file_buffer <<")";
 }
 
+Eval_Result & UMinus_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
+    /* TODO: */
+}
+
 
 Conditional_Expression_Ast::Conditional_Expression_Ast(Ast* cond, Ast* l, Ast* r, int line){
     lhs = l;
@@ -240,14 +347,16 @@ Conditional_Expression_Ast::Conditional_Expression_Ast(Ast* cond, Ast* l, Ast* r
 }
 
 Conditional_Expression_Ast::~Conditional_Expression_Ast(){
-    /* TODO */
+    /* TODO: */
 }
 
 void Conditional_Expression_Ast::print(ostream & file_buffer){
-    /* TODO */
+    /* TODO: */
 }
 
-
+Eval_Result & Conditional_Expression_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+    /* TODO: */
+}
 
 Return_Ast::Return_Ast(int line){
     lineno = line;
@@ -258,6 +367,9 @@ Return_Ast::~Return_Ast(){}
 
 void Return_Ast::print(ostream & file_buffer){}
 
+Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+    /* TODO: */
+}
 
 Relational_Expr_Ast::Relational_Expr_Ast(Ast * lhs, Relational_Op rop, Ast * rhs, int line){
     lhs_condition = lhs;
@@ -268,7 +380,7 @@ Relational_Expr_Ast::Relational_Expr_Ast(Ast * lhs, Relational_Op rop, Ast * rhs
 }
 
 Relational_Expr_Ast::~Relational_Expr_Ast(){
-    /* TODO */
+    /* TODO: */
 }
 
 Data_Type Relational_Expr_Ast::get_data_type(){
@@ -280,12 +392,18 @@ void Relational_Expr_Ast::set_data_type(Data_Type dt){
 }
 
 bool Relational_Expr_Ast::check_ast(){
-    /* TODO */
+    /* TODO: */
 }
 
 void Relational_Expr_Ast::print(ostream & file_buffer){
-    /* TODO */
+    /* TODO: */
 }
+
+
+Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+    /* TODO: */
+}
+
 
 Logical_Expr_Ast::Logical_Expr_Ast(Ast * lhs, Logical_Op bop, Ast * rhs, int line){
     lhs_op = lhs;
@@ -296,7 +414,7 @@ Logical_Expr_Ast::Logical_Expr_Ast(Ast * lhs, Logical_Op bop, Ast * rhs, int lin
 }
 
 Logical_Expr_Ast::~Logical_Expr_Ast(){
-    /* TODO */
+    /* TODO: */
 }
 
 Data_Type Logical_Expr_Ast::get_data_type(){
@@ -308,12 +426,17 @@ void Logical_Expr_Ast::set_data_type(Data_Type dt){
 }
 
 bool Logical_Expr_Ast::check_ast(){
-    /* TODO */
+    /* TODO: */
 }
 
 void Logical_Expr_Ast::print(ostream & file_buffer){
-    /* TODO */
+    /* TODO: */
 }
+
+Eval_Result & Logical_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+    /* TODO: */
+}
+
 
 Selection_Statement_Ast::Selection_Statement_Ast(Ast * cond,Ast* then_part, Ast* else_part, int line){
     cond = cond;
@@ -324,7 +447,7 @@ Selection_Statement_Ast::Selection_Statement_Ast(Ast * cond,Ast* then_part, Ast*
 }
 
 Selection_Statement_Ast::~Selection_Statement_Ast(){
-    /* TODO */
+    /* TODO: */
 }
 
 Data_Type Selection_Statement_Ast::get_data_type(){
@@ -336,12 +459,17 @@ void Selection_Statement_Ast::set_data_type(Data_Type dt){
 }
 
 bool Selection_Statement_Ast::check_ast(){
-    /* TODO */
+    /* TODO: */
 }
 
 void Selection_Statement_Ast::print(ostream & file_buffer){
-    /* TODO */
+    /* TODO: */
 }
+
+Eval_Result & Selection_Statement_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+    /* TODO: */
+}
+
 
 Iteration_Statement_Ast::Iteration_Statement_Ast(Ast * cond, Ast* body, int line, bool do_form){
     cond = cond;
@@ -352,7 +480,7 @@ Iteration_Statement_Ast::Iteration_Statement_Ast(Ast * cond, Ast* body, int line
 }
 
 Iteration_Statement_Ast::~Iteration_Statement_Ast(){
-    /* TODO */
+    /* TODO: */
 }
 
 Data_Type Iteration_Statement_Ast::get_data_type(){
@@ -364,11 +492,15 @@ void Iteration_Statement_Ast::set_data_type(Data_Type dt){
 }
 
 bool Iteration_Statement_Ast::check_ast(){
-    /* TODO */
+    /* TODO: */
 }
 
 void Iteration_Statement_Ast::print(ostream & file_buffer){
-    /* TODO */
+    /* TODO: */
+}
+
+Eval_Result & Iteration_Statement_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+    /* TODO: */
 }
 
 Sequence_Ast::Sequence_Ast(int line){
@@ -376,7 +508,7 @@ Sequence_Ast::Sequence_Ast(int line){
 }
 
 Sequence_Ast::~Sequence_Ast(){
-    /* TODO */
+    /* TODO: */
 }
 
 void Sequence_Ast::ast_push_back(Ast * ast){
@@ -384,5 +516,9 @@ void Sequence_Ast::ast_push_back(Ast * ast){
 }
 
 void Sequence_Ast::print(ostream & file_buffer){
-    /* TODO */
+    /* TODO: */
+}
+
+Eval_Result & Sequence_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+    /* TODO: */
 }

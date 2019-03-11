@@ -6,8 +6,12 @@
 #include<map>
 #include<list>
 
-#define PROC_SPACE "   "
+#define PROC_SPACE    "   "
 #define LOC_VAR_SPACE "      "
+#define INSIDE_LOC_1  "         "
+#define INSIDE_LOC_2  "            "
+#define INSIDE_LOC_3  "               "
+#define INSIDE_LOC_4  "                  "
 
 using namespace std;
 

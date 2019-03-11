@@ -24,9 +24,13 @@ void Eval_Result_Value::set_result_enum(Result_Enum) {}
 
 
 
-Eval_Result_Value_Int::Eval_Result_Value_Int() {}
+Eval_Result_Value_Int::Eval_Result_Value_Int() {
+    defined = false;
+}
 
-Eval_Result_Value_Int::~Eval_Result_Value_Int() {}
+Eval_Result_Value_Int::~Eval_Result_Value_Int() {
+    //?
+}
 
 int Eval_Result_Value_Int::get_int_value() {
     return value;
@@ -37,7 +41,6 @@ void Eval_Result_Value_Int::set_value(int value) {
 }
 
 void Eval_Result_Value_Int::set_value(double value) {
-    //????
     value = (int)value;
 }
 
@@ -62,7 +65,9 @@ Result_Enum Eval_Result_Value_Int::get_result_enum() {
 
 
 
-Eval_Result_Value_Double::Eval_Result_Value_Double() {}
+Eval_Result_Value_Double::Eval_Result_Value_Double() {
+    defined = false;
+}
 
 Eval_Result_Value_Double::~Eval_Result_Value_Double() {
     //???
@@ -73,7 +78,6 @@ double Eval_Result_Value_Double::get_double_value() {
 }
 
 void Eval_Result_Value_Double::set_value(int value) {
-    // ???
     value = (double)value;
 }
 
@@ -105,9 +109,20 @@ Local_Environment::~Local_Environment() {}
 void Local_Environment::print(ostream& fb) {
     for(map<string, Eval_Result* >::iterator it = variable_table.begin(); it != variable_table.end(); it++) {
         fb << it->first ;
-        fb << " " ;
-        // fb << *(it->second);
+        fb << " : " ;
+        if((it->second)->is_variable_defined()) {
+            if((it->second)->get_result_enum() == int_result) {
+                fb << (it->second)->get_int_value();
+            }
+            else if((it->second)->get_result_enum() == int_result) {
+                fb << (it->second)->get_double_value();
+            }
+        }
+        else {
+            fb << "undefined";
+        }
         fb << "\n";
+        // fb << "\n";
     }
 }
 

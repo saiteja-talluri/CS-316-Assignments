@@ -1,9 +1,9 @@
 void main(){
-	int i;
+	int i,j,k,l;
 	i = 4;
 	do
     {
-        i = i + 1;
+        i = i + 1 + 2+3+4+5;
     }
     while(i == 4);
 }
