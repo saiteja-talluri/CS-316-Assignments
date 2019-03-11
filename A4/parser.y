@@ -208,6 +208,11 @@ iteration_statement		:	WHILE '(' log_expression ')'
 							statement_list
 							'}'
 							{
+								if((*$6).empty()) /*body empty */
+								{
+									yyerror("cs316: Error: Block of statements cannot be empty");
+									exit(1);
+								}
 								Sequence_Ast *x = new Sequence_Ast(yylineno);
 								for(list<Ast*>::iterator it = (*$6).begin(); it != (*$6).end(); it++) {
 									x->ast_push_back(*it);
@@ -226,6 +231,11 @@ iteration_statement		:	WHILE '(' log_expression ')'
 							}
 							|	DO '{' statement_list '}' WHILE '(' log_expression ')' ';'
 							{
+								if($3->empty()) /*body empty */
+								{
+									yyerror("cs316: Error: Block of statements cannot be empty");
+									exit(1);
+								}
 								Sequence_Ast *x = new Sequence_Ast(yylineno);
 								for(list<Ast*>::iterator it = (*$3).begin(); it != (*$3).end(); it++) {
 									x->ast_push_back(*it);
@@ -238,13 +248,16 @@ iteration_statement		:	WHILE '(' log_expression ')'
 /*
 if-then-else
 with or without braces
-
-
 */
 
 selection_statement		:	IF '(' log_expression ')'
 							'{' statement_list '}'
 							{
+								if($6->empty()) /*body empty */
+								{
+									yyerror("cs316: Error: Block of statements cannot be empty");
+									exit(1);
+								}
 								Sequence_Ast *x = new Sequence_Ast(yylineno);
 								for(list<Ast*>::iterator it = (*$6).begin(); it != (*$6).end(); it++) {
 									x->ast_push_back(*it);
@@ -255,6 +268,11 @@ selection_statement		:	IF '(' log_expression ')'
 							'{' statement_list '}'
 							ELSE '{' statement_list '}'
 							{
+								if($6->empty() || $10->empty()) /*body empty */
+								{
+									yyerror("cs316: Error: Block of statements cannot be empty");
+									exit(1);
+								}
 								Sequence_Ast *x = new Sequence_Ast(yylineno);
 								for(list<Ast*>::iterator it = (*$6).begin(); it != (*$6).end(); it++) {
 									x->ast_push_back(*it);
@@ -268,7 +286,7 @@ selection_statement		:	IF '(' log_expression ')'
 								$$ = new Selection_Statement_Ast($3, x, y, yylineno);
 							}
 
-							/*
+					/*
 							|	matched_statement
 							{
 								$$ = $1;
@@ -325,17 +343,25 @@ unmatched_statement		:	IF log_expression selection_statement
 
 */
 
-log_expression			:	rel_expression AND rel_expression
+log_expression			:	log_expression AND log_expression
 							{
 								$$ = new Logical_Expr_Ast($1, _logical_and, $3, yylineno);
 							}
-							|	rel_expression OR rel_expression
+							|	log_expression OR log_expression
 							{
 								$$ = new Logical_Expr_Ast($1, _logical_or, $3, yylineno);
 							}
-							|	NOT rel_expression
+							|	NOT log_expression
 							{
 								$$ = new Logical_Expr_Ast($2, _logical_not, NULL, yylineno);
+							}
+							|	rel_expression
+							{
+								$$ = $1;
+							}
+							|	'(' log_expression ')'
+							{
+								$$ = $2;
 							}
 							;
 
@@ -363,6 +389,11 @@ rel_expression			:	arith_expression EQUAL arith_expression
 							{
 								$$ = new Relational_Expr_Ast($1, greater_equalto, $3, yylineno);
 							}
+							|	'(' rel_expression ')'
+							{
+								$$ = $2;
+							}
+
 							;
 
 

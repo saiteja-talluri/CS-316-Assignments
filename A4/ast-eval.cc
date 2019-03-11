@@ -4,6 +4,9 @@
 template class Number_Ast<double>;
 template class Number_Ast<int>;
 
+Eval_Result & Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
+
+}
 
 void Ast::print_value(Local_Environment & eval_env, ostream & file_buffer) {
     /* TODO: */
@@ -72,7 +75,6 @@ Eval_Result & Name_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 
 template <class T>
 Eval_Result & Number_Ast<T>::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
-    /* TODO: */
     Eval_Result *res;
     if(get_data_type() == int_data_type)
         res = new Eval_Result_Value_Int();
@@ -176,14 +178,14 @@ Eval_Result & Conditional_Expression_Ast::evaluate(Local_Environment & eval_env,
     Eval_Result *cond_res = &(cond->evaluate(eval_env, file_buffer));
     if(get_data_type() == int_data_type) {
         res = new Eval_Result_Value_Int();
-        if(cond->get_int_value() == 1)
+        if(cond_res->get_int_value() == 1)
             res->set_value(lhs_res->get_int_value());
         else
             res->set_value(rhs_res->get_int_value());
     }
     else {
         res = new Eval_Result_Value_Double();
-        if(cond->get_int_value() == 1)
+        if(cond_res->get_int_value() == 1)
             res->set_value(lhs_res->get_double_value());
         else
             res->set_value(rhs_res->get_double_value());
@@ -197,8 +199,8 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 
 Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
     Eval_Result *res;
-    Eval_Result *lhs_res = &(left_condition->evaluate(eval_env, file_buffer));
-    Eval_Result *rhs_res = &(right_condition->evaluate(eval_env, file_buffer));
+    Eval_Result *lhs_res = &(lhs_condition->evaluate(eval_env, file_buffer));
+    Eval_Result *rhs_res = &(rhs_condition->evaluate(eval_env, file_buffer));
 
     if(get_data_type() == int_data_type) {
         res = new Eval_Result_Value_Int();
