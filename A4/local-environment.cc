@@ -5,7 +5,6 @@ int Eval_Result::get_int_value() {}
 void Eval_Result::set_value(int value) {}
 double Eval_Result::get_double_value() {}
 void Eval_Result::set_value(double value) {}
-
 bool Eval_Result::is_variable_defined() {}
 void Eval_Result::set_variable_status(bool def) {}
 void Eval_Result::set_result_enum(Result_Enum) {}
@@ -21,15 +20,12 @@ void Eval_Result_Value::set_variable_status(bool def) {}
 void Eval_Result_Value::set_result_enum(Result_Enum) {}
 
 
-
-
-
 Eval_Result_Value_Int::Eval_Result_Value_Int() {
     defined = false;
 }
 
 Eval_Result_Value_Int::~Eval_Result_Value_Int() {
-    //?
+    /* TODO */
 }
 
 int Eval_Result_Value_Int::get_int_value() {
@@ -37,10 +33,14 @@ int Eval_Result_Value_Int::get_int_value() {
 }
 
 void Eval_Result_Value_Int::set_value(int value) {
+    result_type = int_result;
+    defined = true;
     value = value;
 }
 
 void Eval_Result_Value_Int::set_value(double value) {
+    result_type = int_result;
+    defined = true;
     value = (int)value;
 }
 
@@ -62,15 +62,12 @@ Result_Enum Eval_Result_Value_Int::get_result_enum() {
 
 
 
-
-
-
 Eval_Result_Value_Double::Eval_Result_Value_Double() {
     defined = false;
 }
 
 Eval_Result_Value_Double::~Eval_Result_Value_Double() {
-    //???
+    /* TODO */
 }
 
 double Eval_Result_Value_Double::get_double_value() {
@@ -78,10 +75,14 @@ double Eval_Result_Value_Double::get_double_value() {
 }
 
 void Eval_Result_Value_Double::set_value(int value) {
+    result_type = double_result;
+    defined = true;
     value = (double)value;
 }
 
 void Eval_Result_Value_Double::set_value(double value) {
+    result_type = double_result;
+    defined = true;
     value = value;
 }
 
@@ -108,6 +109,7 @@ Local_Environment::~Local_Environment() {}
 
 void Local_Environment::print(ostream& fb) {
     for(map<string, Eval_Result* >::iterator it = variable_table.begin(); it != variable_table.end(); it++) {
+        fb << VAR_SPACE;    /* TODO : Check this space issue */
         fb << it->first ;
         fb << " : " ;
         if((it->second)->is_variable_defined()) {
@@ -122,7 +124,6 @@ void Local_Environment::print(ostream& fb) {
             fb << "undefined";
         }
         fb << "\n";
-        // fb << "\n";
     }
 }
 

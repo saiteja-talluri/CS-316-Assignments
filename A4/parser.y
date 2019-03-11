@@ -378,9 +378,7 @@ assignment_statement	:	NAME ASSIGN arith_expression ';'
 								else if(!(*global_sym_table).is_empty() && (*global_sym_table).variable_in_symbol_list_check(*$1)){
 									Ast* lhs2 = new Name_Ast(*$1, (*global_sym_table).get_symbol_table_entry(*$1), yylineno);
 									$$ = new Assignment_Ast(lhs2,$3,yylineno);
-									(*$$
-									
-									).check_ast();
+									(*$$).check_ast();
 								}
 								else{
 									yyerror("cs316: Error: Variable has not been declared");
