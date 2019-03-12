@@ -29,7 +29,8 @@ Eval_Result_Value_Int::~Eval_Result_Value_Int() {
 }
 
 int Eval_Result_Value_Int::get_int_value() {
-    return value;
+    if(defined)
+        return value;
 }
 
 void Eval_Result_Value_Int::set_value(int value) {
@@ -116,7 +117,7 @@ void Local_Environment::print(ostream& fb) {
             if((it->second)->get_result_enum() == int_result) {
                 fb << (it->second)->get_int_value();
             }
-            else if((it->second)->get_result_enum() == int_result) {
+            else if((it->second)->get_result_enum() == double_result) {
                 fb << (it->second)->get_double_value();
             }
         }
@@ -147,7 +148,7 @@ void Local_Environment::put_variable_value(Eval_Result & value, string name) {
 
 bool Local_Environment::is_variable_defined(string name) {
     for(map<string, Eval_Result* >::iterator it = variable_table.begin(); it != variable_table.end(); it++) {
-        if(it->first == name && it->second != NULL) return true;
+        if(it->first == name && it->second->is_variable_defined()) return true;
     }
     return false;
 }

@@ -1,10 +1,10 @@
+int a;
 void main(){
+	
 	int i,k,l;
 	int j;
-	i = 4;
-	j = 5;
+	float x;
 
-	do{
-		i = i + 1;
-	}while(i < 5);
+	a = 5; 
+	// i = j;
 }

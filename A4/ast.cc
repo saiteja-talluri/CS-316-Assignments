@@ -337,7 +337,7 @@ bool Logical_Expr_Ast::check_ast(){ /* TODO : Check it again */
             return true;
         }
         else{
-            cerr << "cs316: Error: Line "<<lineno<<": Data Type not compatabile in logical expression\n";
+            cerr << "cs316: Error: Line "<<lineno<<": Data Type not compatabile in rhs of NOT logical expression\n";
             exit(EXIT_FAILURE);
             return false;
         }

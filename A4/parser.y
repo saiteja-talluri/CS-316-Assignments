@@ -349,18 +349,22 @@ unmatched_statement		:	IF log_expression selection_statement
 log_expression			:	log_expression AND log_expression
 							{
 								$$ = new Logical_Expr_Ast($1, _logical_and, $3, yylineno);
+								(*$$).check_ast();
 							}
 							|	log_expression OR log_expression
 							{
 								$$ = new Logical_Expr_Ast($1, _logical_or, $3, yylineno);
+								(*$$).check_ast();
 							}
 							|	NOT log_expression
 							{
 								$$ = new Logical_Expr_Ast(NULL, _logical_not, $2, yylineno);
+								(*$$).check_ast();
 							}
 							|	rel_expression
 							{
 								$$ = $1;
+								(*$$).check_ast();
 							}
 							|	'(' log_expression ')'
 							{
@@ -371,26 +375,32 @@ log_expression			:	log_expression AND log_expression
 rel_expression			:	arith_expression EQUAL arith_expression
 							{
 								$$ = new Relational_Expr_Ast($1, equalto, $3, yylineno);
+								(*$$).check_ast();
 							}
 							|	arith_expression NOT_EQUAL arith_expression
 							{
 								$$ = new Relational_Expr_Ast($1, not_equalto, $3, yylineno);
+								(*$$).check_ast();
 							}
 							|	arith_expression LESS_THAN arith_expression
 							{
 								$$ = new Relational_Expr_Ast($1, less_than, $3, yylineno);
+								(*$$).check_ast();
 							}
 							|	arith_expression LESS_THAN_EQUAL arith_expression
 							{
 								$$ = new Relational_Expr_Ast($1, less_equalto, $3, yylineno);
+								(*$$).check_ast();
 							}	
 							|	arith_expression GREATER_THAN arith_expression
 							{
 								$$ = new Relational_Expr_Ast($1, greater_than, $3, yylineno);
+								(*$$).check_ast();
 							}
 							|	arith_expression GREATER_THAN_EQUAL arith_expression
 							{
 								$$ = new Relational_Expr_Ast($1, greater_equalto, $3, yylineno);
+								(*$$).check_ast();
 							}
 							|	'(' rel_expression ')'
 							{

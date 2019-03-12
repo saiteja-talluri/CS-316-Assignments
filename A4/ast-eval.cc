@@ -23,13 +23,22 @@ void Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & re
 
 Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
     string lhs_name = lhs->get_symbol_entry().get_variable_name();
-    print(file_buffer);
+    Table_Scope lhs_scope = lhs->get_symbol_entry().get_symbol_scope();
 
     Eval_Result *rhs_res = &(rhs->evaluate(eval_env, file_buffer));
-    eval_env.put_variable_value(*rhs_res, lhs_name);
 
-    file_buffer << "\n" << AST_SPACE;
-    lhs->print_value(eval_env, file_buffer);
+    if(lhs_scope == local) {
+        eval_env.put_variable_value(*rhs_res, lhs_name);
+        print(file_buffer);
+        file_buffer << "\n" << AST_SPACE;
+        lhs->print_value(eval_env, file_buffer);
+    }
+    else if(lhs_scope == global) {
+        interpreter_global_table.put_variable_value(*rhs_res, lhs_name);
+        print(file_buffer);
+        file_buffer << "\n" << AST_SPACE;
+        lhs->print_value(interpreter_global_table, file_buffer);
+    }
     file_buffer << "\n";
     return *rhs_res;
 }
@@ -56,7 +65,21 @@ void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result
 }
 
 Eval_Result & Name_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer) {
-    return get_value_of_evaluation(eval_env);
+    string name = this->variable_symbol_entry->get_variable_name();
+    Table_Scope var_scope = this->variable_symbol_entry->get_symbol_scope();
+
+    if(var_scope == local && eval_env.is_variable_defined(name)) {
+        return get_value_of_evaluation(eval_env);
+    }
+
+    else if(var_scope == global && interpreter_global_table.is_variable_defined(name))
+    {
+        return get_value_of_evaluation(interpreter_global_table);
+    }
+    cerr << "\ncs316: Error: Line "<<lineno<<": Variable should be defined before its use\n";
+    exit(1);
+    
+        
 }
 
 template <class T>
@@ -156,7 +179,7 @@ Eval_Result & UMinus_Ast::evaluate(Local_Environment & eval_env, ostream & file_
     }
     else {
         res = new Eval_Result_Value_Double();
-        res->set_value((-1.0)*lhs_res->get_int_value());
+        res->set_value((-1.0)*lhs_res->get_double_value()); /*you wrote get_double_value()*/
     }
     return *res;
 }
