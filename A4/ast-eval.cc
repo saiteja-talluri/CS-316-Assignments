@@ -338,7 +338,7 @@ Eval_Result & Selection_Statement_Ast::evaluate(Local_Environment & eval_env, os
     {
         res = &(then_part->evaluate(eval_env, file_buffer));
     }
-    else if(cond_res->get_int_value() == 1)
+    else if(cond_res->get_int_value() == 0)
     {
         res = &(else_part->evaluate(eval_env, file_buffer));
     }

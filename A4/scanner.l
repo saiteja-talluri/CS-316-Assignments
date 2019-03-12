@@ -104,6 +104,7 @@ not !
 			}
 {else_kw}	{
 				store_token_name("ELSE", yytext, yylineno);
+				return ELSE;
 			}
 
 
