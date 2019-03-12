@@ -15,6 +15,7 @@
 	std::string * string_value;
 	list<Ast *> * ast_list;
 	Ast * ast;
+	Sequence_Ast * seq_ast;
 	Symbol_Table * symbol_table;
 	Symbol_Table_Entry * symbol_entry;
 	Basic_Block * basic_block;
@@ -33,9 +34,9 @@
 %type <symbol_entry_list> variable_list	declaration	variable_declaration variable_declaration_list optional_variable_declaration_list
 %type <procedure> procedure_definition
 %type <ast>	assignment_statement arith_expression 
-%type <ast> log_expression rel_expression iteration_statement control_statement 
+%type <ast> log_expression rel_expression iteration_statement statement
+%type <seq_ast> sequence_statement
 %type <ast> selection_statement matched_statement matched_statement2 unmatched_statement
-
 %type <ast_list> statement_list
 
 
@@ -167,129 +168,70 @@ statement_list	        :	/* empty */
 							{
 								$$ = new list<Ast *>();
 							}
-							|	statement_list assignment_statement
-							{
-								(*$1).push_back($2);
-								$$ = $1;
-							}
-							|	statement_list control_statement /*added control statement */
+							|	statement_list statement
 							{
 								(*$1).push_back($2);
 								$$ = $1;
 							}
 							;
 
-control_statement		:	iteration_statement /*while, do-while*/
+
+statement 				:	assignment_statement
 							{
 								$$ = $1;
 							}
-							|	selection_statement /*if then else*/
+							|	iteration_statement  /*while, do-while*/
+							{
+								$$ = $1;
+							}
+							|	selection_statement  /*if then else*/
 							{
 								$$ = $1;
 							}
 							;
 
 
-
-/*
-while() {
-	stmts;
-}
-or 
-while()
-stmt;
-or
-do() {
-	stmts;
-}
-*/
-iteration_statement		:	WHILE '(' log_expression ')' 
-							'{'
-							statement_list
-							'}'
+sequence_statement		:	'{' statement_list '}'
 							{
-
-								if((*$6).empty()) /*body empty */
+								if((*$2).empty()) 	/*body empty */
 								{
 									yyerror("cs316: Error: Block of statements cannot be empty");
 									exit(1);
 								}
-								Sequence_Ast *x = new Sequence_Ast(yylineno);
-								for(list<Ast*>::iterator it = (*$6).begin(); it != (*$6).end(); it++) {
-									x->ast_push_back(*it);
+			
+								$$ = new Sequence_Ast(yylineno);
+								for(list<Ast*>::iterator it = (*$2).begin(); it != (*$2).end(); it++) {
+									$$->ast_push_back(*it);
 								}
-								$$ = new Iteration_Statement_Ast($3, x, yylineno, 0); /*last arg is bool do_form */
-
-								/* $$->print(cout); */
 							}
-							|	WHILE '(' log_expression ')' assignment_statement
+							|
+							statement
 							{
-								Sequence_Ast *x = new Sequence_Ast(yylineno);
-								x->ast_push_back($5);
-							}
-							|	WHILE '(' log_expression ')' control_statement
-							{
-								Sequence_Ast *x = new Sequence_Ast(yylineno);
-								x->ast_push_back($5);
-							}
-							|	DO '{' statement_list '}' WHILE '(' log_expression ')' ';'
-							{
-								if($3->empty()) /*body empty */
-								{
-									yyerror("cs316: Error: Block of statements cannot be empty");
-									exit(1);
-								}
-								Sequence_Ast *x = new Sequence_Ast(yylineno);
-								for(list<Ast*>::iterator it = (*$3).begin(); it != (*$3).end(); it++) {
-									x->ast_push_back(*it);
-								}
-								$$ = new Iteration_Statement_Ast($7, x, yylineno, 1); /*last arg is bool do_form */	
+								$$ = new Sequence_Ast(yylineno);
+								$$->ast_push_back($1);
 							}
 							;
 
+iteration_statement		:	WHILE '(' log_expression ')' sequence_statement
+							{
+								$$ = new Iteration_Statement_Ast($3, $5, yylineno, 0); 	/*last arg is bool do_form */
+							}
+							|	DO sequence_statement WHILE '(' log_expression ')' ';'
+							{
+								$$ = new Iteration_Statement_Ast($5, $2, yylineno, 1); 	/*last arg is bool do_form */	
+							}
+							;
 
+selection_statement		:	IF '(' log_expression ')' sequence_statement
+							{
+								$$ = new Selection_Statement_Ast($3, $5, NULL, yylineno);
+							}
+							|	IF '(' log_expression ')' sequence_statement ELSE sequence_statement
+							{
+								$$ = new Selection_Statement_Ast($3, $5, $7, yylineno);
+							}
+							;
 /*
-if-then-else
-with or without braces
-*/
-
-selection_statement		:	IF '(' log_expression ')'
-							'{' statement_list '}'
-							{
-								if($6->empty()) /*body empty */
-								{
-									yyerror("cs316: Error: Block of statements cannot be empty");
-									exit(1);
-								}
-								Sequence_Ast *x = new Sequence_Ast(yylineno);
-								for(list<Ast*>::iterator it = (*$6).begin(); it != (*$6).end(); it++) {
-									x->ast_push_back(*it);
-								}
-								$$ = new Selection_Statement_Ast($3, x, NULL, yylineno);
-							}
-							|	IF '(' log_expression ')'
-							'{' statement_list '}'
-							ELSE '{' statement_list '}'
-							{
-								if($6->empty() || $10->empty()) /*body empty */
-								{
-									yyerror("cs316: Error: Block of statements cannot be empty");
-									exit(1);
-								}
-								Sequence_Ast *x = new Sequence_Ast(yylineno);
-								for(list<Ast*>::iterator it = (*$6).begin(); it != (*$6).end(); it++) {
-									x->ast_push_back(*it);
-								}
-
-								Sequence_Ast *y = new Sequence_Ast(yylineno);
-								for(list<Ast*>::iterator it = (*$10).begin(); it != (*$10).end(); it++) {
-									y->ast_push_back(*it);
-								}
-
-								$$ = new Selection_Statement_Ast($3, x, y, yylineno);
-							}
-
-					/*
 							|	matched_statement
 							{
 								$$ = $1;
@@ -482,8 +424,7 @@ arith_expression		: 	INTEGER_NUMBER
 								(*$$).check_ast();
 								(*$$).set_data_type((*$2).get_data_type());
 							}
-							/*ternary operator*/
-							|	log_expression '?' arith_expression ':' arith_expression
+							|	log_expression '?' arith_expression ':' arith_expression	/*ternary operator*/
 							{
 								$$ = new Conditional_Expression_Ast($1, $3, $5, yylineno);
 								(*$1).check_ast();

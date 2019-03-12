@@ -1,2 +1,4 @@
 tests/*.c.*
 mysclp
+parser.tab.c
+parser.tab.h

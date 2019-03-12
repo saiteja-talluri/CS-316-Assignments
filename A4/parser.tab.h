@@ -84,13 +84,14 @@ union YYSTYPE
 	std::string * string_value;
 	list<Ast *> * ast_list;
 	Ast * ast;
+	Sequence_Ast * seq_ast;
 	Symbol_Table * symbol_table;
 	Symbol_Table_Entry * symbol_entry;
 	Basic_Block * basic_block;
 	Procedure * procedure;
 	list<Symbol_Table_Entry *> * symbol_entry_list;
 
-#line 94 "parser.tab.h" /* yacc.c:1909  */
+#line 95 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
