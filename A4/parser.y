@@ -15,6 +15,7 @@
 	std::string * string_value;
 	list<Ast *> * ast_list;
 	Ast * ast;
+	Sequence_Ast * seq_ast;
 	Symbol_Table * symbol_table;
 	Symbol_Table_Entry * symbol_entry;
 	Basic_Block * basic_block;
@@ -33,9 +34,9 @@
 %type <symbol_entry_list> variable_list	declaration	variable_declaration variable_declaration_list optional_variable_declaration_list
 %type <procedure> procedure_definition
 %type <ast>	assignment_statement arith_expression 
-%type <ast> log_expression rel_expression iteration_statement statement sequence_statement
+%type <ast> log_expression rel_expression iteration_statement statement
+%type <seq_ast> sequence_statement
 %type <ast> selection_statement matched_statement matched_statement2 unmatched_statement
-
 %type <ast_list> statement_list
 
 
