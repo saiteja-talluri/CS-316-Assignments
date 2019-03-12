@@ -34,9 +34,8 @@
 %type <symbol_entry_list> variable_list	declaration	variable_declaration variable_declaration_list optional_variable_declaration_list
 %type <procedure> procedure_definition
 %type <ast>	assignment_statement arith_expression 
-%type <ast> log_expression rel_expression iteration_statement statement
+%type <ast> log_expression rel_expression iteration_statement statement selection_statement
 %type <seq_ast> sequence_statement
-%type <ast> selection_statement matched_statement matched_statement2 unmatched_statement
 %type <ast_list> statement_list
 
 
@@ -52,9 +51,7 @@
 %right UMINUS
 %right NOT
 
-
-
-
+%expect 17
 %start program
 
 %%
@@ -231,62 +228,6 @@ selection_statement		:	IF '(' log_expression ')' sequence_statement
 								$$ = new Selection_Statement_Ast($3, $5, $7, yylineno);
 							}
 							;
-/*
-							|	matched_statement
-							{
-								$$ = $1;
-							}
-							|	unmatched_statement 
-							{
-								$$ = $1;
-							}
-							
-
-matched_statement		:	IF '(' log_expression ')' matched_statement2 ELSE matched_statement2
-							{
-								$$ = new Selection_Statement_Ast($2, $3, $5, yylineno);
-							}
-
-							*/
-/*
-selection_statement		:	matched_statement
-							{
-								$$ = $1;
-							}
-							| unmatched_statement
-							{
-								$$ = $1;
-							}
-
-
-matched_statement		:	IF log_expression matched_statement2 ELSE matched_statement2
-							{
-								$$ = new Selection_Statement_Ast($2, $3, $5, yylineno);
-							}
-
-matched_statement2		:	matched_statement
-							{
-								$$ = $1;
-							}
-							|	statement_list
-							{
-								x = new Sequence_Ast(yylineno);
-								for(list<Ast*>::iterator it = (*$1).begin(); it != (*$1).end(); it++) {
-									x->ast_push_back(*it);
-								}
-								$$ = x;
-							}
-
-unmatched_statement		:	IF log_expression selection_statement 
-							{
-								$$ = new Selection_Statement_Ast($2, $3, NULL, yylineno);
-							}
-							|	IF log_expression matched_statement else unmatched_statement
-							{
-								$$ = new Selection_Statement_Ast($2, $3, $5, yylineno);	
-							}
-
-*/
 
 log_expression			:	log_expression AND log_expression
 							{

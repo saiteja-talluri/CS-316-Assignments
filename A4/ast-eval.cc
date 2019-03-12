@@ -215,7 +215,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
     Eval_Result *lhs_res = &(lhs_condition->evaluate(eval_env, file_buffer));
     Eval_Result *rhs_res = &(rhs_condition->evaluate(eval_env, file_buffer));
 
-    if(get_data_type() == int_data_type) {
+    if(lhs_res->get_result_enum() == int_result) {
         res = new Eval_Result_Value_Int();
         res->set_value(0);
 
@@ -255,7 +255,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
         }
     }
     
-    else if(get_data_type() == double_data_type) {
+    else if(lhs_res->get_result_enum() == double_result) {
         res = new Eval_Result_Value_Int();
         res->set_value(0);
 
@@ -303,7 +303,6 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 
 Eval_Result & Logical_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
     Eval_Result *res = new Eval_Result_Value_Int();
-    Eval_Result *lhs_res;
     Eval_Result *rhs_res = &(rhs_op->evaluate(eval_env, file_buffer));
     res->set_value(0);
 
@@ -314,12 +313,13 @@ Eval_Result & Logical_Expr_Ast::evaluate(Local_Environment & eval_env, ostream &
     }
     else if (bool_op == _logical_and)
     {
-        lhs_res = &(lhs_op->evaluate(eval_env, file_buffer));
+        Eval_Result *lhs_res = &(lhs_op->evaluate(eval_env, file_buffer));
         if(lhs_res->get_int_value() && rhs_res->get_int_value())
             res->set_value(1);
     }
     else if (bool_op == _logical_or)
     {
+        Eval_Result *lhs_res = &(lhs_op->evaluate(eval_env, file_buffer));
         if(lhs_res->get_int_value() || rhs_res->get_int_value())
             res->set_value(1);
     }
@@ -340,7 +340,8 @@ Eval_Result & Selection_Statement_Ast::evaluate(Local_Environment & eval_env, os
     }
     else if(cond_res->get_int_value() == 0)
     {
-        res = &(else_part->evaluate(eval_env, file_buffer));
+        if(else_part != NULL)
+            res = &(else_part->evaluate(eval_env, file_buffer));
     }
     else{
         cerr << "cs316: Error: Line "<<lineno<<": Unknown Error in Selection Statement Encountered\n";

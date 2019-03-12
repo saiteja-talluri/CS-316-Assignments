@@ -262,6 +262,7 @@ Relational_Expr_Ast::Relational_Expr_Ast(Ast * lhs, Relational_Op rop, Ast * rhs
     rel_op = rop;
     lineno = line;
     ast_num_child = binary_arity;
+    node_data_type = int_data_type;
 }
 
 Relational_Expr_Ast::~Relational_Expr_Ast(){}
@@ -276,7 +277,6 @@ void Relational_Expr_Ast::set_data_type(Data_Type dt){
 
 bool Relational_Expr_Ast::check_ast(){
     if(lhs_condition->get_data_type() == rhs_condition->get_data_type()){
-        node_data_type = lhs_condition->get_data_type();
         return true;
     }
     else{
@@ -318,6 +318,7 @@ Logical_Expr_Ast::Logical_Expr_Ast(Ast * lhs, Logical_Op bop, Ast * rhs, int lin
     bool_op = bop;
     lineno = line;
     ast_num_child = binary_arity;
+    node_data_type = int_data_type;
 }
 
 Logical_Expr_Ast::~Logical_Expr_Ast(){}
@@ -333,7 +334,6 @@ void Logical_Expr_Ast::set_data_type(Data_Type dt){
 bool Logical_Expr_Ast::check_ast(){ /* TODO : Check it again */
     if(bool_op == _logical_not){
         if(rhs_op->check_ast()){
-            node_data_type = rhs_op->get_data_type();
             return true;
         }
         else{
@@ -344,7 +344,6 @@ bool Logical_Expr_Ast::check_ast(){ /* TODO : Check it again */
     }
     else{
         if(rhs_op->get_data_type() == lhs_op->get_data_type()){
-            node_data_type = lhs_op->get_data_type();
             return true;
         }
         else{

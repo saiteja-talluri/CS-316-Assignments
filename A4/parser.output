@@ -1,0 +1,1539 @@
+Terminals unused in grammar
+
+   BBNUM
+   RETURN
+   GREATEAR_THAN_EQUAL
+
+
+State 56 conflicts: 1 shift/reduce
+State 58 conflicts: 1 shift/reduce
+State 90 conflicts: 1 shift/reduce
+State 91 conflicts: 1 shift/reduce
+State 92 conflicts: 1 shift/reduce
+State 93 conflicts: 1 shift/reduce
+State 95 conflicts: 1 shift/reduce
+State 100 conflicts: 10 shift/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: global_variable_declaration_list procedure_definition
+
+    2 procedure_definition: VOID NAME '(' ')' '{' local_variable_declaration_list statement_list '}'
+
+    3 global_variable_declaration_list: optional_variable_declaration_list
+
+    4 local_variable_declaration_list: optional_variable_declaration_list
+
+    5 optional_variable_declaration_list: %empty
+    6                                   | variable_declaration_list
+
+    7 variable_declaration_list: variable_declaration
+    8                          | variable_declaration_list variable_declaration
+
+    9 variable_declaration: declaration ';'
+
+   10 declaration: INTEGER variable_list
+   11            | FLOAT variable_list
+
+   12 variable_list: NAME
+   13              | variable_list ',' NAME
+
+   14 statement_list: %empty
+   15               | statement_list statement
+
+   16 statement: assignment_statement
+   17          | iteration_statement
+   18          | selection_statement
+
+   19 sequence_statement: '{' statement_list '}'
+   20                   | statement
+
+   21 iteration_statement: WHILE '(' log_expression ')' sequence_statement
+   22                    | DO sequence_statement WHILE '(' log_expression ')' ';'
+
+   23 selection_statement: IF '(' log_expression ')' sequence_statement
+   24                    | IF '(' log_expression ')' sequence_statement ELSE sequence_statement
+
+   25 log_expression: log_expression AND log_expression
+   26               | log_expression OR log_expression
+   27               | NOT log_expression
+   28               | rel_expression
+   29               | '(' log_expression ')'
+
+   30 rel_expression: arith_expression EQUAL arith_expression
+   31               | arith_expression NOT_EQUAL arith_expression
+   32               | arith_expression LESS_THAN arith_expression
+   33               | arith_expression LESS_THAN_EQUAL arith_expression
+   34               | arith_expression GREATER_THAN arith_expression
+   35               | arith_expression GREATER_THAN_EQUAL arith_expression
+   36               | '(' rel_expression ')'
+
+   37 assignment_statement: NAME ASSIGN arith_expression ';'
+
+   38 arith_expression: INTEGER_NUMBER
+   39                 | DOUBLE_NUMBER
+   40                 | NAME
+   41                 | arith_expression '+' arith_expression
+   42                 | arith_expression '-' arith_expression
+   43                 | arith_expression '*' arith_expression
+   44                 | arith_expression '/' arith_expression
+   45                 | '-' arith_expression
+   46                 | log_expression '?' arith_expression ':' arith_expression
+   47                 | '(' arith_expression ')'
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 2 21 22 23 24 29 36 47
+')' (41) 2 21 22 23 24 29 36 47
+'*' (42) 43
+'+' (43) 41
+',' (44) 13
+'-' (45) 42 45
+'/' (47) 44
+':' (58) 46
+';' (59) 9 22 37
+'?' (63) 46
+'{' (123) 2 19
+'}' (125) 2 19
+error (256)
+INTEGER_NUMBER (258) 38
+DOUBLE_NUMBER (259) 39
+NAME (260) 2 12 13 37 40
+BBNUM (261)
+RETURN (262)
+INTEGER (263) 10
+FLOAT (264) 11
+ASSIGN (265) 37
+VOID (266) 2
+UMINUS (267)
+WHILE (268) 21 22
+IF (269) 23 24
+DO (270) 22
+ELSE (271) 24
+EQUAL (272) 30
+LESS_THAN (273) 32
+GREATER_THAN (274) 34
+LESS_THAN_EQUAL (275) 33
+GREATER_THAN_EQUAL (276) 35
+NOT_EQUAL (277) 31
+AND (278) 25
+OR (279) 26
+NOT (280) 27
+GREATEAR_THAN_EQUAL (281)
+
+
+Nonterminals, with rules where they appear
+
+$accept (39)
+    on left: 0
+program (40)
+    on left: 1, on right: 0
+procedure_definition (41)
+    on left: 2, on right: 1
+global_variable_declaration_list (42)
+    on left: 3, on right: 1
+local_variable_declaration_list (43)
+    on left: 4, on right: 2
+optional_variable_declaration_list (44)
+    on left: 5 6, on right: 3 4
+variable_declaration_list (45)
+    on left: 7 8, on right: 6 8
+variable_declaration (46)
+    on left: 9, on right: 7 8
+declaration (47)
+    on left: 10 11, on right: 9
+variable_list (48)
+    on left: 12 13, on right: 10 11 13
+statement_list (49)
+    on left: 14 15, on right: 2 15 19
+statement (50)
+    on left: 16 17 18, on right: 15 20
+sequence_statement (51)
+    on left: 19 20, on right: 21 22 23 24
+iteration_statement (52)
+    on left: 21 22, on right: 17
+selection_statement (53)
+    on left: 23 24, on right: 18
+log_expression (54)
+    on left: 25 26 27 28 29, on right: 21 22 23 24 25 26 27 29 46
+rel_expression (55)
+    on left: 30 31 32 33 34 35 36, on right: 28 36
+assignment_statement (56)
+    on left: 37, on right: 16
+arith_expression (57)
+    on left: 38 39 40 41 42 43 44 45 46 47, on right: 30 31 32 33 34
+    35 37 41 42 43 44 45 46 47
+
+
+State 0
+
+    0 $accept: . program $end
+
+    INTEGER  shift, and go to state 1
+    FLOAT    shift, and go to state 2
+
+    $default  reduce using rule 5 (optional_variable_declaration_list)
+
+    program                             go to state 3
+    global_variable_declaration_list    go to state 4
+    optional_variable_declaration_list  go to state 5
+    variable_declaration_list           go to state 6
+    variable_declaration                go to state 7
+    declaration                         go to state 8
+
+
+State 1
+
+   10 declaration: INTEGER . variable_list
+
+    NAME  shift, and go to state 9
+
+    variable_list  go to state 10
+
+
+State 2
+
+   11 declaration: FLOAT . variable_list
+
+    NAME  shift, and go to state 9
+
+    variable_list  go to state 11
+
+
+State 3
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 12
+
+
+State 4
+
+    1 program: global_variable_declaration_list . procedure_definition
+
+    VOID  shift, and go to state 13
+
+    procedure_definition  go to state 14
+
+
+State 5
+
+    3 global_variable_declaration_list: optional_variable_declaration_list .
+
+    $default  reduce using rule 3 (global_variable_declaration_list)
+
+
+State 6
+
+    6 optional_variable_declaration_list: variable_declaration_list .
+    8 variable_declaration_list: variable_declaration_list . variable_declaration
+
+    INTEGER  shift, and go to state 1
+    FLOAT    shift, and go to state 2
+
+    $default  reduce using rule 6 (optional_variable_declaration_list)
+
+    variable_declaration  go to state 15
+    declaration           go to state 8
+
+
+State 7
+
+    7 variable_declaration_list: variable_declaration .
+
+    $default  reduce using rule 7 (variable_declaration_list)
+
+
+State 8
+
+    9 variable_declaration: declaration . ';'
+
+    ';'  shift, and go to state 16
+
+
+State 9
+
+   12 variable_list: NAME .
+
+    $default  reduce using rule 12 (variable_list)
+
+
+State 10
+
+   10 declaration: INTEGER variable_list .
+   13 variable_list: variable_list . ',' NAME
+
+    ','  shift, and go to state 17
+
+    $default  reduce using rule 10 (declaration)
+
+
+State 11
+
+   11 declaration: FLOAT variable_list .
+   13 variable_list: variable_list . ',' NAME
+
+    ','  shift, and go to state 17
+
+    $default  reduce using rule 11 (declaration)
+
+
+State 12
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 13
+
+    2 procedure_definition: VOID . NAME '(' ')' '{' local_variable_declaration_list statement_list '}'
+
+    NAME  shift, and go to state 18
+
+
+State 14
+
+    1 program: global_variable_declaration_list procedure_definition .
+
+    $default  reduce using rule 1 (program)
+
+
+State 15
+
+    8 variable_declaration_list: variable_declaration_list variable_declaration .
+
+    $default  reduce using rule 8 (variable_declaration_list)
+
+
+State 16
+
+    9 variable_declaration: declaration ';' .
+
+    $default  reduce using rule 9 (variable_declaration)
+
+
+State 17
+
+   13 variable_list: variable_list ',' . NAME
+
+    NAME  shift, and go to state 19
+
+
+State 18
+
+    2 procedure_definition: VOID NAME . '(' ')' '{' local_variable_declaration_list statement_list '}'
+
+    '('  shift, and go to state 20
+
+
+State 19
+
+   13 variable_list: variable_list ',' NAME .
+
+    $default  reduce using rule 13 (variable_list)
+
+
+State 20
+
+    2 procedure_definition: VOID NAME '(' . ')' '{' local_variable_declaration_list statement_list '}'
+
+    ')'  shift, and go to state 21
+
+
+State 21
+
+    2 procedure_definition: VOID NAME '(' ')' . '{' local_variable_declaration_list statement_list '}'
+
+    '{'  shift, and go to state 22
+
+
+State 22
+
+    2 procedure_definition: VOID NAME '(' ')' '{' . local_variable_declaration_list statement_list '}'
+
+    INTEGER  shift, and go to state 1
+    FLOAT    shift, and go to state 2
+
+    $default  reduce using rule 5 (optional_variable_declaration_list)
+
+    local_variable_declaration_list     go to state 23
+    optional_variable_declaration_list  go to state 24
+    variable_declaration_list           go to state 6
+    variable_declaration                go to state 7
+    declaration                         go to state 8
+
+
+State 23
+
+    2 procedure_definition: VOID NAME '(' ')' '{' local_variable_declaration_list . statement_list '}'
+
+    $default  reduce using rule 14 (statement_list)
+
+    statement_list  go to state 25
+
+
+State 24
+
+    4 local_variable_declaration_list: optional_variable_declaration_list .
+
+    $default  reduce using rule 4 (local_variable_declaration_list)
+
+
+State 25
+
+    2 procedure_definition: VOID NAME '(' ')' '{' local_variable_declaration_list statement_list . '}'
+   15 statement_list: statement_list . statement
+
+    NAME   shift, and go to state 26
+    WHILE  shift, and go to state 27
+    IF     shift, and go to state 28
+    DO     shift, and go to state 29
+    '}'    shift, and go to state 30
+
+    statement             go to state 31
+    iteration_statement   go to state 32
+    selection_statement   go to state 33
+    assignment_statement  go to state 34
+
+
+State 26
+
+   37 assignment_statement: NAME . ASSIGN arith_expression ';'
+
+    ASSIGN  shift, and go to state 35
+
+
+State 27
+
+   21 iteration_statement: WHILE . '(' log_expression ')' sequence_statement
+
+    '('  shift, and go to state 36
+
+
+State 28
+
+   23 selection_statement: IF . '(' log_expression ')' sequence_statement
+   24                    | IF . '(' log_expression ')' sequence_statement ELSE sequence_statement
+
+    '('  shift, and go to state 37
+
+
+State 29
+
+   22 iteration_statement: DO . sequence_statement WHILE '(' log_expression ')' ';'
+
+    NAME   shift, and go to state 26
+    WHILE  shift, and go to state 27
+    IF     shift, and go to state 28
+    DO     shift, and go to state 29
+    '{'    shift, and go to state 38
+
+    statement             go to state 39
+    sequence_statement    go to state 40
+    iteration_statement   go to state 32
+    selection_statement   go to state 33
+    assignment_statement  go to state 34
+
+
+State 30
+
+    2 procedure_definition: VOID NAME '(' ')' '{' local_variable_declaration_list statement_list '}' .
+
+    $default  reduce using rule 2 (procedure_definition)
+
+
+State 31
+
+   15 statement_list: statement_list statement .
+
+    $default  reduce using rule 15 (statement_list)
+
+
+State 32
+
+   17 statement: iteration_statement .
+
+    $default  reduce using rule 17 (statement)
+
+
+State 33
+
+   18 statement: selection_statement .
+
+    $default  reduce using rule 18 (statement)
+
+
+State 34
+
+   16 statement: assignment_statement .
+
+    $default  reduce using rule 16 (statement)
+
+
+State 35
+
+   37 assignment_statement: NAME ASSIGN . arith_expression ';'
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 47
+    rel_expression    go to state 48
+    arith_expression  go to state 49
+
+
+State 36
+
+   21 iteration_statement: WHILE '(' . log_expression ')' sequence_statement
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 50
+    rel_expression    go to state 48
+    arith_expression  go to state 51
+
+
+State 37
+
+   23 selection_statement: IF '(' . log_expression ')' sequence_statement
+   24                    | IF '(' . log_expression ')' sequence_statement ELSE sequence_statement
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 52
+    rel_expression    go to state 48
+    arith_expression  go to state 51
+
+
+State 38
+
+   19 sequence_statement: '{' . statement_list '}'
+
+    $default  reduce using rule 14 (statement_list)
+
+    statement_list  go to state 53
+
+
+State 39
+
+   20 sequence_statement: statement .
+
+    $default  reduce using rule 20 (sequence_statement)
+
+
+State 40
+
+   22 iteration_statement: DO sequence_statement . WHILE '(' log_expression ')' ';'
+
+    WHILE  shift, and go to state 54
+
+
+State 41
+
+   38 arith_expression: INTEGER_NUMBER .
+
+    $default  reduce using rule 38 (arith_expression)
+
+
+State 42
+
+   39 arith_expression: DOUBLE_NUMBER .
+
+    $default  reduce using rule 39 (arith_expression)
+
+
+State 43
+
+   40 arith_expression: NAME .
+
+    $default  reduce using rule 40 (arith_expression)
+
+
+State 44
+
+   27 log_expression: NOT . log_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 55
+    rel_expression    go to state 48
+    arith_expression  go to state 51
+
+
+State 45
+
+   45 arith_expression: '-' . arith_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 47
+    rel_expression    go to state 48
+    arith_expression  go to state 56
+
+
+State 46
+
+   29 log_expression: '(' . log_expression ')'
+   36 rel_expression: '(' . rel_expression ')'
+   47 arith_expression: '(' . arith_expression ')'
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 57
+    rel_expression    go to state 58
+    arith_expression  go to state 59
+
+
+State 47
+
+   25 log_expression: log_expression . AND log_expression
+   26               | log_expression . OR log_expression
+   46 arith_expression: log_expression . '?' arith_expression ':' arith_expression
+
+    AND  shift, and go to state 60
+    OR   shift, and go to state 61
+    '?'  shift, and go to state 62
+
+
+State 48
+
+   28 log_expression: rel_expression .
+
+    $default  reduce using rule 28 (log_expression)
+
+
+State 49
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   37 assignment_statement: NAME ASSIGN arith_expression . ';'
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+
+    EQUAL               shift, and go to state 63
+    LESS_THAN           shift, and go to state 64
+    GREATER_THAN        shift, and go to state 65
+    LESS_THAN_EQUAL     shift, and go to state 66
+    GREATER_THAN_EQUAL  shift, and go to state 67
+    NOT_EQUAL           shift, and go to state 68
+    '+'                 shift, and go to state 69
+    '-'                 shift, and go to state 70
+    '*'                 shift, and go to state 71
+    '/'                 shift, and go to state 72
+    ';'                 shift, and go to state 73
+
+
+State 50
+
+   21 iteration_statement: WHILE '(' log_expression . ')' sequence_statement
+   25 log_expression: log_expression . AND log_expression
+   26               | log_expression . OR log_expression
+   46 arith_expression: log_expression . '?' arith_expression ':' arith_expression
+
+    AND  shift, and go to state 60
+    OR   shift, and go to state 61
+    '?'  shift, and go to state 62
+    ')'  shift, and go to state 74
+
+
+State 51
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+
+    EQUAL               shift, and go to state 63
+    LESS_THAN           shift, and go to state 64
+    GREATER_THAN        shift, and go to state 65
+    LESS_THAN_EQUAL     shift, and go to state 66
+    GREATER_THAN_EQUAL  shift, and go to state 67
+    NOT_EQUAL           shift, and go to state 68
+    '+'                 shift, and go to state 69
+    '-'                 shift, and go to state 70
+    '*'                 shift, and go to state 71
+    '/'                 shift, and go to state 72
+
+
+State 52
+
+   23 selection_statement: IF '(' log_expression . ')' sequence_statement
+   24                    | IF '(' log_expression . ')' sequence_statement ELSE sequence_statement
+   25 log_expression: log_expression . AND log_expression
+   26               | log_expression . OR log_expression
+   46 arith_expression: log_expression . '?' arith_expression ':' arith_expression
+
+    AND  shift, and go to state 60
+    OR   shift, and go to state 61
+    '?'  shift, and go to state 62
+    ')'  shift, and go to state 75
+
+
+State 53
+
+   15 statement_list: statement_list . statement
+   19 sequence_statement: '{' statement_list . '}'
+
+    NAME   shift, and go to state 26
+    WHILE  shift, and go to state 27
+    IF     shift, and go to state 28
+    DO     shift, and go to state 29
+    '}'    shift, and go to state 76
+
+    statement             go to state 31
+    iteration_statement   go to state 32
+    selection_statement   go to state 33
+    assignment_statement  go to state 34
+
+
+State 54
+
+   22 iteration_statement: DO sequence_statement WHILE . '(' log_expression ')' ';'
+
+    '('  shift, and go to state 77
+
+
+State 55
+
+   25 log_expression: log_expression . AND log_expression
+   26               | log_expression . OR log_expression
+   27               | NOT log_expression .
+   46 arith_expression: log_expression . '?' arith_expression ':' arith_expression
+
+    $default  reduce using rule 27 (log_expression)
+
+
+State 56
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+   45                 | '-' arith_expression .
+
+    GREATER_THAN_EQUAL  shift, and go to state 67
+
+    GREATER_THAN_EQUAL  [reduce using rule 45 (arith_expression)]
+    $default            reduce using rule 45 (arith_expression)
+
+
+State 57
+
+   25 log_expression: log_expression . AND log_expression
+   26               | log_expression . OR log_expression
+   29               | '(' log_expression . ')'
+   46 arith_expression: log_expression . '?' arith_expression ':' arith_expression
+
+    AND  shift, and go to state 60
+    OR   shift, and go to state 61
+    '?'  shift, and go to state 62
+    ')'  shift, and go to state 78
+
+
+State 58
+
+   28 log_expression: rel_expression .
+   36 rel_expression: '(' rel_expression . ')'
+
+    ')'  shift, and go to state 79
+
+    ')'       [reduce using rule 28 (log_expression)]
+    $default  reduce using rule 28 (log_expression)
+
+
+State 59
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+   47                 | '(' arith_expression . ')'
+
+    EQUAL               shift, and go to state 63
+    LESS_THAN           shift, and go to state 64
+    GREATER_THAN        shift, and go to state 65
+    LESS_THAN_EQUAL     shift, and go to state 66
+    GREATER_THAN_EQUAL  shift, and go to state 67
+    NOT_EQUAL           shift, and go to state 68
+    '+'                 shift, and go to state 69
+    '-'                 shift, and go to state 70
+    '*'                 shift, and go to state 71
+    '/'                 shift, and go to state 72
+    ')'                 shift, and go to state 80
+
+
+State 60
+
+   25 log_expression: log_expression AND . log_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 81
+    rel_expression    go to state 48
+    arith_expression  go to state 51
+
+
+State 61
+
+   26 log_expression: log_expression OR . log_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 82
+    rel_expression    go to state 48
+    arith_expression  go to state 51
+
+
+State 62
+
+   46 arith_expression: log_expression '?' . arith_expression ':' arith_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 47
+    rel_expression    go to state 48
+    arith_expression  go to state 83
+
+
+State 63
+
+   30 rel_expression: arith_expression EQUAL . arith_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 47
+    rel_expression    go to state 48
+    arith_expression  go to state 84
+
+
+State 64
+
+   32 rel_expression: arith_expression LESS_THAN . arith_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 47
+    rel_expression    go to state 48
+    arith_expression  go to state 85
+
+
+State 65
+
+   34 rel_expression: arith_expression GREATER_THAN . arith_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 47
+    rel_expression    go to state 48
+    arith_expression  go to state 86
+
+
+State 66
+
+   33 rel_expression: arith_expression LESS_THAN_EQUAL . arith_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 47
+    rel_expression    go to state 48
+    arith_expression  go to state 87
+
+
+State 67
+
+   35 rel_expression: arith_expression GREATER_THAN_EQUAL . arith_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 47
+    rel_expression    go to state 48
+    arith_expression  go to state 88
+
+
+State 68
+
+   31 rel_expression: arith_expression NOT_EQUAL . arith_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 47
+    rel_expression    go to state 48
+    arith_expression  go to state 89
+
+
+State 69
+
+   41 arith_expression: arith_expression '+' . arith_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 47
+    rel_expression    go to state 48
+    arith_expression  go to state 90
+
+
+State 70
+
+   42 arith_expression: arith_expression '-' . arith_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 47
+    rel_expression    go to state 48
+    arith_expression  go to state 91
+
+
+State 71
+
+   43 arith_expression: arith_expression '*' . arith_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 47
+    rel_expression    go to state 48
+    arith_expression  go to state 92
+
+
+State 72
+
+   44 arith_expression: arith_expression '/' . arith_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 47
+    rel_expression    go to state 48
+    arith_expression  go to state 93
+
+
+State 73
+
+   37 assignment_statement: NAME ASSIGN arith_expression ';' .
+
+    $default  reduce using rule 37 (assignment_statement)
+
+
+State 74
+
+   21 iteration_statement: WHILE '(' log_expression ')' . sequence_statement
+
+    NAME   shift, and go to state 26
+    WHILE  shift, and go to state 27
+    IF     shift, and go to state 28
+    DO     shift, and go to state 29
+    '{'    shift, and go to state 38
+
+    statement             go to state 39
+    sequence_statement    go to state 94
+    iteration_statement   go to state 32
+    selection_statement   go to state 33
+    assignment_statement  go to state 34
+
+
+State 75
+
+   23 selection_statement: IF '(' log_expression ')' . sequence_statement
+   24                    | IF '(' log_expression ')' . sequence_statement ELSE sequence_statement
+
+    NAME   shift, and go to state 26
+    WHILE  shift, and go to state 27
+    IF     shift, and go to state 28
+    DO     shift, and go to state 29
+    '{'    shift, and go to state 38
+
+    statement             go to state 39
+    sequence_statement    go to state 95
+    iteration_statement   go to state 32
+    selection_statement   go to state 33
+    assignment_statement  go to state 34
+
+
+State 76
+
+   19 sequence_statement: '{' statement_list '}' .
+
+    $default  reduce using rule 19 (sequence_statement)
+
+
+State 77
+
+   22 iteration_statement: DO sequence_statement WHILE '(' . log_expression ')' ';'
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 96
+    rel_expression    go to state 48
+    arith_expression  go to state 51
+
+
+State 78
+
+   29 log_expression: '(' log_expression ')' .
+
+    $default  reduce using rule 29 (log_expression)
+
+
+State 79
+
+   36 rel_expression: '(' rel_expression ')' .
+
+    $default  reduce using rule 36 (rel_expression)
+
+
+State 80
+
+   47 arith_expression: '(' arith_expression ')' .
+
+    $default  reduce using rule 47 (arith_expression)
+
+
+State 81
+
+   25 log_expression: log_expression . AND log_expression
+   25               | log_expression AND log_expression .
+   26               | log_expression . OR log_expression
+   46 arith_expression: log_expression . '?' arith_expression ':' arith_expression
+
+    $default  reduce using rule 25 (log_expression)
+
+
+State 82
+
+   25 log_expression: log_expression . AND log_expression
+   26               | log_expression . OR log_expression
+   26               | log_expression OR log_expression .
+   46 arith_expression: log_expression . '?' arith_expression ':' arith_expression
+
+    AND  shift, and go to state 60
+
+    $default  reduce using rule 26 (log_expression)
+
+
+State 83
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+   46                 | log_expression '?' arith_expression . ':' arith_expression
+
+    EQUAL               shift, and go to state 63
+    LESS_THAN           shift, and go to state 64
+    GREATER_THAN        shift, and go to state 65
+    LESS_THAN_EQUAL     shift, and go to state 66
+    GREATER_THAN_EQUAL  shift, and go to state 67
+    NOT_EQUAL           shift, and go to state 68
+    '+'                 shift, and go to state 69
+    '-'                 shift, and go to state 70
+    '*'                 shift, and go to state 71
+    '/'                 shift, and go to state 72
+    ':'                 shift, and go to state 97
+
+
+State 84
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   30               | arith_expression EQUAL arith_expression .
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+
+    EQUAL               shift, and go to state 63
+    LESS_THAN           shift, and go to state 64
+    GREATER_THAN        shift, and go to state 65
+    LESS_THAN_EQUAL     shift, and go to state 66
+    GREATER_THAN_EQUAL  shift, and go to state 67
+    NOT_EQUAL           shift, and go to state 68
+    '+'                 shift, and go to state 69
+    '-'                 shift, and go to state 70
+    '*'                 shift, and go to state 71
+    '/'                 shift, and go to state 72
+
+    $default  reduce using rule 30 (rel_expression)
+
+
+State 85
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   32               | arith_expression LESS_THAN arith_expression .
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+
+    EQUAL               shift, and go to state 63
+    LESS_THAN           shift, and go to state 64
+    GREATER_THAN        shift, and go to state 65
+    LESS_THAN_EQUAL     shift, and go to state 66
+    GREATER_THAN_EQUAL  shift, and go to state 67
+    NOT_EQUAL           shift, and go to state 68
+    '+'                 shift, and go to state 69
+    '-'                 shift, and go to state 70
+    '*'                 shift, and go to state 71
+    '/'                 shift, and go to state 72
+
+    $default  reduce using rule 32 (rel_expression)
+
+
+State 86
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   34               | arith_expression GREATER_THAN arith_expression .
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+
+    EQUAL               shift, and go to state 63
+    LESS_THAN           shift, and go to state 64
+    GREATER_THAN        shift, and go to state 65
+    LESS_THAN_EQUAL     shift, and go to state 66
+    GREATER_THAN_EQUAL  shift, and go to state 67
+    NOT_EQUAL           shift, and go to state 68
+    '+'                 shift, and go to state 69
+    '-'                 shift, and go to state 70
+    '*'                 shift, and go to state 71
+    '/'                 shift, and go to state 72
+
+    $default  reduce using rule 34 (rel_expression)
+
+
+State 87
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   33               | arith_expression LESS_THAN_EQUAL arith_expression .
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+
+    EQUAL               shift, and go to state 63
+    LESS_THAN           shift, and go to state 64
+    GREATER_THAN        shift, and go to state 65
+    LESS_THAN_EQUAL     shift, and go to state 66
+    GREATER_THAN_EQUAL  shift, and go to state 67
+    NOT_EQUAL           shift, and go to state 68
+    '+'                 shift, and go to state 69
+    '-'                 shift, and go to state 70
+    '*'                 shift, and go to state 71
+    '/'                 shift, and go to state 72
+
+    $default  reduce using rule 33 (rel_expression)
+
+
+State 88
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   35               | arith_expression GREATER_THAN_EQUAL arith_expression .
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+
+    EQUAL               shift, and go to state 63
+    LESS_THAN           shift, and go to state 64
+    GREATER_THAN        shift, and go to state 65
+    LESS_THAN_EQUAL     shift, and go to state 66
+    GREATER_THAN_EQUAL  shift, and go to state 67
+    NOT_EQUAL           shift, and go to state 68
+    '+'                 shift, and go to state 69
+    '-'                 shift, and go to state 70
+    '*'                 shift, and go to state 71
+    '/'                 shift, and go to state 72
+
+    $default  reduce using rule 35 (rel_expression)
+
+
+State 89
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   31               | arith_expression NOT_EQUAL arith_expression .
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+
+    EQUAL               shift, and go to state 63
+    LESS_THAN           shift, and go to state 64
+    GREATER_THAN        shift, and go to state 65
+    LESS_THAN_EQUAL     shift, and go to state 66
+    GREATER_THAN_EQUAL  shift, and go to state 67
+    NOT_EQUAL           shift, and go to state 68
+    '+'                 shift, and go to state 69
+    '-'                 shift, and go to state 70
+    '*'                 shift, and go to state 71
+    '/'                 shift, and go to state 72
+
+    $default  reduce using rule 31 (rel_expression)
+
+
+State 90
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   41 arith_expression: arith_expression . '+' arith_expression
+   41                 | arith_expression '+' arith_expression .
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+
+    GREATER_THAN_EQUAL  shift, and go to state 67
+    '*'                 shift, and go to state 71
+    '/'                 shift, and go to state 72
+
+    GREATER_THAN_EQUAL  [reduce using rule 41 (arith_expression)]
+    $default            reduce using rule 41 (arith_expression)
+
+
+State 91
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   42                 | arith_expression '-' arith_expression .
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+
+    GREATER_THAN_EQUAL  shift, and go to state 67
+    '*'                 shift, and go to state 71
+    '/'                 shift, and go to state 72
+
+    GREATER_THAN_EQUAL  [reduce using rule 42 (arith_expression)]
+    $default            reduce using rule 42 (arith_expression)
+
+
+State 92
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   43                 | arith_expression '*' arith_expression .
+   44                 | arith_expression . '/' arith_expression
+
+    GREATER_THAN_EQUAL  shift, and go to state 67
+
+    GREATER_THAN_EQUAL  [reduce using rule 43 (arith_expression)]
+    $default            reduce using rule 43 (arith_expression)
+
+
+State 93
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+   44                 | arith_expression '/' arith_expression .
+
+    GREATER_THAN_EQUAL  shift, and go to state 67
+
+    GREATER_THAN_EQUAL  [reduce using rule 44 (arith_expression)]
+    $default            reduce using rule 44 (arith_expression)
+
+
+State 94
+
+   21 iteration_statement: WHILE '(' log_expression ')' sequence_statement .
+
+    $default  reduce using rule 21 (iteration_statement)
+
+
+State 95
+
+   23 selection_statement: IF '(' log_expression ')' sequence_statement .
+   24                    | IF '(' log_expression ')' sequence_statement . ELSE sequence_statement
+
+    ELSE  shift, and go to state 98
+
+    ELSE      [reduce using rule 23 (selection_statement)]
+    $default  reduce using rule 23 (selection_statement)
+
+
+State 96
+
+   22 iteration_statement: DO sequence_statement WHILE '(' log_expression . ')' ';'
+   25 log_expression: log_expression . AND log_expression
+   26               | log_expression . OR log_expression
+   46 arith_expression: log_expression . '?' arith_expression ':' arith_expression
+
+    AND  shift, and go to state 60
+    OR   shift, and go to state 61
+    '?'  shift, and go to state 62
+    ')'  shift, and go to state 99
+
+
+State 97
+
+   46 arith_expression: log_expression '?' arith_expression ':' . arith_expression
+
+    INTEGER_NUMBER  shift, and go to state 41
+    DOUBLE_NUMBER   shift, and go to state 42
+    NAME            shift, and go to state 43
+    NOT             shift, and go to state 44
+    '-'             shift, and go to state 45
+    '('             shift, and go to state 46
+
+    log_expression    go to state 47
+    rel_expression    go to state 48
+    arith_expression  go to state 100
+
+
+State 98
+
+   24 selection_statement: IF '(' log_expression ')' sequence_statement ELSE . sequence_statement
+
+    NAME   shift, and go to state 26
+    WHILE  shift, and go to state 27
+    IF     shift, and go to state 28
+    DO     shift, and go to state 29
+    '{'    shift, and go to state 38
+
+    statement             go to state 39
+    sequence_statement    go to state 101
+    iteration_statement   go to state 32
+    selection_statement   go to state 33
+    assignment_statement  go to state 34
+
+
+State 99
+
+   22 iteration_statement: DO sequence_statement WHILE '(' log_expression ')' . ';'
+
+    ';'  shift, and go to state 102
+
+
+State 100
+
+   30 rel_expression: arith_expression . EQUAL arith_expression
+   31               | arith_expression . NOT_EQUAL arith_expression
+   32               | arith_expression . LESS_THAN arith_expression
+   33               | arith_expression . LESS_THAN_EQUAL arith_expression
+   34               | arith_expression . GREATER_THAN arith_expression
+   35               | arith_expression . GREATER_THAN_EQUAL arith_expression
+   41 arith_expression: arith_expression . '+' arith_expression
+   42                 | arith_expression . '-' arith_expression
+   43                 | arith_expression . '*' arith_expression
+   44                 | arith_expression . '/' arith_expression
+   46                 | log_expression '?' arith_expression ':' arith_expression .
+
+    EQUAL               shift, and go to state 63
+    LESS_THAN           shift, and go to state 64
+    GREATER_THAN        shift, and go to state 65
+    LESS_THAN_EQUAL     shift, and go to state 66
+    GREATER_THAN_EQUAL  shift, and go to state 67
+    NOT_EQUAL           shift, and go to state 68
+    '+'                 shift, and go to state 69
+    '-'                 shift, and go to state 70
+    '*'                 shift, and go to state 71
+    '/'                 shift, and go to state 72
+
+    EQUAL               [reduce using rule 46 (arith_expression)]
+    LESS_THAN           [reduce using rule 46 (arith_expression)]
+    GREATER_THAN        [reduce using rule 46 (arith_expression)]
+    LESS_THAN_EQUAL     [reduce using rule 46 (arith_expression)]
+    GREATER_THAN_EQUAL  [reduce using rule 46 (arith_expression)]
+    NOT_EQUAL           [reduce using rule 46 (arith_expression)]
+    '+'                 [reduce using rule 46 (arith_expression)]
+    '-'                 [reduce using rule 46 (arith_expression)]
+    '*'                 [reduce using rule 46 (arith_expression)]
+    '/'                 [reduce using rule 46 (arith_expression)]
+    $default            reduce using rule 46 (arith_expression)
+
+
+State 101
+
+   24 selection_statement: IF '(' log_expression ')' sequence_statement ELSE sequence_statement .
+
+    $default  reduce using rule 24 (selection_statement)
+
+
+State 102
+
+   22 iteration_statement: DO sequence_statement WHILE '(' log_expression ')' ';' .
+
+    $default  reduce using rule 22 (iteration_statement)

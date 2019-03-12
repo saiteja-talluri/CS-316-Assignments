@@ -920,11 +920,12 @@ YY_RULE_SETUP
 #line 105 "scanner.l"
 {
 				store_token_name("ELSE", yytext, yylineno);
+				return ELSE;
 			}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 111 "scanner.l"
+#line 112 "scanner.l"
 {
 				/* cout<<yytext<<endl; */
 				store_token_name("NAME", yytext, yylineno);
@@ -936,7 +937,7 @@ YY_RULE_SETUP
 /*relops*/
 case 14:
 YY_RULE_SETUP
-#line 121 "scanner.l"
+#line 122 "scanner.l"
 {
 				store_token_name("EQUAL", yytext, yylineno);
 				return EQUAL;
@@ -944,7 +945,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 126 "scanner.l"
+#line 127 "scanner.l"
 {
 				store_token_name("LESS_THAN", yytext, yylineno);
 				return LESS_THAN;
@@ -952,7 +953,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 131 "scanner.l"
+#line 132 "scanner.l"
 {
 				store_token_name("GREATER_THAN", yytext, yylineno);
 				return GREATER_THAN;
@@ -960,7 +961,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 136 "scanner.l"
+#line 137 "scanner.l"
 {
 				store_token_name("LESS_THAN_EQUAL", yytext, yylineno);
 				return LESS_THAN_EQUAL;
@@ -968,7 +969,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 141 "scanner.l"
+#line 142 "scanner.l"
 {
 				store_token_name("GREATER_THAN_EQUAL", yytext, yylineno);
 				return GREATER_THAN_EQUAL;
@@ -976,7 +977,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 146 "scanner.l"
+#line 147 "scanner.l"
 {
 				store_token_name("NOT_EQUAL", yytext, yylineno);
 				return NOT_EQUAL;
@@ -985,7 +986,7 @@ YY_RULE_SETUP
 /*logical ops*/
 case 20:
 YY_RULE_SETUP
-#line 152 "scanner.l"
+#line 153 "scanner.l"
 {
 				store_token_name("AND", yytext, yylineno);
 				return AND;
@@ -993,7 +994,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 157 "scanner.l"
+#line 158 "scanner.l"
 {
 				store_token_name("OR", yytext, yylineno);
 				return OR;
@@ -1001,7 +1002,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 162 "scanner.l"
+#line 163 "scanner.l"
 {
 				store_token_name("NOT", yytext, yylineno);
 				return NOT;
@@ -1009,7 +1010,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 170 "scanner.l"
+#line 171 "scanner.l"
 {
 				/* cout<<yytext<<endl; */
 				store_token_name("ARITHOP",yytext,yylineno);
@@ -1018,7 +1019,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 178 "scanner.l"
+#line 179 "scanner.l"
 {
 				/* cout<<yytext<<endl; */
 				store_token_name("META CHAR",yytext,yylineno);
@@ -1028,14 +1029,14 @@ YY_RULE_SETUP
 case 25:
 /* rule 25 can match eol */
 YY_RULE_SETUP
-#line 184 "scanner.l"
+#line 185 "scanner.l"
 {
 				
 			}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 188 "scanner.l"
+#line 189 "scanner.l"
 {
 				cerr<<"cs316: Error\n";
 				exit(1);
@@ -1044,10 +1045,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 194 "scanner.l"
+#line 195 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1051 "lex.yy.c"
+#line 1052 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2060,6 +2061,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 194 "scanner.l"
+#line 195 "scanner.l"
 
 
