@@ -1037,16 +1037,17 @@ case 26:
 YY_RULE_SETUP
 #line 188 "scanner.l"
 {
-				cout<<"cs316: Error\n";
+				cerr<<"cs316: Error\n";
+				exit(1);
 				/* All other characters are ignored */ 
 			}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 193 "scanner.l"
+#line 194 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1050 "lex.yy.c"
+#line 1051 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2059,6 +2060,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 193 "scanner.l"
+#line 194 "scanner.l"
 
 

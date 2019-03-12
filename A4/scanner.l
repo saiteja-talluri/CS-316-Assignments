@@ -186,7 +186,8 @@ not !
 			}
 
 {char}		{
-				cout<<"cs316: Error\n";
+				cerr<<"cs316: Error\n";
+				exit(1);
 				/* All other characters are ignored */ 
 			}
 

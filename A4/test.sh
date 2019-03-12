@@ -42,13 +42,13 @@ for filename in "$testdir"/*.c; do
 	
 
 	
-	if [ "$DIFF1" != "" ]
-	then
-		echo "spim code comparison failed on $filename. Did not run further tests (lexicographic ordering)."
-		echo "Showing diff:"
-		echo "$DIFF1"
-		exit
-	fi
+	# if [ "$DIFF1" != "" ]
+	# then
+	# 	echo "spim code comparison failed on $filename. Did not run further tests (lexicographic ordering)."
+	# 	echo "Showing diff:"
+	# 	echo "$DIFF1"
+	# 	exit
+	# fi
 
 	if [ "$DIFF2" != "" ]
 	then

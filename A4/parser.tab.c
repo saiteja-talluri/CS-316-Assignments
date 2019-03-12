@@ -474,7 +474,7 @@ static const yytype_uint16 yyrline[] =
      129,   135,   142,   151,   157,   167,   170,   175,   182,   186,
      206,   225,   230,   235,   256,   270,   349,   354,   359,   364,
      369,   375,   380,   385,   390,   395,   400,   405,   414,   434,
-     438,   442,   455,   461,   467,   473,   479,   486,   490
+     438,   442,   455,   461,   467,   473,   479,   486,   493
 };
 #endif
 
@@ -1809,20 +1809,23 @@ yyreduce:
 #line 487 "parser.y" /* yacc.c:1646  */
     {
 								(yyval.ast) = new Conditional_Expression_Ast((yyvsp[-4].ast), (yyvsp[-2].ast), (yyvsp[0].ast), yylineno);
+								(*(yyvsp[-4].ast)).check_ast();
+								(*(yyval.ast)).check_ast();
+
 							}
-#line 1814 "parser.tab.c" /* yacc.c:1646  */
+#line 1817 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 491 "parser.y" /* yacc.c:1646  */
+#line 494 "parser.y" /* yacc.c:1646  */
     {
 								(yyval.ast) = (yyvsp[-1].ast);
 							}
-#line 1822 "parser.tab.c" /* yacc.c:1646  */
+#line 1825 "parser.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1826 "parser.tab.c" /* yacc.c:1646  */
+#line 1829 "parser.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2050,4 +2053,4 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 495 "parser.y" /* yacc.c:1906  */
+#line 498 "parser.y" /* yacc.c:1906  */
