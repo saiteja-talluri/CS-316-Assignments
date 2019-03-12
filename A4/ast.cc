@@ -51,7 +51,7 @@ bool Assignment_Ast::check_ast(){
     else{
         cerr << "cs316: Error: Line "<<lineno<<": Data Type not compatabile in the assignment\n";
         exit(EXIT_FAILURE);
-        return false;   /* TODO : Should exit here right? */
+        return false;
     }
 }
 
@@ -238,7 +238,7 @@ Conditional_Expression_Ast::~Conditional_Expression_Ast(){}
 void Conditional_Expression_Ast::print(ostream & file_buffer){
     file_buffer << "\n         Cond:\n            IF_ELSE";
     cond->print(file_buffer);
-    file_buffer << ")\n            LHS (";
+    file_buffer << "\n            LHS (";
     lhs->print(file_buffer);
     file_buffer << ")\n            RHS (";
     rhs->print(file_buffer);

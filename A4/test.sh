@@ -40,15 +40,22 @@ for filename in "$testdir"/*.c; do
 	DIFF6=$(diff "$filename.toks" "$filename.mytoks")
 	DIFF7=$(diff "$filename.sym" "$filename.mysym")
 	
-
+	if [ "$DIFF5" != "" ]
+	then
+		echo "eval comparison failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "Showing diff:"
+		echo "$DIFF5"
+		exit
+	fi
 	
-	# if [ "$DIFF1" != "" ]
-	# then
-	# 	echo "spim code comparison failed on $filename. Did not run further tests (lexicographic ordering)."
-	# 	echo "Showing diff:"
-	# 	echo "$DIFF1"
-	# 	exit
-	# fi
+	if [ "$DIFF1" != "" ]
+	then
+		# echo "spim code comparison failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "continuing with further tests"
+		echo "Showing diff:"
+		echo "$DIFF1"
+		# exit
+	fi
 
 	if [ "$DIFF2" != "" ]
 	then
@@ -78,13 +85,7 @@ for filename in "$testdir"/*.c; do
 		exit
 	fi
 
-	if [ "$DIFF5" != "" ]
-	then
-		echo "eval comparison failed on $filename. Did not run further tests (lexicographic ordering)."
-		echo "Showing diff:"
-		echo "$DIFF5"
-		exit
-	fi
+	
 
 	if [ "$DIFF6" != "" ]
 	then
@@ -93,7 +94,7 @@ for filename in "$testdir"/*.c; do
 			echo "tokens comparison failed on $filename even though myerr is empty. Did not run further tests (lexicographic ordering)."
 			exit
 		fi
-		echo "tokens comparison failed on $filename, but myerr is empty. Continuing tests"
+		echo "tokens comparison failed on $filename, but myerr is non-empty. Continuing tests"
 		echo ""
 		# echo "Showing diff:"
 		# echo "$DIFF6"
