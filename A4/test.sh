@@ -73,16 +73,16 @@ for filename in "$testdir"/*.c; do
 		echo "icode comparison failed on $filename. Continuing further tests."
 		echo "Showing diff:"
 		echo "$DIFF3"
-		exit
+		# exit
 	fi
 
 
 	if [ "$DIFF4" != "" ]
 	then
-		echo "ast comparison failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "ast comparison failed on $filename. Continuing further tests."
 		echo "Showing diff:"
 		echo "$DIFF4"
-		exit
+		# exit
 	fi
 
 	
