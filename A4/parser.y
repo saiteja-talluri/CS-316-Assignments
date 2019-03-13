@@ -424,7 +424,8 @@ arith_expression		: 	INTEGER_NUMBER
 								(*$$).check_ast();
 								(*$$).set_data_type((*$2).get_data_type());
 							}
-							|	log_expression '?' arith_expression ':' arith_expression	/*ternary operator*/
+							/*causing shift reduce errors */
+							|	log_expression '?' arith_expression ':' arith_expression	
 							{
 								$$ = new Conditional_Expression_Ast($1, $3, $5, yylineno);
 								(*$1).check_ast();

@@ -276,7 +276,7 @@ void Relational_Expr_Ast::set_data_type(Data_Type dt){
 
 bool Relational_Expr_Ast::check_ast(){
     if(lhs_condition->get_data_type() == rhs_condition->get_data_type()){
-        node_data_type = lhs_condition->get_data_type();
+        node_data_type = int_data_type;
         return true;
     }
     else{

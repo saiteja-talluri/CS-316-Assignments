@@ -11,5 +11,27 @@ void main() {
     {
         b=4;
     }
+
+    if(i>j)
+        b=5;
+    else
+        b=4;
     
+    if(i>j)
+        {b=5;}
+    else
+        b=4;
+    
+    if(i>j)
+        b=5;
+    else
+        {b=4;}
+    
+    if(i>j)
+        if(i>j)
+            b=4;
+        else
+            b=5;
+    else
+        b=6;
 }

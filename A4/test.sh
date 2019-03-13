@@ -50,7 +50,7 @@ for filename in "$testdir"/*.c; do
 	
 	if [ "$DIFF1" != "" ]
 	then
-		# echo "spim code comparison failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "spim code comparison failed on $filename. Did not run further tests (lexicographic ordering)."
 		echo "continuing with further tests"
 		echo "Showing diff:"
 		echo "$DIFF1"
@@ -71,18 +71,19 @@ for filename in "$testdir"/*.c; do
 	if [ "$DIFF3" != "" ]
 	then
 		echo "icode comparison failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "continuing with further tests"
 		echo "Showing diff:"
 		echo "$DIFF3"
-		exit
+		# exit
 	fi
 
 
 	if [ "$DIFF4" != "" ]
 	then
-		echo "ast comparison failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "ast comparison failed on $filename. Continuing further tests."
 		echo "Showing diff:"
 		echo "$DIFF4"
-		exit
+		# exit
 	fi
 
 	
