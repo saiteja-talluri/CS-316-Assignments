@@ -68,13 +68,13 @@ for filename in "$testdir"/*.c; do
 		# exit
 	fi	
 
-	if [ "$DIFF3" != "" ]
-	then
-		echo "icode comparison failed on $filename. Continuing further tests."
-		echo "Showing diff:"
-		echo "$DIFF3"
-		# exit
-	fi
+	# if [ "$DIFF3" != "" ]
+	# then
+	# 	echo "icode comparison failed on $filename. Continuing further tests."
+	# 	echo "Showing diff:"
+	# 	echo "$DIFF3"
+	# 	# exit
+	# fi
 
 
 	if [ "$DIFF4" != "" ]
