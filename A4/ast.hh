@@ -8,8 +8,8 @@
 #include<typeinfo>
 #include<list>
 
-#define AST_SPACE "         "
-#define AST_NODE_SPACE "            "
+#define AST_SPACE 		   "         "
+#define AST_NODE_SPACE     "            "
 #define AST_SUB_NODE_SPACE "               "
 
 #define END_OF_PROG -3	

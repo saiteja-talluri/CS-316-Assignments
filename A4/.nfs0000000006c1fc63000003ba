@@ -277,7 +277,6 @@ void Relational_Expr_Ast::set_data_type(Data_Type dt){
 
 bool Relational_Expr_Ast::check_ast(){
     if(lhs_condition->get_data_type() == rhs_condition->get_data_type()){
-        node_data_type = int_data_type;
         return true;
     }
     else{
@@ -425,7 +424,7 @@ bool Selection_Statement_Ast::check_ast(){
 }
 
 void Selection_Statement_Ast::print(ostream & file_buffer){
-    file_buffer << "\n         IF : \n         CONDITION (";
+    file_buffer << "\n         IF :\n         CONDITION (";
     cond->print(file_buffer);
     file_buffer <<")\n         THEN (";
     then_part->print(file_buffer);
@@ -471,15 +470,14 @@ bool Iteration_Statement_Ast::check_ast(){
 void Iteration_Statement_Ast::print(ostream & file_buffer){
 
     if(is_do_form){
-
-        file_buffer <<"\n" << AST_SPACE << "DO (";
+        file_buffer <<"\n          DO (";
         body->print(file_buffer);
-        file_buffer << ")\n" << AST_SPACE <<"WHILE CONDITION (";
+        file_buffer << ")\n          WHILE CONDITION (";
         cond->print(file_buffer);
         file_buffer <<")";
     }
     else{
-        file_buffer << "\n         WHILE : ";
+        file_buffer << "\n         WHILE :";
         file_buffer << "\n         CONDITION (";
         cond->print(file_buffer);
         file_buffer <<")\n         BODY (";
@@ -499,9 +497,7 @@ void Sequence_Ast::ast_push_back(Ast * ast){
 }
 
 void Sequence_Ast::print(ostream & file_buffer){
-    // if(statement_list.size() > 1)
-        file_buffer << "\n";
-
+    file_buffer << "\n";
     for(list<Ast*>::iterator it = statement_list.begin(); it != statement_list.end(); it++) {
         (*it)->print(file_buffer);
     }
