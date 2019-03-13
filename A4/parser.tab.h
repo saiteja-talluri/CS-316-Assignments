@@ -68,7 +68,8 @@ extern int yydebug;
     AND = 278,
     OR = 279,
     NOT = 280,
-    GREATEAR_THAN_EQUAL = 281
+    GREATEAR_THAN_EQUAL = 281,
+    NOT_ELSE = 282
   };
 #endif
 
@@ -91,7 +92,7 @@ union YYSTYPE
 	Procedure * procedure;
 	list<Symbol_Table_Entry *> * symbol_entry_list;
 
-#line 95 "parser.tab.h" /* yacc.c:1909  */
+#line 96 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
