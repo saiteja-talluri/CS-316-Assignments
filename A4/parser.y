@@ -325,7 +325,7 @@ arith_expression		:	log_expression '?' arith_expression ':' arith_expression	/*t
 							}
 							;
 
-expression		: 	INTEGER_NUMBER	
+expression				: 	INTEGER_NUMBER	
 							{
 								$$ = new Number_Ast<int>($1, int_data_type, yylineno);
 							}
