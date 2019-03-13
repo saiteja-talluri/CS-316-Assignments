@@ -35,7 +35,7 @@
 %type <procedure> procedure_definition
 %type <ast>	assignment_statement arith_expression expression
 %type <ast> log_expression rel_expression iteration_statement statement selection_statement
-%type <seq_ast> sequence_statement
+%type <ast> sequence_statement
 %type <ast_list> statement_list
 
 
@@ -197,16 +197,20 @@ sequence_statement		:	'{' statement_list '}'
 									exit(1);
 								}
 			
-								$$ = new Sequence_Ast(yylineno);
+								Sequence_Ast* temp = new Sequence_Ast(yylineno);
 								for(list<Ast*>::iterator it = (*$2).begin(); it != (*$2).end(); it++) {
-									$$->ast_push_back(*it);
+									temp->ast_push_back(*it);
 								}
+								$$ = temp;
 							}
 							|
 							statement
 							{
+								/*
 								$$ = new Sequence_Ast(yylineno);
 								$$->ast_push_back($1);
+								*/
+								$$ = $1;
 							}
 							;
 
@@ -324,7 +328,7 @@ arith_expression		:	log_expression '?' arith_expression ':' arith_expression	/*t
 								$$ = $1;
 							}
 							;
-							
+
 expression				: 	INTEGER_NUMBER	
 							{
 								$$ = new Number_Ast<int>($1, int_data_type, yylineno);

@@ -499,9 +499,7 @@ void Sequence_Ast::ast_push_back(Ast * ast){
 }
 
 void Sequence_Ast::print(ostream & file_buffer){
-    // if(statement_list.size() > 1)
-        file_buffer << "\n";
-
+    file_buffer << "\n";
     for(list<Ast*>::iterator it = statement_list.begin(); it != statement_list.end(); it++) {
         (*it)->print(file_buffer);
     }
