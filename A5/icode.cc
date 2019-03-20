@@ -24,10 +24,9 @@ Instruction_Descriptor::Instruction_Descriptor() {
 	/* TODO */
 }
 
-Tgt_Op Instruction_Descriptor::Tgt_Op get_op() {
+Tgt_Op Instruction_Descriptor::get_op() {
 	return this->inst_op;
 }
-
 
 string Instruction_Descriptor::get_name() {
 	return this->name;
@@ -73,7 +72,7 @@ Mem_Addr_Opd & Mem_Addr_Opd::operator= (const Mem_Addr_Opd & rhs) {
 	this->symbol_entry = rhs.symbol_entry;
 }
 
-Register_Addr_Opd::Register_Addr_Opd(Register_Descriptor * rd); {
+Register_Addr_Opd::Register_Addr_Opd(Register_Descriptor * rd) {
 	this->register_description = rd;
 }
 
@@ -89,7 +88,7 @@ void Register_Addr_Opd::print_asm_opd(ostream & file_buffer) {
 	/* TODO */
 }
 
-Register_Addr_Opd & operator=(const Register_Addr_Opd & rhs) {
+Register_Addr_Opd & Register_Addr_Opd::operator=(const Register_Addr_Opd & rhs) {
 	this->register_description = rhs.register_description;
 }
 
@@ -109,7 +108,7 @@ void Const_Opd<T>::print_asm_opd(ostream & file_buffer) {
 }
 
 template <class T>
-Const_Opd & Const_Opd<T>::operator=(const Const_Opd & rhs) {
+Const_Opd<T> & Const_Opd<T>::operator=(const Const_Opd & rhs) {
 	this->num = rhs.num;
 }
 
@@ -131,7 +130,7 @@ void Icode_Stmt::set_result(Ics_Opd * io) {}
 
 Move_IC_Stmt::Move_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, Ics_Opd * result) {
 	machine_desc_object.initialize_instruction_table();
-	this->op_desc = machine_desc_object.spim_instruction_table[inst_op];
+	this->op_desc = *(machine_desc_object.spim_instruction_table[inst_op]);
 	this->opd1 = opd1;
 	this->result = result;
 }
@@ -171,16 +170,9 @@ void Move_IC_Stmt::print_assembly(ostream & file_buffer) {
 }
 
 
-class Compute_IC_Stmt: public Icode_Stmt
-{ 
-	Ics_Opd * opd1;   
-	Ics_Opd * opd2;   
-	Ics_Opd * result; 
-
-
 Compute_IC_Stmt::Compute_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, Ics_Opd * opd2, Ics_Opd * result) {
 	machine_desc_object.initialize_instruction_table();
-	this->op_desc = machine_desc_object.spim_instruction_table[inst_op];
+	this->op_desc = *(machine_desc_object.spim_instruction_table[inst_op]);
 	this->opd1 = opd1;
 	this->opd2 = opd2;
 	this->result = result;
@@ -229,15 +221,9 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer) {
 	/* TODO */
 }
 
-class Control_Flow_IC_Stmt: public Icode_Stmt
-{ 
-	Ics_Opd * opd1;      
-	string label; 
-
-
 Control_Flow_IC_Stmt::Control_Flow_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, string label) {
 	machine_desc_object.initialize_instruction_table();
-	this->op_desc = machine_desc_object.spim_instruction_table[inst_op];
+	this->op_desc = *(machine_desc_object.spim_instruction_table[inst_op]);
 	this->opd1 = opd1;
 	this->label = label;
 }
@@ -275,13 +261,10 @@ void Control_Flow_IC_Stmt::print_assembly(ostream & file_buffer) {
 	/* TODO */
 }
 
-class Label_IC_Stmt: public Icode_Stmt
-{       
-	string label; 
 
 Label_IC_Stmt::Label_IC_Stmt(Tgt_Op inst_op, string label) {
 	machine_desc_object.initialize_instruction_table();
-	this->op_desc = machine_desc_object.spim_instruction_table[inst_op];
+	this->op_desc = *(machine_desc_object.spim_instruction_table[inst_op]);
 	this->label = label;
 } 
 
@@ -320,7 +303,7 @@ Code_For_Ast::Code_For_Ast(list<Icode_Stmt *> & ic_l, Register_Descriptor * reg)
 }
 
 void Code_For_Ast::append_ics(Icode_Stmt & ics) {
-	this->ics_list.push_back(*ics);
+	this->ics_list.push_back(&ics);
 }
 
 list<Icode_Stmt *> & Code_For_Ast::get_icode_list() {
