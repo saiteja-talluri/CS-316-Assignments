@@ -1,10 +1,9 @@
-void main() {                    
-
-	int p,
-	sa,   qwer
-	, wert,			
-	et; 
-
-	int x;
-	int = 1;
+void main(){
+    int a;
+    a = 1;
+	if(a==1) {
+		if(!(a==2)){
+			a=2;}
+		}
+	
 }

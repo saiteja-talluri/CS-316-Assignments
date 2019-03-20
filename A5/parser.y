@@ -33,7 +33,7 @@
 
 %type <symbol_entry_list> variable_list	declaration	variable_declaration variable_declaration_list optional_variable_declaration_list
 %type <procedure> procedure_definition
-%type <ast>	assignment_statement arith_expression expression
+%type <ast>	assignment_statement arith_expression
 %type <ast> log_expression rel_expression iteration_statement statement selection_statement
 %type <ast> sequence_statement
 %type <ast_list> statement_list
@@ -41,11 +41,11 @@
 
 
 %right ASSIGN
-%right '?'
+%right '?' ':'
 %left OR
 %left AND
 %left EQUAL NOT_EQUAL
-%left LESS_THAN GREATER_THAN LESS_THAN_EQUAL GREATEAR_THAN_EQUAL
+%left LESS_THAN GREATER_THAN LESS_THAN_EQUAL GREATER_THAN_EQUAL
 %left '+' '-'
 %left '*' '/'
 %right UMINUS
@@ -256,32 +256,32 @@ log_expression			:	log_expression AND log_expression
 							}
 							;
 
-rel_expression			:	expression EQUAL arith_expression
+rel_expression			:	arith_expression EQUAL arith_expression
 							{
 								$$ = new Relational_Expr_Ast($1, equalto, $3, yylineno);
 								(*$$).check_ast();
 							}
-							|	expression NOT_EQUAL arith_expression
+							|	arith_expression NOT_EQUAL arith_expression
 							{
 								$$ = new Relational_Expr_Ast($1, not_equalto, $3, yylineno);
 								(*$$).check_ast();
 							}
-							|	expression LESS_THAN arith_expression
+							|	arith_expression LESS_THAN arith_expression
 							{
 								$$ = new Relational_Expr_Ast($1, less_than, $3, yylineno);
 								(*$$).check_ast();
 							}
-							|	expression LESS_THAN_EQUAL arith_expression
+							|	arith_expression LESS_THAN_EQUAL arith_expression
 							{
 								$$ = new Relational_Expr_Ast($1, less_equalto, $3, yylineno);
 								(*$$).check_ast();
 							}	
-							|	expression GREATER_THAN arith_expression
+							|	arith_expression GREATER_THAN arith_expression
 							{
 								$$ = new Relational_Expr_Ast($1, greater_than, $3, yylineno);
 								(*$$).check_ast();
 							}
-							|	expression GREATER_THAN_EQUAL arith_expression
+							|	arith_expression GREATER_THAN_EQUAL arith_expression
 							{
 								$$ = new Relational_Expr_Ast($1, greater_equalto, $3, yylineno);
 								(*$$).check_ast();
@@ -310,22 +310,7 @@ assignment_statement	:	NAME ASSIGN arith_expression ';'
 							}
 							;
 
-
-arith_expression		:	log_expression '?' arith_expression ':' arith_expression	/*ternary operator*/
-							{
-								$$ = new Conditional_Expression_Ast($1, $3, $5, yylineno);
-								(*$1).check_ast();
-								(*$$).check_ast();
-
-							}
-							|
-							expression
-							{
-								$$ = $1;
-							}
-							;
-
-expression				: 	INTEGER_NUMBER	
+arith_expression		: 	INTEGER_NUMBER	
 							{
 								$$ = new Number_Ast<int>($1, int_data_type, yylineno);
 							}
@@ -346,35 +331,42 @@ expression				: 	INTEGER_NUMBER
 									exit(1);
 								}
 							}
-							| expression '+' expression
+							| arith_expression '+' arith_expression
 							{
 								$$ = new Plus_Ast($1, $3, yylineno);
 								(*$$).check_ast();
 								(*$$).set_data_type((*$1).get_data_type());
 							}
-							| expression '-' expression
+							| arith_expression '-' arith_expression
 							{
 								$$ = new Minus_Ast($1, $3, yylineno);
 								(*$$).check_ast();
 								(*$$).set_data_type((*$1).get_data_type());
 							}
-							| expression '*' expression
+							| arith_expression '*' arith_expression
 							{
 								$$ = new Mult_Ast($1, $3, yylineno);
 								(*$$).check_ast();
 								(*$$).set_data_type((*$1).get_data_type());
 							}
-							| expression '/' expression
+							| arith_expression '/' arith_expression
 							{
 								$$ = new Divide_Ast($1, $3, yylineno);
 								(*$$).check_ast();
 								(*$$).set_data_type((*$1).get_data_type());
 							}
-							| '-' expression %prec UMINUS
+							| '-' arith_expression %prec UMINUS
 							{
 								$$ = new UMinus_Ast($2,NULL,yylineno);
 								(*$$).check_ast();
 								(*$$).set_data_type((*$2).get_data_type());
+							}
+							|	log_expression '?' arith_expression ':' arith_expression	/*ternary operator*/
+							{
+								$$ = new Conditional_Expression_Ast($1, $3, $5, yylineno);
+								(*$1).check_ast();
+								(*$$).check_ast();
+
 							}
 							| '('arith_expression')'
 							{
