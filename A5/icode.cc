@@ -1,4 +1,5 @@
 #include "icode.hh"
+#include "reg-alloc.hh"
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -7,11 +8,6 @@
 #include <map>
 template class Const_Opd<double>;
 template class Const_Opd<int>;
-
-//////////////////////
-#include "reg-alloc.hh"
-//////////////////////
-
 
 ///////////////////////// Instruction Descriptor ///////////////////////////////////
 
@@ -65,7 +61,6 @@ Mem_Addr_Opd::Mem_Addr_Opd(Symbol_Table_Entry & se) {
 }
 
 void Mem_Addr_Opd::print_ics_opd(ostream & file_buffer) {
-	/* TODO */
 	file_buffer << this->symbol_entry->get_variable_name() << "_";
 }
 

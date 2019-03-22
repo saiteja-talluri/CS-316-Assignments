@@ -12,9 +12,12 @@ Code_For_Ast & Ast::create_store_stmt(Register_Descriptor * store_register) {
 
 
 Code_For_Ast & Assignment_Ast::compile() {
-	Code_For_Ast * rhs_res = &rhs->compile();
-	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(this->rhs_res->get_reg());	
-	return this->lhs->create_store_stmt(rhs_result->get_reg());
+	Code_For_Ast rhs_res = rhs->compile();
+	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(rhs_res.get_reg());	
+	Code_For_Ast lhs_res = this->lhs->create_store_stmt(rhs_result->get_reg());
+	Code_For_Ast *output = new Code_For_Ast(rhs_res.get_icode_list(), rhs_res.get_reg());
+	output->append_ics(*(lhs_res.get_icode_list().front()));
+	return *output;
 }
 
 
@@ -66,19 +69,18 @@ Code_For_Ast & Number_Ast<T>::compile() {
 	if(this->get_data_type() == int_data_type) {
 		rd = machine_desc_object.get_new_register<gp_data>();
 		result = new Register_Addr_Opd(rd);
-		load_stmt = new Move_IC_Stmt(load, opd1, result);
+		load_stmt = new Move_IC_Stmt(imm_load, opd1, result);
 	}
 		
 	else if(this->get_data_type() == double_data_type) {
 		rd = machine_desc_object.get_new_register<float_reg>();
 		result = new Register_Addr_Opd(rd);
-		load_stmt = new Move_IC_Stmt(load_d, opd1, result);
+		load_stmt = new Move_IC_Stmt(imm_load_d, opd1, result);
 	}
 	 
 	Code_For_Ast *output = new Code_For_Ast();
 	output->set_reg(rd);
 	output->append_ics(*load_stmt);
-	// load_stmt->print_icode(cerr);
 	return *output;
 }
 
@@ -90,8 +92,10 @@ Code_For_Ast & Number_Ast<T>::compile_and_optimize_ast(Lra_Outcome & lra) {
 
 
 Code_For_Ast & Plus_Ast::compile() {
-	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(this->lhs->compile().get_reg());
-	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(this->rhs->compile().get_reg());
+	Code_For_Ast lhs_code =	this->lhs->compile(); 
+	Code_For_Ast rhs_code =	this->rhs->compile(); 
+	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(lhs_code.get_reg());
+	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(rhs_code.get_reg());
 	Register_Descriptor *rd;
 	Register_Addr_Opd *result;
 	Compute_IC_Stmt *plus_stmt;
@@ -105,7 +109,8 @@ Code_For_Ast & Plus_Ast::compile() {
 		result = new Register_Addr_Opd(rd);
 		plus_stmt = new Compute_IC_Stmt(add_d, lhs_result, rhs_result, result);
 	}
-	Code_For_Ast *output = new Code_For_Ast();
+	Code_For_Ast *output = new Code_For_Ast(lhs_code.get_icode_list(), rd);
+	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
 	output->set_reg(rd);
 	output->append_ics(*plus_stmt);
 	return *output;
@@ -117,8 +122,10 @@ Code_For_Ast & Plus_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
 }
 
 Code_For_Ast & Minus_Ast::compile() {
-	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(this->lhs->compile().get_reg());
-	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(this->rhs->compile().get_reg());
+	Code_For_Ast lhs_code =	this->lhs->compile(); 
+	Code_For_Ast rhs_code =	this->rhs->compile(); 
+	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(lhs_code.get_reg());
+	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(rhs_code.get_reg());
 	Register_Descriptor *rd;
 	Register_Addr_Opd *result;
 	Compute_IC_Stmt *minus_stmt;
@@ -132,7 +139,8 @@ Code_For_Ast & Minus_Ast::compile() {
 		result = new Register_Addr_Opd(rd);
 		minus_stmt = new Compute_IC_Stmt(sub_d, lhs_result, rhs_result, result);
 	}
-	Code_For_Ast *output = new Code_For_Ast();
+	Code_For_Ast *output = new Code_For_Ast(lhs_code.get_icode_list(), rd);
+	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
 	output->set_reg(rd);
 	output->append_ics(*minus_stmt);
 	return *output;
@@ -144,8 +152,10 @@ Code_For_Ast & Minus_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
 }
 
 Code_For_Ast & Divide_Ast::compile() {
-	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(this->lhs->compile().get_reg());
-	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(this->rhs->compile().get_reg());
+	Code_For_Ast lhs_code =	this->lhs->compile(); 
+	Code_For_Ast rhs_code =	this->rhs->compile(); 
+	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(lhs_code.get_reg());
+	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(rhs_code.get_reg());
 	Register_Descriptor *rd;
 	Register_Addr_Opd *result;
 	Compute_IC_Stmt *divide_stmt;
@@ -159,7 +169,8 @@ Code_For_Ast & Divide_Ast::compile() {
 		result = new Register_Addr_Opd(rd);
 		divide_stmt = new Compute_IC_Stmt(div_d, lhs_result, rhs_result, result);
 	}
-	Code_For_Ast *output = new Code_For_Ast();
+	Code_For_Ast *output = new Code_For_Ast(lhs_code.get_icode_list(), rd);
+	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
 	output->set_reg(rd);
 	output->append_ics(*divide_stmt);
 	return *output;
@@ -170,8 +181,10 @@ Code_For_Ast & Divide_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
 }
 
 Code_For_Ast & Mult_Ast::compile() {
-	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(this->lhs->compile().get_reg());
-	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(this->rhs->compile().get_reg());
+	Code_For_Ast lhs_code =	this->lhs->compile(); 
+	Code_For_Ast rhs_code =	this->rhs->compile(); 
+	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(lhs_code.get_reg());
+	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(rhs_code.get_reg());
 	Register_Descriptor *rd;
 	Register_Addr_Opd *result;
 	Compute_IC_Stmt *mult_stmt;
@@ -185,7 +198,8 @@ Code_For_Ast & Mult_Ast::compile() {
 		result = new Register_Addr_Opd(rd);
 		mult_stmt = new Compute_IC_Stmt(mult_d, lhs_result, rhs_result, result);
 	}
-	Code_For_Ast *output = new Code_For_Ast();
+	Code_For_Ast *output = new Code_For_Ast(lhs_code.get_icode_list(), rd);
+	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
 	output->set_reg(rd);
 	output->append_ics(*mult_stmt);
 	return *output;
@@ -196,22 +210,22 @@ Code_For_Ast & Mult_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
 }
 
 Code_For_Ast & UMinus_Ast::compile() {
-    Register_Addr_Opd *lhs_result = new Register_Addr_Opd(this->lhs->compile().get_reg());
-	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(this->rhs->compile().get_reg());
+	Code_For_Ast lhs_code =	this->lhs->compile(); 
+	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(lhs_code.get_reg());
 	Register_Descriptor *rd;
 	Register_Addr_Opd *result;
-	Compute_IC_Stmt *uminus_stmt;
+	Move_IC_Stmt *uminus_stmt;
 	if(this->lhs->get_data_type() == int_data_type) {
 		rd = machine_desc_object.get_new_register<gp_data>();
 		result = new Register_Addr_Opd(rd);
-		uminus_stmt = new Compute_IC_Stmt(uminus, lhs_result, rhs_result, result);
+		uminus_stmt = new Move_IC_Stmt(uminus, lhs_result, result);
 	}
 	else if(this->lhs->get_data_type() == double_data_type) {
 		rd = machine_desc_object.get_new_register<float_reg>();
 		result = new Register_Addr_Opd(rd);
-		uminus_stmt = new Compute_IC_Stmt(uminus_d, lhs_result, rhs_result, result);
+		uminus_stmt = new Move_IC_Stmt(uminus_d, lhs_result, result);
 	}
-	Code_For_Ast *output = new Code_For_Ast();
+	Code_For_Ast *output = new Code_For_Ast(lhs_code.get_icode_list(), rd);
 	output->set_reg(rd);
 	output->append_ics(*uminus_stmt);
 	return *output;
@@ -248,21 +262,21 @@ Code_For_Ast & Return_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
 
 
 Code_For_Ast & Relational_Expr_Ast::compile() {
-	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(this->lhs_condition->compile().get_reg());
-	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(this->rhs_condition->compile().get_reg());
-	Register_Descriptor *rd;
-	Register_Addr_Opd *result;
-	Control_Flow_IC_Stmt *rel_stmt;
+	// Register_Addr_Opd *lhs_result = new Register_Addr_Opd(this->lhs_condition->compile().get_reg());
+	// Register_Addr_Opd *rhs_result = new Register_Addr_Opd(this->rhs_condition->compile().get_reg());
+	// Register_Descriptor *rd;
+	// Register_Addr_Opd *result;
+	// Control_Flow_IC_Stmt *rel_stmt;
 	
-	rd = machine_desc_object.get_new_register<gp_data>();
-	result = new Register_Addr_Opd(rd);
-	uminus_stmt = new Compute_IC_Stmt(uminus, lhs_result, rhs_result, result);
+	// rd = machine_desc_object.get_new_register<gp_data>();
+	// result = new Register_Addr_Opd(rd);
+	// uminus_stmt = new Compute_IC_Stmt(uminus, lhs_result, rhs_result, result);
 	
 	
-	Code_For_Ast *output = new Code_For_Ast();
-	output->set_reg(rd);
-	output->append_ics(*uminus_stmt);
-	return *output;
+	// Code_For_Ast *output = new Code_For_Ast();
+	// output->set_reg(rd);
+	// output->append_ics(*uminus_stmt);
+	// return *output;
 }
 
 Code_For_Ast & Logical_Expr_Ast::compile() {
