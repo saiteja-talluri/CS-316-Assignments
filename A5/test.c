@@ -1,6 +1,7 @@
-int a,b;
+// int a,b;
 void main() {
-	float x;
+	float x, y, z;
 	x = 1.2;
-	print x;
+	y = 1.3;
+	z = x > y ? x : y;
 }
