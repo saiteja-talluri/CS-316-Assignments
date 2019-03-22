@@ -8,6 +8,10 @@
 template class Const_Opd<double>;
 template class Const_Opd<int>;
 
+//////////////////////
+#include "reg-alloc.hh"
+//////////////////////
+
 
 ///////////////////////// Instruction Descriptor ///////////////////////////////////
 
@@ -62,6 +66,7 @@ Mem_Addr_Opd::Mem_Addr_Opd(Symbol_Table_Entry & se) {
 
 void Mem_Addr_Opd::print_ics_opd(ostream & file_buffer) {
 	/* TODO */
+	file_buffer << this->symbol_entry->get_variable_name() << "_";
 }
 
 void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer) {
@@ -81,7 +86,7 @@ Register_Descriptor * Register_Addr_Opd::get_reg() {
 }
 
 void Register_Addr_Opd::print_ics_opd(ostream & file_buffer) {
-	/* TODO */
+	file_buffer << this->register_description->get_name();
 }
 
 void Register_Addr_Opd::print_asm_opd(ostream & file_buffer) {
@@ -99,12 +104,13 @@ Const_Opd<T>::Const_Opd(T num){
 
 template <class T>
 void Const_Opd<T>::print_ics_opd(ostream & file_buffer) {
-	/* TODO */
+	file_buffer << num;
 }
 
 template <class T>
 void Const_Opd<T>::print_asm_opd(ostream & file_buffer) {
 	/* TODO */
+	
 }
 
 template <class T>
@@ -163,6 +169,12 @@ void Move_IC_Stmt::set_result(Ics_Opd * io) {
 
 void Move_IC_Stmt::print_icode(ostream & file_buffer) {
 	/* TODO */
+	file_buffer << "	" << this->op_desc.get_name() << "    	";
+	// this->opd1->get_reg()->get_name() << " <- " << this->result->get_reg()->get_name() << "\n";
+	this->result->print_ics_opd(file_buffer);
+	file_buffer << " <- ";
+	this->opd1->print_ics_opd(file_buffer);
+	file_buffer << "\n";
 }
 
 void Move_IC_Stmt::print_assembly(ostream & file_buffer) {
