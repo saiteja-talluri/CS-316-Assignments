@@ -70,6 +70,7 @@ procedure_definition	:	VOID NAME '(' ')'
 									local_variable_declaration_list statement_list
         	           		'}' 
 							{	
+								*$2 = *$2 + "_";
 								$$ = new Procedure(void_data_type,*$2, yylineno);
 								(*local_sym_table).set_table_scope(local);
 								(*$$).set_local_list((*local_sym_table));
@@ -150,12 +151,14 @@ declaration							:	INTEGER variable_list
 variable_list                       :	NAME	
 										{
 											$$ = new list<Symbol_Table_Entry *>();
-											Symbol_Table_Entry* a = new Symbol_Table_Entry(*$1,int_data_type,yylineno);
+											*$1 = *$1 + "_";
+											Symbol_Table_Entry* a = new Symbol_Table_Entry(*$1, int_data_type,yylineno);
 											(*$$).push_back(a);
 										}
 										| variable_list ',' NAME
 										{
-											Symbol_Table_Entry* b = new Symbol_Table_Entry(*$3,int_data_type,yylineno);
+											*$3 = *$3 + "_";
+											Symbol_Table_Entry* b = new Symbol_Table_Entry(*$3, int_data_type,yylineno);
 											(*$1).push_back(b); /* TODO: Clarify from the TA */
 											$$ = $1;
 										}
@@ -293,6 +296,7 @@ rel_expression			:	arith_expression EQUAL arith_expression
 assignment_statement	:	NAME ASSIGN arith_expression ';'
 				
 							{
+								*$1 = *$1 + "_";
 								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*$1)){ 
 									Ast* lhs1 = new Name_Ast(*$1, (*local_sym_table).get_symbol_table_entry(*$1), yylineno);
 									$$ = new Assignment_Ast(lhs1,$3,yylineno);
@@ -320,6 +324,7 @@ arith_expression		: 	INTEGER_NUMBER
 							}
 							| NAME
 							{
+								*$1 = *$1 + "_";
 								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*($1))){
 									$$ = new Name_Ast(*$1, (*local_sym_table).get_symbol_table_entry(*$1), yylineno);
 								}

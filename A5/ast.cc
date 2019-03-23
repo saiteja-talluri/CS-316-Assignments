@@ -231,6 +231,7 @@ Conditional_Expression_Ast::Conditional_Expression_Ast(Ast* cond, Ast* l, Ast* r
     rhs = r;
     this->cond = cond;
     ast_num_child = ternary_arity;
+    labelCounter++; //doubtful 
 }
 
 Conditional_Expression_Ast::~Conditional_Expression_Ast(){}
@@ -490,6 +491,7 @@ void Iteration_Statement_Ast::print(ostream & file_buffer){
 
 Sequence_Ast::Sequence_Ast(int line){
     lineno = line;
+    labelCounter++; //doubtful 
 }
 
 Sequence_Ast::~Sequence_Ast(){}

@@ -294,37 +294,45 @@ Code_For_Ast & Relational_Expr_Ast::compile() {
 		comp_stmt = new Compute_IC_Stmt(sne, lhs_result, rhs_result, result);
 	}
 
-	
-	
-	
 	Code_For_Ast *output = new Code_For_Ast(lhs_code.get_icode_list(), rd);
 	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
 	output->set_reg(rd);
 	output->append_ics(*comp_stmt);
-	// output->append_ics(*rel_stmt);
 	return *output;
 }
 
 Code_For_Ast & Logical_Expr_Ast::compile() {
-	cerr<<"test\n";
-	Code_For_Ast lhs_code =	this->lhs_op->compile(); 
+	Code_For_Ast lhs_code;
+	Register_Addr_Opd *lhs_result;
+	if(this->bool_op != _logical_not) {
+		lhs_code =	this->lhs_op->compile(); 
+		lhs_result = new Register_Addr_Opd(lhs_code.get_reg());
+	}
 	Code_For_Ast rhs_code =	this->rhs_op->compile(); 
-	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(lhs_code.get_reg());
 	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(rhs_code.get_reg());
 	Register_Descriptor *rd = machine_desc_object.get_new_register<gp_data>();
 	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
-	Control_Flow_IC_Stmt *rel_stmt;
-	Compute_IC_Stmt * comp_stmt;
 	
+	Compute_IC_Stmt * comp_stmt;
 	rd = machine_desc_object.get_new_register<gp_data>();
 	result = new Register_Addr_Opd(rd);
-	
 
-	Code_For_Ast *output = new Code_For_Ast(lhs_code.get_icode_list(), rd);
-	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
+	if(this->bool_op == _logical_and) {
+		comp_stmt = new Compute_IC_Stmt(and_t, lhs_result, rhs_result, result);
+	}
+	else if(this->bool_op == _logical_or) {
+		comp_stmt = new Compute_IC_Stmt(or_t, lhs_result, rhs_result, result);
+	}
+	else if(this->bool_op == _logical_not) {
+		comp_stmt = new Compute_IC_Stmt(not_t, NULL, rhs_result, result);
+	}
+
+	Code_For_Ast *output = new Code_For_Ast();
 	output->set_reg(rd);
-	// output->append_ics(*comp_stmt);
-	// output->append_ics(*rel_stmt);
+	if(this->bool_op != _logical_not)
+		output->get_icode_list().insert(output->get_icode_list().end(),lhs_code.get_icode_list().begin(),lhs_code.get_icode_list().end());	
+	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
+	output->append_ics(*comp_stmt);
 	return *output;
 }
 
@@ -370,5 +378,14 @@ Code_For_Ast & Iteration_Statement_Ast::compile() {
 
 Code_For_Ast & Sequence_Ast::compile() {
 	//TODO:
+	list<Ast *>::iterator it;
+	for(it = this->statement_list.begin(); it != this->statement_list.end(); it++) {
+		Code_For_Ast temp = (*it)->compile();
+		this->sa_icode_list.insert(this->sa_icode_list.end(), temp.get_icode_list().begin(),
+		 temp.get_icode_list().end());
+	}
+
+	Code_For_Ast *output = new Code_For_Ast(this->sa_icode_list, NULL);
+	return *output;
 }
 

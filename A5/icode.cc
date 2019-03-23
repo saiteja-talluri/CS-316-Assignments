@@ -61,13 +61,16 @@ Register_Descriptor * Ics_Opd::get_reg() {
 Mem_Addr_Opd::Mem_Addr_Opd(Symbol_Table_Entry & se) {
 	this->symbol_entry = &se;
 }
-
 void Mem_Addr_Opd::print_ics_opd(ostream & file_buffer) {
-	file_buffer << this->symbol_entry->get_variable_name() << "_";
+	file_buffer << this->symbol_entry->get_variable_name();
 }
 
 void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer) {
-	file_buffer << this->symbol_entry->get_start_offset() << "($fp)";
+	if(this->symbol_entry->get_symbol_scope() == global)
+		file_buffer << this->symbol_entry->get_variable_name();
+
+	else if(this->symbol_entry->get_symbol_scope() == local)
+		file_buffer << this->symbol_entry->get_start_offset() << "($fp)";
 }
 
 Mem_Addr_Opd & Mem_Addr_Opd::operator= (const Mem_Addr_Opd & rhs) {
@@ -164,7 +167,7 @@ void Move_IC_Stmt::set_result(Ics_Opd * io) {
 }
 
 void Move_IC_Stmt::print_icode(ostream & file_buffer) {
-	file_buffer << "	" << this->op_desc.get_name() << "    	";
+	file_buffer << "	" << this->op_desc.get_name() << ":" << string(9 - this->op_desc.get_name().length(), ' ') << "\t";
 	this->result->print_ics_opd(file_buffer);
 	file_buffer << " <- ";
 	this->opd1->print_ics_opd(file_buffer);
@@ -174,21 +177,18 @@ void Move_IC_Stmt::print_icode(ostream & file_buffer) {
 void Move_IC_Stmt::print_assembly(ostream & file_buffer) {
 	file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
 
-	if(this->op_desc.get_mnemonic() == "s.d" || this->op_desc.get_mnemonic() == "sw") {
+	if(this->op_desc.get_assembly_format() == a_op_o1_r) {
 		this->opd1->print_asm_opd(file_buffer);
 		file_buffer << ", ";
 		this->result->print_asm_opd(file_buffer);
-		
 	}
-	else {
+	else if(this->op_desc.get_assembly_format() == a_op_r_o1){
 		this->result->print_asm_opd(file_buffer);
 		file_buffer << ", ";
 		this->opd1->print_asm_opd(file_buffer);
 	}
-	
 	file_buffer << "\n";
 }
-
 
 Compute_IC_Stmt::Compute_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, Ics_Opd * opd2, Ics_Opd * result) {
 	machine_desc_object.initialize_instruction_table();
@@ -234,7 +234,9 @@ void Compute_IC_Stmt::set_result(Ics_Opd * io) {
 }
 
 void Compute_IC_Stmt::print_icode(ostream & file_buffer) {
-	file_buffer << "	" << this->op_desc.get_name() << "    	";
+	/* TODO: look for more formats*/
+	// one operand
+	file_buffer << "	" << this->op_desc.get_name() << ":" << string(9 - this->op_desc.get_name().length(), ' ') << "\t";
 	this->result->print_ics_opd(file_buffer);
 	file_buffer << " <- ";
 	this->opd1->print_ics_opd(file_buffer);
@@ -244,6 +246,8 @@ void Compute_IC_Stmt::print_icode(ostream & file_buffer) {
 }
 
 void Compute_IC_Stmt::print_assembly(ostream & file_buffer) {
+	/* TODO: look for more formats*/
+	// one operand
 	file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
 	this->result->print_asm_opd(file_buffer);
 	file_buffer << ", ";
@@ -286,16 +290,16 @@ void Control_Flow_IC_Stmt::set_label(string label) {
 }
 
 void Control_Flow_IC_Stmt::print_icode(ostream & file_buffer) {
-	/* TODO: */
-	if(this->op_desc.get_name() == "beq") {
-		file_buffer << "	" << this->op_desc.get_name() << "        	";
+	/* TODO: look for more formats*/
+	if(this->op_desc.get_ic_format() == i_op_o1_o2_st) {
+		file_buffer << "	" << this->op_desc.get_name() << ":" << string(9 - this->op_desc.get_name().length(), ' ') << "\t";
 		this->opd1->print_ics_opd(file_buffer);
 		file_buffer << " , zero : goto ";
 		file_buffer << this->get_label();
 		file_buffer << "\n";
 	}
 
-	else if(this->op_desc.get_name() == "jump") {
+	else if(this->op_desc.get_ic_format() == i_op_st) {
 		file_buffer << "	goto ";
 		file_buffer << this->get_label();
 		file_buffer << "\n";
@@ -304,16 +308,16 @@ void Control_Flow_IC_Stmt::print_icode(ostream & file_buffer) {
 }
 
 void Control_Flow_IC_Stmt::print_assembly(ostream & file_buffer) {
-	/* TODO: */
-	if(this->op_desc.get_name() == "beq") {
-		file_buffer << "	" << this->op_desc.get_mnemonic() << "        	";
+	/* TODO: look for more formats*/
+	if(this->op_desc.get_assembly_format() == a_op_o1_o2_st) {
+		file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
 		this->opd1->print_ics_opd(file_buffer);
 		file_buffer << ", $zero, ";
 		file_buffer << this->get_label();
 		file_buffer << "\n";
 	}
 
-	else if(this->op_desc.get_name() == "jump") {
+	else if(this->op_desc.get_assembly_format() == a_op_st) {
 		file_buffer << "	j ";
 		file_buffer << this->get_label();
 		file_buffer << "\n";

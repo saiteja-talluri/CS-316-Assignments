@@ -1,12 +1,12 @@
-// int a,b;
+int a;
 void main() {
-	float x, y, z;
-	x = 1.2 + 1.0 + 1.0;
-	y = 1.3;
-	if(x != y)
-		z = 4.0;
+	int a, b, c;
+	a = 3;
+	b = 4;
+	if(a != b && a > b)
+		c = 7;
 	else
-		z = 3.0;
+		{c = 8;}
 		
-	//!!! grammar is fucked up. Try putting braces in else_part
+	
 }
