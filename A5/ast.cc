@@ -11,7 +11,7 @@ Ast::Ast(){}
 
 Ast::~Ast(){}
 
-int Ast::labelCounter;
+int Ast::labelCounter = 0;
 
 Data_Type Ast::get_data_type(){
     return node_data_type;
@@ -231,7 +231,6 @@ Conditional_Expression_Ast::Conditional_Expression_Ast(Ast* cond, Ast* l, Ast* r
     rhs = r;
     this->cond = cond;
     ast_num_child = ternary_arity;
-    labelCounter++;
 }
 
 Conditional_Expression_Ast::~Conditional_Expression_Ast(){}
@@ -491,7 +490,6 @@ void Iteration_Statement_Ast::print(ostream & file_buffer){
 
 Sequence_Ast::Sequence_Ast(int line){
     lineno = line;
-    labelCounter++;
 }
 
 Sequence_Ast::~Sequence_Ast(){}

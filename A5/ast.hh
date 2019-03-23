@@ -33,7 +33,7 @@ protected:
 	Data_Type node_data_type;
 	Ast_Arity ast_num_child;
 
-   static int labelCounter;
+	static int labelCounter;
 	int lineno;
 	string get_new_label(){
 

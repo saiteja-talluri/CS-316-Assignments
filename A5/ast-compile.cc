@@ -9,7 +9,7 @@ template class Number_Ast<int>;
 Code_For_Ast & Ast::create_store_stmt(Register_Descriptor * store_register) {
 
 }
-
+//TODO: release registers
 
 Code_For_Ast & Assignment_Ast::compile() {
 	Code_For_Ast rhs_res = rhs->compile();
@@ -22,7 +22,7 @@ Code_For_Ast & Assignment_Ast::compile() {
 
 
 Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
-	
+	//TODO:
 }
 
 
@@ -42,6 +42,7 @@ Code_For_Ast & Name_Ast::compile() {
 }
 
 Code_For_Ast & Name_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
+	//TODO:
 }
 
 Code_For_Ast & Name_Ast::create_store_stmt(Register_Descriptor * store_register) {
@@ -87,7 +88,7 @@ Code_For_Ast & Number_Ast<T>::compile() {
 
 template <class T>
 Code_For_Ast & Number_Ast<T>::compile_and_optimize_ast(Lra_Outcome & lra) {
-
+	//TODO:
 }
 
 
@@ -118,7 +119,7 @@ Code_For_Ast & Plus_Ast::compile() {
 
 
 Code_For_Ast & Plus_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
-
+	//TODO:
 }
 
 Code_For_Ast & Minus_Ast::compile() {
@@ -148,7 +149,7 @@ Code_For_Ast & Minus_Ast::compile() {
 
 
 Code_For_Ast & Minus_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
-
+	//TODO:
 }
 
 Code_For_Ast & Divide_Ast::compile() {
@@ -177,7 +178,7 @@ Code_For_Ast & Divide_Ast::compile() {
 }
 
 Code_For_Ast & Divide_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
-
+	//TODO:
 }
 
 Code_For_Ast & Mult_Ast::compile() {
@@ -206,7 +207,7 @@ Code_For_Ast & Mult_Ast::compile() {
 }
 
 Code_For_Ast & Mult_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
-
+	//TODO:
 }
 
 Code_For_Ast & UMinus_Ast::compile() {
@@ -233,7 +234,7 @@ Code_For_Ast & UMinus_Ast::compile() {
 
 
 Code_For_Ast & UMinus_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
-  
+	//TODO:
 }
 
 Code_For_Ast & Conditional_Expression_Ast::compile() {
@@ -262,36 +263,112 @@ Code_For_Ast & Return_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
 
 
 Code_For_Ast & Relational_Expr_Ast::compile() {
-	// Register_Addr_Opd *lhs_result = new Register_Addr_Opd(this->lhs_condition->compile().get_reg());
-	// Register_Addr_Opd *rhs_result = new Register_Addr_Opd(this->rhs_condition->compile().get_reg());
-	// Register_Descriptor *rd;
-	// Register_Addr_Opd *result;
-	// Control_Flow_IC_Stmt *rel_stmt;
+	Code_For_Ast lhs_code =	this->lhs_condition->compile(); 
+	Code_For_Ast rhs_code =	this->rhs_condition->compile(); 
+	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(lhs_code.get_reg());
+	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(rhs_code.get_reg());
+	Register_Descriptor *rd = machine_desc_object.get_new_register<gp_data>();
+	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
 	
-	// rd = machine_desc_object.get_new_register<gp_data>();
-	// result = new Register_Addr_Opd(rd);
-	// uminus_stmt = new Compute_IC_Stmt(uminus, lhs_result, rhs_result, result);
+	Compute_IC_Stmt * comp_stmt;
+
+	rd = machine_desc_object.get_new_register<gp_data>();
+	result = new Register_Addr_Opd(rd);
+
+	if(this->rel_op == less_equalto) {
+		comp_stmt = new Compute_IC_Stmt(sle, lhs_result, rhs_result, result);
+	}
+	else if(this->rel_op == less_than) {
+		comp_stmt = new Compute_IC_Stmt(slt, lhs_result, rhs_result, result);
+	}
+	else if(this->rel_op == greater_than) {
+		comp_stmt = new Compute_IC_Stmt(sgt, lhs_result, rhs_result, result);
+	}
+	else if(this->rel_op == greater_equalto) {
+		comp_stmt = new Compute_IC_Stmt(sge, lhs_result, rhs_result, result);
+	}
+	else if(this->rel_op == equalto) {
+		comp_stmt = new Compute_IC_Stmt(seq, lhs_result, rhs_result, result);
+	}
+	else if(this->rel_op == not_equalto) {
+		comp_stmt = new Compute_IC_Stmt(sne, lhs_result, rhs_result, result);
+	}
+
 	
 	
-	// Code_For_Ast *output = new Code_For_Ast();
-	// output->set_reg(rd);
-	// output->append_ics(*uminus_stmt);
-	// return *output;
+	
+	Code_For_Ast *output = new Code_For_Ast(lhs_code.get_icode_list(), rd);
+	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
+	output->set_reg(rd);
+	output->append_ics(*comp_stmt);
+	// output->append_ics(*rel_stmt);
+	return *output;
 }
 
 Code_For_Ast & Logical_Expr_Ast::compile() {
+	cerr<<"test\n";
+	Code_For_Ast lhs_code =	this->lhs_op->compile(); 
+	Code_For_Ast rhs_code =	this->rhs_op->compile(); 
+	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(lhs_code.get_reg());
+	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(rhs_code.get_reg());
+	Register_Descriptor *rd = machine_desc_object.get_new_register<gp_data>();
+	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
+	Control_Flow_IC_Stmt *rel_stmt;
+	Compute_IC_Stmt * comp_stmt;
+	
+	rd = machine_desc_object.get_new_register<gp_data>();
+	result = new Register_Addr_Opd(rd);
+	
 
+	Code_For_Ast *output = new Code_For_Ast(lhs_code.get_icode_list(), rd);
+	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
+	output->set_reg(rd);
+	// output->append_ics(*comp_stmt);
+	// output->append_ics(*rel_stmt);
+	return *output;
 }
 
 Code_For_Ast & Selection_Statement_Ast::compile() {
+	Code_For_Ast cond_code = this->cond->compile(); 
+	Code_For_Ast then_code = this->then_part->compile(); 
+	Code_For_Ast else_code;
+	Label_IC_Stmt * label1 = new Label_IC_Stmt(j, this->get_new_label()); //why does label need tg_op?
+	Label_IC_Stmt * label2;
+	Control_Flow_IC_Stmt *jump_stmt;
+	if(this->else_part != NULL) {
+		else_code = this->else_part->compile();
+		Register_Addr_Opd *else_result = new Register_Addr_Opd(else_code.get_reg());
+		label2 = new Label_IC_Stmt(j, this->get_new_label());
+		jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
+	}
 
+	Register_Addr_Opd *cond_result = new Register_Addr_Opd(cond_code.get_reg());
+	Register_Addr_Opd *then_result = new Register_Addr_Opd(then_code.get_reg());
+	Register_Descriptor *rd = machine_desc_object.get_new_register<gp_data>();
+	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
+	Control_Flow_IC_Stmt *rel_stmt = new Control_Flow_IC_Stmt(beq, cond_result, label1->get_label());
+
+	Code_For_Ast *output = new Code_For_Ast(cond_code.get_icode_list(), rd);
+	output->append_ics(*rel_stmt);
+	output->get_icode_list().insert(output->get_icode_list().end(),then_code.get_icode_list().begin(),then_code.get_icode_list().end());
+	if(this->else_part != NULL) {
+		output->append_ics(*jump_stmt);
+	}
+	output->append_ics(*label1);
+	if(this->else_part != NULL) {
+		output->get_icode_list().insert(output->get_icode_list().end(),else_code.get_icode_list().begin(),else_code.get_icode_list().end());
+		output->append_ics(*label2);
+	}
+	
+	output->set_reg(rd);
+	return *output;
 }
 
 Code_For_Ast & Iteration_Statement_Ast::compile() {
-
+	//TODO:
 }
 
 Code_For_Ast & Sequence_Ast::compile() {
-
+	//TODO:
 }
 

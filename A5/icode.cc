@@ -21,7 +21,7 @@ Instruction_Descriptor::Instruction_Descriptor (Tgt_Op op, string name, string m
 }
 
 Instruction_Descriptor::Instruction_Descriptor() {
-	/* TODO */
+	/* TODO: */
 }
 
 Tgt_Op Instruction_Descriptor::get_op() {
@@ -49,12 +49,14 @@ Assembly_Format Instruction_Descriptor::get_assembly_format() {
 }
  
 void Instruction_Descriptor::print_instruction_descriptor(ostream & file_buffer) {
-	/* TODO */
+	file_buffer << this->get_name();
 }
 
 ///////////////////////////// Icode statement operand ///////////////////////////////////
 
-Register_Descriptor * Ics_Opd::get_reg() {}
+Register_Descriptor * Ics_Opd::get_reg() {	
+
+}
 
 Mem_Addr_Opd::Mem_Addr_Opd(Symbol_Table_Entry & se) {
 	this->symbol_entry = &se;
@@ -65,7 +67,7 @@ void Mem_Addr_Opd::print_ics_opd(ostream & file_buffer) {
 }
 
 void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer) {
-	/* TODO */
+	file_buffer << this->symbol_entry->get_start_offset() << "($fp)";
 }
 
 Mem_Addr_Opd & Mem_Addr_Opd::operator= (const Mem_Addr_Opd & rhs) {
@@ -85,7 +87,7 @@ void Register_Addr_Opd::print_ics_opd(ostream & file_buffer) {
 }
 
 void Register_Addr_Opd::print_asm_opd(ostream & file_buffer) {
-	/* TODO */
+	file_buffer << "$" << this->register_description->get_name();
 }
 
 Register_Addr_Opd & Register_Addr_Opd::operator=(const Register_Addr_Opd & rhs) {
@@ -104,8 +106,7 @@ void Const_Opd<T>::print_ics_opd(ostream & file_buffer) {
 
 template <class T>
 void Const_Opd<T>::print_asm_opd(ostream & file_buffer) {
-	/* TODO */
-	
+	file_buffer << num;
 }
 
 template <class T>
@@ -163,9 +164,7 @@ void Move_IC_Stmt::set_result(Ics_Opd * io) {
 }
 
 void Move_IC_Stmt::print_icode(ostream & file_buffer) {
-	/* TODO */
 	file_buffer << "	" << this->op_desc.get_name() << "    	";
-	// this->opd1->get_reg()->get_name() << " <- " << this->result->get_reg()->get_name() << "\n";
 	this->result->print_ics_opd(file_buffer);
 	file_buffer << " <- ";
 	this->opd1->print_ics_opd(file_buffer);
@@ -173,7 +172,21 @@ void Move_IC_Stmt::print_icode(ostream & file_buffer) {
 }
 
 void Move_IC_Stmt::print_assembly(ostream & file_buffer) {
-	/* TODO */
+	file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
+
+	if(this->op_desc.get_mnemonic() == "s.d" || this->op_desc.get_mnemonic() == "sw") {
+		this->opd1->print_asm_opd(file_buffer);
+		file_buffer << ", ";
+		this->result->print_asm_opd(file_buffer);
+		
+	}
+	else {
+		this->result->print_asm_opd(file_buffer);
+		file_buffer << ", ";
+		this->opd1->print_asm_opd(file_buffer);
+	}
+	
+	file_buffer << "\n";
 }
 
 
@@ -221,11 +234,23 @@ void Compute_IC_Stmt::set_result(Ics_Opd * io) {
 }
 
 void Compute_IC_Stmt::print_icode(ostream & file_buffer) {
-	/* TODO */
+	file_buffer << "	" << this->op_desc.get_name() << "    	";
+	this->result->print_ics_opd(file_buffer);
+	file_buffer << " <- ";
+	this->opd1->print_ics_opd(file_buffer);
+	file_buffer << " , ";
+	this->opd2->print_ics_opd(file_buffer);
+	file_buffer << "\n";
 }
 
 void Compute_IC_Stmt::print_assembly(ostream & file_buffer) {
-	/* TODO */
+	file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
+	this->result->print_asm_opd(file_buffer);
+	file_buffer << ", ";
+	this->opd1->print_asm_opd(file_buffer);
+	file_buffer << ", ";
+	this->opd2->print_asm_opd(file_buffer);
+	file_buffer << "\n";
 }
 
 Control_Flow_IC_Stmt::Control_Flow_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, string label) {
@@ -261,11 +286,38 @@ void Control_Flow_IC_Stmt::set_label(string label) {
 }
 
 void Control_Flow_IC_Stmt::print_icode(ostream & file_buffer) {
-	/* TODO */
+	/* TODO: */
+	if(this->op_desc.get_name() == "beq") {
+		file_buffer << "	" << this->op_desc.get_name() << "        	";
+		this->opd1->print_ics_opd(file_buffer);
+		file_buffer << " , zero : goto ";
+		file_buffer << this->get_label();
+		file_buffer << "\n";
+	}
+
+	else if(this->op_desc.get_name() == "jump") {
+		file_buffer << "	goto ";
+		file_buffer << this->get_label();
+		file_buffer << "\n";
+	}
+	
 }
 
 void Control_Flow_IC_Stmt::print_assembly(ostream & file_buffer) {
-	/* TODO */
+	/* TODO: */
+	if(this->op_desc.get_name() == "beq") {
+		file_buffer << "	" << this->op_desc.get_mnemonic() << "        	";
+		this->opd1->print_ics_opd(file_buffer);
+		file_buffer << ", $zero, ";
+		file_buffer << this->get_label();
+		file_buffer << "\n";
+	}
+
+	else if(this->op_desc.get_name() == "jump") {
+		file_buffer << "	j ";
+		file_buffer << this->get_label();
+		file_buffer << "\n";
+	}
 }
 
 
@@ -293,11 +345,11 @@ void Label_IC_Stmt::set_label(string label) {
 }
 
 void Label_IC_Stmt::print_icode(ostream & file_buffer) {
-	/* TODO */
+	file_buffer << "\n" << this->get_label() << ":\n";
 }
 
 void Label_IC_Stmt::print_assembly(ostream & file_buffer) {
-	/* TODO */
+	file_buffer << "\n" << this->get_label() << ":\n";
 }
 
 //////////////////////// Intermediate code for Ast statements ////////////////////////
