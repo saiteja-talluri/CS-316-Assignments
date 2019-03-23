@@ -29,12 +29,18 @@ Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
 Code_For_Ast & Name_Ast::compile() {
 	Mem_Addr_Opd *opd1  = new Mem_Addr_Opd(*this->variable_symbol_entry);
 	Register_Descriptor *rd;
-	if(this->variable_symbol_entry->get_data_type() == int_data_type)
+	Register_Addr_Opd *result;
+	Move_IC_Stmt *load_stmt;
+	if(this->variable_symbol_entry->get_data_type() == int_data_type) {
 		rd = machine_desc_object.get_new_register<gp_data>();
-	else if(this->variable_symbol_entry->get_data_type() == double_data_type)
+		result = new Register_Addr_Opd(rd);
+		load_stmt = new Move_IC_Stmt(load, opd1, result);
+	}
+	else if(this->variable_symbol_entry->get_data_type() == double_data_type) {
 		rd = machine_desc_object.get_new_register<float_reg>();
-	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
-	Move_IC_Stmt *load_stmt = new Move_IC_Stmt(load, opd1, result);
+		result = new Register_Addr_Opd(rd);
+		load_stmt = new Move_IC_Stmt(load_d, opd1, result);
+	}
 	Code_For_Ast *output = new Code_For_Ast();
 	output->set_reg(rd);
 	output->append_ics(*load_stmt);
