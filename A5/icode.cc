@@ -20,9 +20,7 @@ Instruction_Descriptor::Instruction_Descriptor (Tgt_Op op, string name, string m
 	this->assem_format = af;
 }
 
-Instruction_Descriptor::Instruction_Descriptor() {
-	/* TODO: */
-}
+Instruction_Descriptor::Instruction_Descriptor() {}
 
 Tgt_Op Instruction_Descriptor::get_op() {
 	return this->inst_op;
@@ -54,9 +52,7 @@ void Instruction_Descriptor::print_instruction_descriptor(ostream & file_buffer)
 
 ///////////////////////////// Icode statement operand ///////////////////////////////////
 
-Register_Descriptor * Ics_Opd::get_reg() {	
-
-}
+Register_Descriptor * Ics_Opd::get_reg() {}
 
 Mem_Addr_Opd::Mem_Addr_Opd(Symbol_Table_Entry & se) {
 	this->symbol_entry = &se;
@@ -311,7 +307,7 @@ void Control_Flow_IC_Stmt::print_assembly(ostream & file_buffer) {
 	/* TODO: look for more formats*/
 	if(this->op_desc.get_assembly_format() == a_op_o1_o2_st) {
 		file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
-		this->opd1->print_ics_opd(file_buffer);
+		this->opd1->print_asm_opd(file_buffer);
 		file_buffer << ", $zero, ";
 		file_buffer << this->get_label();
 		file_buffer << "\n";
