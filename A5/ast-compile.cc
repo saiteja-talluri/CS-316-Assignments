@@ -17,6 +17,7 @@ Code_For_Ast & Assignment_Ast::compile() {
 	Code_For_Ast lhs_res = this->lhs->create_store_stmt(rhs_result->get_reg());
 	Code_For_Ast *output = new Code_For_Ast(rhs_res.get_icode_list(), rhs_res.get_reg());
 	output->append_ics(*(lhs_res.get_icode_list().front()));
+	rhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
 	return *output;
 }
 
