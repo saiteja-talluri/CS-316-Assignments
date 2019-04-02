@@ -244,18 +244,28 @@ Code_For_Ast & UMinus_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
 }
 
 Code_For_Ast & Conditional_Expression_Ast::compile() {
-    // Register_Descriptor * lhs_result = this->lhs.compile().get_reg();
-	// Register_Descriptor * rhs_result = this->rhs.compile().get_reg();
-    // Register_Descriptor * cond_result = this->cond.compile().get_reg();
+	Code_For_Ast cond_code = this->cond->compile();
+    Code_For_Ast lhs_code = this->lhs->compile();
+	Code_For_Ast rhs_code = this->rhs->compile();
+	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(lhs_code.get_reg());
+	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(rhs_code.get_reg());
+	Register_Addr_Opd *cond_result = new Register_Addr_Opd(cond_code.get_reg());
+	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
+	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
 
-    // // label1 = new Label_IC_Stmt(this->cond)
-    // Register_Descriptor *result = machine_desc_object.get_new_register(lhs_result->get_use_category());
-    // Compute_IC_Stmt *cond_stmt = lhs_result;
-    // Code_For_Ast *output = new Code_For_Ast();
-    // output->set_reg(result);
-    // output->append_ics(*cond_stmt);
+	Label_IC_Stmt * label1 = new Label_IC_Stmt(j, this->get_new_label()); //why does label need tg_op?
+	Label_IC_Stmt * label2 = new Label_IC_Stmt(j, this->get_new_label()); //why does label need tg_op?
+	Control_Flow_IC_Stmt * jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
 
-    // return *output;
+	Control_Flow_IC_Stmt * branch_stmt = new Control_Flow_IC_Stmt(beq, cond_result, label1->get_label());
+
+	Code_For_Ast *output = new Code_For_Ast();
+	output->set_reg(rd);
+	output->get_icode_list().insert(output->get_icode_list().end(),cond_code.get_icode_list().begin(), cond_code.get_icode_list().end());
+	output->append_ics(*branch_stmt);
+
+
+	return *output;
 }
 
 
@@ -380,10 +390,34 @@ Code_For_Ast & Selection_Statement_Ast::compile() {
 
 Code_For_Ast & Iteration_Statement_Ast::compile() {
 	//TODO:
+	Code_For_Ast cond_code = this->cond->compile(); 
+	Code_For_Ast body_code = this->body->compile(); 
+
+	Label_IC_Stmt * label1 = new Label_IC_Stmt(j, this->get_new_label()); //why does label need tg_op?
+	Label_IC_Stmt * label2 = new Label_IC_Stmt(j, this->get_new_label()); //why does label need tg_op?
+	Control_Flow_IC_Stmt * jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
+
+	Register_Addr_Opd *cond_result = new Register_Addr_Opd(cond_code.get_reg());
+	Register_Addr_Opd *body_result = new Register_Addr_Opd(body_code.get_reg());
+	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
+	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
+	Control_Flow_IC_Stmt *control_stmt = new Control_Flow_IC_Stmt(bne, cond_result, label1->get_label());
+	jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
+
+	Code_For_Ast *output = new Code_For_Ast();
+	output->set_reg(rd);
+	if(! this->is_do_form)
+		output->append_ics(*jump_stmt);
+	output->append_ics(*label1);
+	output->get_icode_list().insert(output->get_icode_list().end(), body_code.get_icode_list().begin(), body_code.get_icode_list().end());
+	output->append_ics(*label2);
+	output->get_icode_list().insert(output->get_icode_list().end(), cond_code.get_icode_list().begin(), cond_code.get_icode_list().end());
+	output->append_ics(*control_stmt);
+	
+	return *output;
 }
 
 Code_For_Ast & Sequence_Ast::compile() {
-	//TODO:
 	list<Ast *>::iterator it;
 	for(it = this->statement_list.begin(); it != this->statement_list.end(); it++) {
 		Code_For_Ast temp = (*it)->compile();
