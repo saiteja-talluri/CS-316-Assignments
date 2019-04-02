@@ -1,5 +1,6 @@
-testdir="tests"
+#!/bin/bash
 
+testdir="tests"
 
 if [ ! -d "$testdir" ]; 
 then
@@ -8,10 +9,6 @@ then
 fi
 
 make
-
-nodiff=true
-stopondiff=false
-#ignore these for now
 
 for filename in "$testdir"/*.c; do
 
@@ -22,32 +19,20 @@ for filename in "$testdir"/*.c; do
 	./sclp -icode "$filename" 2>"$filename.err"
 	DIFF1=$(diff "$filename.spim" "$filename.myspim")
 	DIFF2=$(diff "$filename.err" "$filename.myerr")
-
 	DIFF3=$(diff "$filename.ic" "$filename.myic")
-
-
-
 
 	./mysclp -tokens -ast -symtab -eval "$filename" 2> /dev/null
 	mv "$filename.eval" "$filename.myeval"
 	mv "$filename.ast" "$filename.myast"
 	mv "$filename.sym" "$filename.mysym"
 	mv "$filename.toks" "$filename.mytoks"
+
 	./sclp -tokens -ast -symtab -eval "$filename" 2> /dev/null
 	DIFF4=$(diff "$filename.ast" "$filename.myast")
 	DIFF5=$(diff "$filename.eval" "$filename.myeval")
-
 	DIFF6=$(diff "$filename.toks" "$filename.mytoks")
 	DIFF7=$(diff "$filename.sym" "$filename.mysym")
-	
-	# if [ "$DIFF5" != "" ]
-	# then
-	# 	echo "eval comparison failed on $filename. Did not run further tests (lexicographic ordering)."
-	# 	echo "Showing diff:"
-	# 	echo "$DIFF5"
-	# 	exit
-	# fi
-	
+		
 	if [ "$DIFF1" != "" ]
 	then
 		echo "spim code comparison failed on $filename. Continuing further tests."
@@ -68,13 +53,13 @@ for filename in "$testdir"/*.c; do
 		# exit
 	fi	
 
-	# if [ "$DIFF3" != "" ]
-	# then
-	# 	echo "icode comparison failed on $filename. Continuing further tests."
-	# 	echo "Showing diff:"
-	# 	echo "$DIFF3"
-	# 	# exit
-	# fi
+	if [ "$DIFF3" != "" ]
+	then
+		echo "icode comparison failed on $filename. Continuing further tests."
+		echo "Showing diff:"
+		echo "$DIFF3"
+		# exit
+	fi
 
 
 	if [ "$DIFF4" != "" ]
@@ -85,11 +70,17 @@ for filename in "$testdir"/*.c; do
 		# exit
 	fi
 
-	
+	# if [ "$DIFF5" != "" ]
+	# then
+	# 	echo "eval comparison failed on $filename. Did not run further tests (lexicographic ordering)."
+	# 	echo "Showing diff:"
+	# 	echo "$DIFF5"
+	# 	exit
+	# fi
 
 	if [ "$DIFF6" != "" ]
 	then
-		if ! [ -s "$filename.myerr" ] #myerr is empty
+		if ! [ -s "$filename.myerr" ]
 		then
 			echo "tokens comparison failed on $filename even though myerr is empty. Did not run further tests (lexicographic ordering)."
 			exit
@@ -109,6 +100,5 @@ for filename in "$testdir"/*.c; do
 		exit
 	fi
 
-	
 done
-echo "All tests passed!"
+# echo "All tests passed!"
