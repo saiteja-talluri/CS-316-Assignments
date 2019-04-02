@@ -70,7 +70,6 @@ procedure_definition	:	VOID NAME '(' ')'
 									local_variable_declaration_list statement_list
         	           		'}' 
 							{	
-								*$2 = *$2 + "_";
 								$$ = new Procedure(void_data_type,*$2, yylineno);
 								(*local_sym_table).set_table_scope(local);
 								(*$$).set_local_list((*local_sym_table));
