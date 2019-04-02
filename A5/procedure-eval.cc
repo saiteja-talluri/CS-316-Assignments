@@ -1,10 +1,20 @@
 
+
 #include<string>
 #include<fstream>
 #include<iostream>
 
 using namespace std;
 
+// #include"common-classes.hh"
+// #include"error-display.hh"
+// #include"user-options.hh"
+#include"local-environment.hh"
+#include"symbol-table.hh"
+#include"ast.hh"
+// #include"basic-block.hh"
+#include"procedure.hh"
+// #include"sprogram.hh"
 
 Eval_Result & Procedure::evaluate(ostream & file_buffer)
 {

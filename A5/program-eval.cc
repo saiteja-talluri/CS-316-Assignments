@@ -1,17 +1,24 @@
-
 #include<string>
 #include<fstream>
 
 using namespace std;
 
-
+// #include"common-classes.hh"
+#include"local-environment.hh"
+// #include"user-options.hh"
+// #include"error-display.hh"
+#include"symbol-table.hh"
+#include"ast.hh"
+// #include"basic-block.hh"
+#include"procedure.hh"
+#include"program.hh"
 
 Local_Environment interpreter_global_table;
 
 Eval_Result & Program::evaluate()
 {
 	Procedure * main_proc = procedure;
-	CHECK_INPUT_AND_ABORT(((main_proc != NULL) && (main_proc->get_proc_name() == "main")), 
+	CHECK_INPUT_AND_ABORT(((main_proc != NULL) && (main_proc->get_proc_name() == "main_")), 
 		"No main function found in the program", NO_FILE_LINE);
 
 	global_symbol_table.create(interpreter_global_table);

@@ -33,7 +33,7 @@ protected:
 	Data_Type node_data_type;
 	Ast_Arity ast_num_child;
 
-	static int labelCounter;
+   static int labelCounter;
 	int lineno;
 	string get_new_label(){
 
@@ -361,19 +361,5 @@ public:
 	Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra){}
 };
 
-class Print_Ast:public Ast
-{
-     Ast *var;
-public:
-    Print_Ast(Ast *v, int line);
-    ~Print_Ast();
-
-    void print(ostream & file_buffer);
-
-    Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer){}
-
-    Code_For_Ast & compile(){}
-    Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra){}
-};
 
 #endif
