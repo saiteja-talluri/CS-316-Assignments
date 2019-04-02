@@ -120,6 +120,8 @@ Code_For_Ast & Plus_Ast::compile() {
 	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
 	output->set_reg(rd);
 	output->append_ics(*plus_stmt);
+	lhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
+	rhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
 	return *output;
 }
 
@@ -150,6 +152,8 @@ Code_For_Ast & Minus_Ast::compile() {
 	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
 	output->set_reg(rd);
 	output->append_ics(*minus_stmt);
+	lhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
+	rhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
 	return *output;
 }
 
@@ -180,6 +184,8 @@ Code_For_Ast & Divide_Ast::compile() {
 	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
 	output->set_reg(rd);
 	output->append_ics(*divide_stmt);
+	lhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
+	rhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
 	return *output;
 }
 
@@ -209,6 +215,8 @@ Code_For_Ast & Mult_Ast::compile() {
 	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
 	output->set_reg(rd);
 	output->append_ics(*mult_stmt);
+	lhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
+	rhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
 	return *output;
 }
 
@@ -235,6 +243,7 @@ Code_For_Ast & UMinus_Ast::compile() {
 	Code_For_Ast *output = new Code_For_Ast(lhs_code.get_icode_list(), rd);
 	output->set_reg(rd);
 	output->append_ics(*uminus_stmt);
+	lhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
 	return *output;
 }
 
@@ -314,6 +323,8 @@ Code_For_Ast & Relational_Expr_Ast::compile() {
 	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
 	output->set_reg(rd);
 	output->append_ics(*comp_stmt);
+	lhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
+	rhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
 	return *output;
 }
 
@@ -406,7 +417,7 @@ Code_For_Ast & Iteration_Statement_Ast::compile() {
 
 	Code_For_Ast *output = new Code_For_Ast();
 	output->set_reg(rd);
-	if(! this->is_do_form)
+	if(!this->is_do_form)
 		output->append_ics(*jump_stmt);
 	output->append_ics(*label1);
 	output->get_icode_list().insert(output->get_icode_list().end(), body_code.get_icode_list().begin(), body_code.get_icode_list().end());
