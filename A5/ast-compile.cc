@@ -32,7 +32,7 @@ Code_For_Ast & Name_Ast::compile() {
 	Register_Addr_Opd *result;
 	Move_IC_Stmt *load_stmt;
 	if(this->variable_symbol_entry->get_data_type() == int_data_type) {
-		rd = machine_desc_object.get_new_register<gp_data>();
+		rd = machine_desc_object.get_new_register<int_reg>();
 		result = new Register_Addr_Opd(rd);
 		load_stmt = new Move_IC_Stmt(load, opd1, result);
 	}
@@ -56,7 +56,7 @@ Code_For_Ast & Name_Ast::create_store_stmt(Register_Descriptor * store_register)
 	Mem_Addr_Opd *opd1  = new Mem_Addr_Opd(*this->variable_symbol_entry);
 	Move_IC_Stmt *store_stmt;
 	Code_For_Ast *output = new Code_For_Ast();
-	if(store_register->get_use_category() == gp_data) {
+	if(store_register->get_use_category() == int_reg) {
 		store_stmt = new Move_IC_Stmt(store, result, opd1);
 	}
 	else if(store_register->get_use_category() == float_reg) {
@@ -74,7 +74,7 @@ Code_For_Ast & Number_Ast<T>::compile() {
 	Move_IC_Stmt *load_stmt;
 	Register_Addr_Opd *result;
 	if(this->get_data_type() == int_data_type) {
-		rd = machine_desc_object.get_new_register<gp_data>();
+		rd = machine_desc_object.get_new_register<int_reg>();
 		result = new Register_Addr_Opd(rd);
 		load_stmt = new Move_IC_Stmt(imm_load, opd1, result);
 	}
@@ -107,7 +107,7 @@ Code_For_Ast & Plus_Ast::compile() {
 	Register_Addr_Opd *result;
 	Compute_IC_Stmt *plus_stmt;
 	if(this->lhs->get_data_type() == int_data_type) {
-		rd = machine_desc_object.get_new_register<gp_data>();
+		rd = machine_desc_object.get_new_register<int_reg>();
 		result = new Register_Addr_Opd(rd);
 		plus_stmt = new Compute_IC_Stmt(add, lhs_result, rhs_result, result);
 	}
@@ -137,7 +137,7 @@ Code_For_Ast & Minus_Ast::compile() {
 	Register_Addr_Opd *result;
 	Compute_IC_Stmt *minus_stmt;
 	if(this->lhs->get_data_type() == int_data_type) {
-		rd = machine_desc_object.get_new_register<gp_data>();
+		rd = machine_desc_object.get_new_register<int_reg>();
 		result = new Register_Addr_Opd(rd);
 		minus_stmt = new Compute_IC_Stmt(sub, lhs_result, rhs_result, result);
 	}
@@ -167,7 +167,7 @@ Code_For_Ast & Divide_Ast::compile() {
 	Register_Addr_Opd *result;
 	Compute_IC_Stmt *divide_stmt;
 	if(this->lhs->get_data_type() == int_data_type) {
-		rd = machine_desc_object.get_new_register<gp_data>();
+		rd = machine_desc_object.get_new_register<int_reg>();
 		result = new Register_Addr_Opd(rd);
 		divide_stmt = new Compute_IC_Stmt(divd, lhs_result, rhs_result, result);
 	}
@@ -196,7 +196,7 @@ Code_For_Ast & Mult_Ast::compile() {
 	Register_Addr_Opd *result;
 	Compute_IC_Stmt *mult_stmt;
 	if(this->lhs->get_data_type() == int_data_type) {
-		rd = machine_desc_object.get_new_register<gp_data>();
+		rd = machine_desc_object.get_new_register<int_reg>();
 		result = new Register_Addr_Opd(rd);
 		mult_stmt = new Compute_IC_Stmt(mult, lhs_result, rhs_result, result);
 	}
@@ -223,7 +223,7 @@ Code_For_Ast & UMinus_Ast::compile() {
 	Register_Addr_Opd *result;
 	Move_IC_Stmt *uminus_stmt;
 	if(this->lhs->get_data_type() == int_data_type) {
-		rd = machine_desc_object.get_new_register<gp_data>();
+		rd = machine_desc_object.get_new_register<int_reg>();
 		result = new Register_Addr_Opd(rd);
 		uminus_stmt = new Move_IC_Stmt(uminus, lhs_result, result);
 	}
@@ -260,11 +260,11 @@ Code_For_Ast & Conditional_Expression_Ast::compile() {
 
 
 Code_For_Ast & Return_Ast::compile() {
-
+	//TODO:
 }
 
 Code_For_Ast & Return_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
-
+	//TODO:
 }
 
 
@@ -273,12 +273,12 @@ Code_For_Ast & Relational_Expr_Ast::compile() {
 	Code_For_Ast rhs_code =	this->rhs_condition->compile(); 
 	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(lhs_code.get_reg());
 	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(rhs_code.get_reg());
-	Register_Descriptor *rd = machine_desc_object.get_new_register<gp_data>();
+	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
 	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
 	
 	Compute_IC_Stmt * comp_stmt;
 
-	rd = machine_desc_object.get_new_register<gp_data>();
+	rd = machine_desc_object.get_new_register<int_reg>();
 	result = new Register_Addr_Opd(rd);
 
 	if(this->rel_op == less_equalto) {
@@ -316,11 +316,11 @@ Code_For_Ast & Logical_Expr_Ast::compile() {
 	}
 	Code_For_Ast rhs_code =	this->rhs_op->compile(); 
 	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(rhs_code.get_reg());
-	Register_Descriptor *rd = machine_desc_object.get_new_register<gp_data>();
+	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
 	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
 	
 	Compute_IC_Stmt * comp_stmt;
-	rd = machine_desc_object.get_new_register<gp_data>();
+	rd = machine_desc_object.get_new_register<int_reg>();
 	result = new Register_Addr_Opd(rd);
 
 	if(this->bool_op == _logical_and) {
@@ -358,7 +358,7 @@ Code_For_Ast & Selection_Statement_Ast::compile() {
 
 	Register_Addr_Opd *cond_result = new Register_Addr_Opd(cond_code.get_reg());
 	Register_Addr_Opd *then_result = new Register_Addr_Opd(then_code.get_reg());
-	Register_Descriptor *rd = machine_desc_object.get_new_register<gp_data>();
+	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
 	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
 	Control_Flow_IC_Stmt *rel_stmt = new Control_Flow_IC_Stmt(beq, cond_result, label1->get_label());
 
