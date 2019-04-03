@@ -163,7 +163,8 @@ void Move_IC_Stmt::set_result(Ics_Opd * io) {
 }
 
 void Move_IC_Stmt::print_icode(ostream & file_buffer) {
-	file_buffer << "	" << this->op_desc.get_name() << ":" << string(9 - this->op_desc.get_name().length(), ' ') << "\t";
+	// file_buffer << "	" << this->op_desc.get_name() << ":" << string(8 - this->op_desc.get_name().length(), ' ') << "\t";
+	file_buffer << "	" << this->op_desc.get_name() << ":" << string(4, ' ') << "\t";
 	this->result->print_ics_opd(file_buffer);
 	file_buffer << " <- ";
 	this->opd1->print_ics_opd(file_buffer);
@@ -232,7 +233,8 @@ void Compute_IC_Stmt::set_result(Ics_Opd * io) {
 void Compute_IC_Stmt::print_icode(ostream & file_buffer) {
 	/* TODO: look for more formats*/
 	// one operand
-	file_buffer << "	" << this->op_desc.get_name() << ":" << string(9 - this->op_desc.get_name().length(), ' ') << "\t";
+	file_buffer << "	" << this->op_desc.get_name() << ":" << string(4, ' ') << "\t";
+	// file_buffer << "	" << this->op_desc.get_name() << ":" << string(9 - this->op_desc.get_name().length(), ' ') << "\t";
 	this->result->print_ics_opd(file_buffer);
 	file_buffer << " <- ";
 	this->opd1->print_ics_opd(file_buffer);
@@ -288,7 +290,8 @@ void Control_Flow_IC_Stmt::set_label(string label) {
 void Control_Flow_IC_Stmt::print_icode(ostream & file_buffer) {
 	/* TODO: look for more formats*/
 	if(this->op_desc.get_ic_format() == i_op_o1_o2_st) {
-		file_buffer << "	" << this->op_desc.get_name() << ":" << string(9 - this->op_desc.get_name().length(), ' ') << "\t";
+		// file_buffer << "	" << this->op_desc.get_name() << ":" << string(9 - this->op_desc.get_name().length(), ' ') << "\t";
+		file_buffer << "	" << this->op_desc.get_name() << ":" << string(4, ' ') << "\t";
 		this->opd1->print_ics_opd(file_buffer);
 		file_buffer << " , zero : goto ";
 		file_buffer << this->get_label();
@@ -380,4 +383,15 @@ void Code_For_Ast::set_reg(Register_Descriptor * reg) {
 Code_For_Ast & Code_For_Ast::operator=(const Code_For_Ast & rhs) {
 	this->ics_list = rhs.ics_list;
 	this->result_register = rhs.result_register;
+}
+
+/*print*/
+Print_IC_Stmt::Print_IC_Stmt() {}
+Print_IC_Stmt::~Print_IC_Stmt() {}
+void Print_IC_Stmt::print_icode(ostream & file_buffer) {
+	// cerr<<"REACHED HERE\n";
+	file_buffer << "        print\n";
+}
+void Print_IC_Stmt::print_assembly(ostream & file_buffer) {
+	file_buffer << "        syscall\n";
 }

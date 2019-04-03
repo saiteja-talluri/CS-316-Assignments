@@ -506,3 +506,22 @@ void Sequence_Ast::print(ostream & file_buffer){
         (*it)->print(file_buffer);
     }
 }
+
+/*print*/
+Print_Ast::Print_Ast(Ast *v, int line) {
+    this->var = v;
+    this->lineno = line;
+}
+
+Print_Ast::~Print_Ast() {
+
+}
+
+void Print_Ast::print(ostream & file_buffer) {
+    file_buffer << "\n         Print :\n             (";
+    this->var->print(file_buffer);
+    file_buffer << ") ";
+    cerr<<"REACHED here\n";
+    // no endline?
+
+}

@@ -298,7 +298,7 @@ Code_For_Ast & Relational_Expr_Ast::compile() {
 	
 	Compute_IC_Stmt * comp_stmt;
 
-	rd = machine_desc_object.get_new_register<int_reg>();
+	// rd = machine_desc_object.get_new_register<int_reg>();
 	result = new Register_Addr_Opd(rd);
 
 	if(this->rel_op == less_equalto) {
@@ -441,3 +441,44 @@ Code_For_Ast & Sequence_Ast::compile() {
 	return *output;
 }
 
+
+/*print*/
+Code_For_Ast & Print_Ast::compile() {
+	Mem_Addr_Opd *variable  = new Mem_Addr_Opd(this->var->get_symbol_entry());
+	Register_Descriptor *rd1;
+	Register_Descriptor *rd2;
+	Move_IC_Stmt *load1;
+	Move_IC_Stmt *load2;
+	Register_Addr_Opd *RAO1;
+	Register_Addr_Opd *RAO2;
+	Const_Opd<int> *constant;
+	Print_IC_Stmt *print_stmt = new Print_IC_Stmt();
+
+	if(this->var->get_data_type() == int_data_type) {
+		constant = new Const_Opd<int>(1);
+		rd1 = new Register_Descriptor(v0, "v0", int_num, int_reg);
+		rd2 = new Register_Descriptor(a0, "a0", int_num, argument);
+		RAO1 = new Register_Addr_Opd(rd1);
+		load1 = new Move_IC_Stmt(imm_load, constant, RAO1);
+
+		RAO2 = new Register_Addr_Opd(rd2);
+		load2 = new Move_IC_Stmt(load, variable, RAO2);
+	}
+	else if(this->var->get_data_type() == double_data_type) {
+		constant = new Const_Opd<int>(3);
+		rd1 = new Register_Descriptor(v0, "v0", int_num, int_reg);
+		rd2 = new Register_Descriptor(f12, "f12", float_num, float_reg);
+		RAO1 = new Register_Addr_Opd(rd1);
+		load1 = new Move_IC_Stmt(imm_load, constant, RAO1);
+
+		RAO2 = new Register_Addr_Opd(rd2);
+		load2 = new Move_IC_Stmt(load_d, variable, RAO2);
+	}
+
+    Code_For_Ast *output = new Code_For_Ast();
+	output->set_reg(rd1);
+	output->append_ics(*load1);
+	output->append_ics(*load2);
+	output->append_ics(*print_stmt);
+	return *output;
+}

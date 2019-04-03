@@ -28,6 +28,7 @@
 %token <string_value> NAME
 %token BBNUM  RETURN  INTEGER  FLOAT  ASSIGN  VOID  UMINUS
 %token WHILE IF DO ELSE
+%token PRINT
 %token EQUAL LESS_THAN GREATER_THAN LESS_THAN_EQUAL GREATER_THAN_EQUAL NOT_EQUAL
 %token AND OR NOT
 
@@ -36,6 +37,8 @@
 %type <ast>	assignment_statement arith_expression
 %type <ast> log_expression rel_expression iteration_statement statement selection_statement
 %type <ast> sequence_statement
+/*print*/
+%type <ast> print_statement
 %type <ast_list> statement_list
 
 
@@ -188,6 +191,11 @@ statement 				:	assignment_statement
 							{
 								$$ = $1;
 							}
+							/*print*/
+							|	print_statement
+							{
+								$$ = $1;
+							}
 							;
 
 
@@ -313,6 +321,23 @@ assignment_statement	:	NAME ASSIGN arith_expression ';'
 							}
 							;
 
+print_statement			:	PRINT NAME ';'
+							{
+								*$2 = *$2 + "_";
+								if(!(*local_sym_table).is_empty() && (*local_sym_table).variable_in_symbol_list_check(*$2)){ 
+									Ast* var = new Name_Ast(*$2, (*local_sym_table).get_symbol_table_entry(*$2), yylineno);
+									$$ = new Print_Ast(var, yylineno);
+								}
+								else if(!(*global_sym_table).is_empty() && (*global_sym_table).variable_in_symbol_list_check(*$2)){
+									Ast* var = new Name_Ast(*$2, (*global_sym_table).get_symbol_table_entry(*$2), yylineno);
+									$$ = new Print_Ast(var, yylineno);
+								}
+								else{
+									yyerror("cs316: Error: Variable has not been declared");
+									exit(1);
+								}
+							}
+
 arith_expression		: 	INTEGER_NUMBER	
 							{
 								$$ = new Number_Ast<int>($1, int_data_type, yylineno);
@@ -377,4 +402,6 @@ arith_expression		: 	INTEGER_NUMBER
 								$$ = $2;
 							}
 							;
+
+
 %%

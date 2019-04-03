@@ -17,7 +17,6 @@ sl_comment \/[\/]+.*
 name [a-zA-Z_][a-zA-Z0-9_]*
 void_kw void
 meta_char [{},;()?:]
-/*what about colon?*/
 char .
 assign =
 
@@ -39,6 +38,9 @@ neq !=
 and &&
 or ||
 not !
+
+/*print*/
+print_kw print
 
 %%
 
@@ -107,7 +109,11 @@ not !
 				return ELSE;
 			}
 
-
+ /*print*/
+{print_kw}	{
+				store_token_name("PRINT", yytext, yylineno);
+				return PRINT;
+			}
 
 {name}  	{
 				/* cout<<yytext<<endl; */
@@ -116,7 +122,8 @@ not !
 				*yylval.string_value = yytext;
 				return NAME;
 			}
-			
+ 
+
  /*relops*/
 
 {eq}		{
