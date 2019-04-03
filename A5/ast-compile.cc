@@ -254,7 +254,10 @@ Code_For_Ast & UMinus_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
 }
 
 Code_For_Ast & Conditional_Expression_Ast::compile() {
+	
 	Code_For_Ast cond_code = this->cond->compile();
+	Label_IC_Stmt * label1 = new Label_IC_Stmt(j, this->get_new_label()); 
+
     Code_For_Ast lhs_code = this->lhs->compile();
 	Code_For_Ast rhs_code = this->rhs->compile();
 	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(lhs_code.get_reg());
@@ -263,8 +266,7 @@ Code_For_Ast & Conditional_Expression_Ast::compile() {
 	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
 	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
 
-	Label_IC_Stmt * label1 = new Label_IC_Stmt(j, this->get_new_label()); //why does label need tg_op?
-	Label_IC_Stmt * label2 = new Label_IC_Stmt(j, this->get_new_label()); //why does label need tg_op?
+	Label_IC_Stmt * label2 = new Label_IC_Stmt(j, this->get_new_label()); 
 	Control_Flow_IC_Stmt * jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
 
 	Control_Flow_IC_Stmt * branch_stmt = new Control_Flow_IC_Stmt(beq, cond_result, label1->get_label());
@@ -298,7 +300,6 @@ Code_For_Ast & Relational_Expr_Ast::compile() {
 	
 	Compute_IC_Stmt * comp_stmt;
 
-	// rd = machine_desc_object.get_new_register<int_reg>();
 	result = new Register_Addr_Opd(rd);
 
 	if(this->rel_op == less_equalto) {
@@ -368,13 +369,13 @@ Code_For_Ast & Selection_Statement_Ast::compile() {
 	Code_For_Ast cond_code = this->cond->compile(); 
 	Code_For_Ast then_code = this->then_part->compile(); 
 	Code_For_Ast else_code;
-	Label_IC_Stmt * label1 = new Label_IC_Stmt(j, this->get_new_label()); //why does label need tg_op?
+	Label_IC_Stmt * label1 = new Label_IC_Stmt(j, this->get_new_label()); 
 	Label_IC_Stmt * label2;
 	Control_Flow_IC_Stmt *jump_stmt;
 	if(this->else_part != NULL) {
+		label2 = new Label_IC_Stmt(j, this->get_new_label());
 		else_code = this->else_part->compile();
 		Register_Addr_Opd *else_result = new Register_Addr_Opd(else_code.get_reg());
-		label2 = new Label_IC_Stmt(j, this->get_new_label());
 		jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
 	}
 
@@ -403,10 +404,10 @@ Code_For_Ast & Selection_Statement_Ast::compile() {
 Code_For_Ast & Iteration_Statement_Ast::compile() {
 	//TODO:
 	Code_For_Ast cond_code = this->cond->compile(); 
+	Label_IC_Stmt * label1 = new Label_IC_Stmt(j, this->get_new_label()); 
+	Label_IC_Stmt * label2 = new Label_IC_Stmt(j, this->get_new_label()); 
 	Code_For_Ast body_code = this->body->compile(); 
 
-	Label_IC_Stmt * label1 = new Label_IC_Stmt(j, this->get_new_label()); //why does label need tg_op?
-	Label_IC_Stmt * label2 = new Label_IC_Stmt(j, this->get_new_label()); //why does label need tg_op?
 	Control_Flow_IC_Stmt * jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
 
 	Register_Addr_Opd *cond_result = new Register_Addr_Opd(cond_code.get_reg());
