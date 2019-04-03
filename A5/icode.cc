@@ -244,13 +244,25 @@ void Compute_IC_Stmt::print_icode(ostream & file_buffer) {
 void Compute_IC_Stmt::print_assembly(ostream & file_buffer) {
 	/* TODO: look for more formats*/
 	// one operand
-	file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
-	this->result->print_asm_opd(file_buffer);
-	file_buffer << ", ";
-	this->opd1->print_asm_opd(file_buffer);
-	file_buffer << ", ";
-	this->opd2->print_asm_opd(file_buffer);
-	file_buffer << "\n";
+	if(op_desc.get_assembly_format() == a_op_r_o1_o2) {
+		file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
+		this->result->print_asm_opd(file_buffer);
+		file_buffer << ", ";
+		this->opd1->print_asm_opd(file_buffer);
+		file_buffer << ", ";
+		this->opd2->print_asm_opd(file_buffer);
+		file_buffer << "\n";
+	}
+	else if(op_desc.get_assembly_format() == a_op_o1_o2) {
+		file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
+		// this->result->print_asm_opd(file_buffer);
+		// file_buffer << ", ";
+		this->opd1->print_asm_opd(file_buffer);
+		file_buffer << ", ";
+		this->opd2->print_asm_opd(file_buffer);
+		file_buffer << "\n";
+	}
+	
 }
 
 Control_Flow_IC_Stmt::Control_Flow_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, string label) {
@@ -314,7 +326,7 @@ void Control_Flow_IC_Stmt::print_assembly(ostream & file_buffer) {
 	}
 
 	else if(this->op_desc.get_assembly_format() == a_op_st) {
-		file_buffer << "	j ";
+		file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
 		file_buffer << this->get_label();
 		file_buffer << "\n";
 	}
@@ -386,7 +398,6 @@ Code_For_Ast & Code_For_Ast::operator=(const Code_For_Ast & rhs) {
 Print_IC_Stmt::Print_IC_Stmt() {}
 Print_IC_Stmt::~Print_IC_Stmt() {}
 void Print_IC_Stmt::print_icode(ostream & file_buffer) {
-	// cerr<<"REACHED HERE\n";
 	file_buffer << "        print\n";
 }
 void Print_IC_Stmt::print_assembly(ostream & file_buffer) {

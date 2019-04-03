@@ -1,6 +1,6 @@
 #!/bin/bash
 
-testdir="tests"
+testdir="A4_tests"
 
 if [ ! -d "$testdir" ]; 
 then
@@ -12,14 +12,26 @@ make
 
 for filename in "$testdir"/*.c; do
 
-	./mysclp -icode "$filename" 2>"$filename.myerr"
-	mv "$filename.spim" "$filename.myspim"
-	mv "$filename.ic" "$filename.myic"
+	# ./mysclp -icode "$filename" 2>"$filename.myerr"
+	# mv "$filename.spim" "$filename.myspim"
+	# mv "$filename.ic" "$filename.myic"
 
-	./sclp -icode "$filename" 2>"$filename.err"
+	# ./sclp -icode "$filename" 2>"$filename.err"
+	# DIFF1=$(diff "$filename.spim" "$filename.myspim")
+	# DIFF2=$(diff "$filename.err" "$filename.myerr")
+	# DIFF3=$(diff "$filename.ic" "$filename.myic")
+
+	# without icode
+	./mysclp "$filename" 2>"$filename.myerr"
+	mv "$filename.spim" "$filename.myspim"
+	# mv "$filename.ic" "$filename.myic"
+
+	./sclp "$filename" 2>"$filename.err"
 	DIFF1=$(diff "$filename.spim" "$filename.myspim")
 	DIFF2=$(diff "$filename.err" "$filename.myerr")
-	DIFF3=$(diff "$filename.ic" "$filename.myic")
+	# DIFF3=$(diff "$filename.ic" "$filename.myic")
+
+
 
 	./mysclp -tokens -ast -symtab -eval "$filename" 2> /dev/null
 	mv "$filename.eval" "$filename.myeval"
@@ -29,7 +41,7 @@ for filename in "$testdir"/*.c; do
 
 	./sclp -tokens -ast -symtab -eval "$filename" 2> /dev/null
 	DIFF4=$(diff "$filename.ast" "$filename.myast")
-	DIFF5=$(diff "$filename.eval" "$filename.myeval")
+	# DIFF5=$(diff "$filename.eval" "$filename.myeval")
 	DIFF6=$(diff "$filename.toks" "$filename.mytoks")
 	DIFF7=$(diff "$filename.sym" "$filename.mysym")
 		
@@ -94,10 +106,10 @@ for filename in "$testdir"/*.c; do
 
 	if [ "$DIFF7" != "" ]
 	then
-		echo "symtab comparison failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "symtab comparison failed on $filename. Continuing further tests"
 		echo "Showing diff:"
 		echo "$DIFF7"
-		exit
+		# exit
 	fi
 
 done

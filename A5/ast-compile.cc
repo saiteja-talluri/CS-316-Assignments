@@ -263,20 +263,51 @@ Code_For_Ast & Conditional_Expression_Ast::compile() {
 	Register_Addr_Opd *lhs_result = new Register_Addr_Opd(lhs_code.get_reg());
 	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(rhs_code.get_reg());
 	Register_Addr_Opd *cond_result = new Register_Addr_Opd(cond_code.get_reg());
-	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
+
+	Register_Descriptor *rd;
+	if(this->lhs->get_data_type() == int_data_type) {
+		rd = machine_desc_object.get_new_register<int_reg>();
+	}
+	else {
+		rd = machine_desc_object.get_new_register<float_reg>();
+	}
 	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
+
 
 	Label_IC_Stmt * label2 = new Label_IC_Stmt(j, this->get_new_label()); 
 	Control_Flow_IC_Stmt * jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
 
-	Control_Flow_IC_Stmt * branch_stmt = new Control_Flow_IC_Stmt(beq, cond_result, label1->get_label());
+	Register_Addr_Opd *zero_reg = new Register_Addr_Opd(machine_desc_object.spim_register_table[zero]);
+	Compute_IC_Stmt* lhs_or_stmt = new Compute_IC_Stmt(or_t, lhs_result, zero_reg, result);
+	Compute_IC_Stmt* rhs_or_stmt = new Compute_IC_Stmt(or_t, rhs_result, zero_reg, result);
+	// Mem_Addr_Opd *memopd1 = new Mem_Addr_Opd()
+	// if(this->lhs->get_data_type() == int_data_type) {
+	// 	Move_IC_Stmt *lhs_move = new Move_IC_Stmt(load, memopd1, result)
+	// }
+
+	Control_Flow_IC_Stmt * branch_stmt;
+	if(this->lhs->get_data_type() == int_data_type) {
+		branch_stmt = new Control_Flow_IC_Stmt(beq, cond_result, label1->get_label());
+	}
+	if(this->lhs->get_data_type() == double_data_type) {
+		branch_stmt = new Control_Flow_IC_Stmt(bc1f, NULL, label1->get_label());
+	}
+
 
 	Code_For_Ast *output = new Code_For_Ast();
 	output->set_reg(rd);
 	output->get_icode_list().insert(output->get_icode_list().end(),cond_code.get_icode_list().begin(), cond_code.get_icode_list().end());
 	output->append_ics(*branch_stmt);
-
-
+	output->get_icode_list().insert(output->get_icode_list().end(),lhs_code.get_icode_list().begin(), lhs_code.get_icode_list().end());
+	output->append_ics(*lhs_or_stmt);
+	output->append_ics(*jump_stmt);
+	output->append_ics(*label1);
+	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(), rhs_code.get_icode_list().end());
+	output->append_ics(*rhs_or_stmt);
+	output->append_ics(*label2);
+	lhs_result->get_reg()->reset_use_for_expr_result(); //Free the registers
+	rhs_result->get_reg()->reset_use_for_expr_result(); //Free the registers
+	cond_result->get_reg()->reset_use_for_expr_result(); //Free the registers
 	return *output;
 }
 
@@ -302,31 +333,54 @@ Code_For_Ast & Relational_Expr_Ast::compile() {
 
 	result = new Register_Addr_Opd(rd);
 
-	if(this->rel_op == less_equalto) {
-		comp_stmt = new Compute_IC_Stmt(sle, lhs_result, rhs_result, result);
+
+	if(this->lhs_condition->get_data_type() == int_data_type) {
+		if(this->rel_op == less_equalto) {
+			comp_stmt = new Compute_IC_Stmt(sle, lhs_result, rhs_result, result);
+		}
+		else if(this->rel_op == less_than) {
+			comp_stmt = new Compute_IC_Stmt(slt, lhs_result, rhs_result, result);
+		}
+		else if(this->rel_op == greater_than) {
+			comp_stmt = new Compute_IC_Stmt(sgt, lhs_result, rhs_result, result);
+		}
+		else if(this->rel_op == greater_equalto) {
+			comp_stmt = new Compute_IC_Stmt(sge, lhs_result, rhs_result, result);
+		}
+		else if(this->rel_op == equalto) {
+			comp_stmt = new Compute_IC_Stmt(seq, lhs_result, rhs_result, result);
+		}
+		else if(this->rel_op == not_equalto) {
+			comp_stmt = new Compute_IC_Stmt(sne, lhs_result, rhs_result, result);
+		}
 	}
-	else if(this->rel_op == less_than) {
-		comp_stmt = new Compute_IC_Stmt(slt, lhs_result, rhs_result, result);
+	else {
+		if(this->rel_op == less_equalto) {
+			comp_stmt = new Compute_IC_Stmt(sle_d, lhs_result, rhs_result, NULL);
+		}
+		else if(this->rel_op == less_than) {
+			comp_stmt = new Compute_IC_Stmt(slt_d, lhs_result, rhs_result, NULL);
+		}
+		else if(this->rel_op == equalto) {
+			comp_stmt = new Compute_IC_Stmt(seq_d, lhs_result, rhs_result, NULL);
+		}
+		else if(this->rel_op == greater_than) {
+			comp_stmt = new Compute_IC_Stmt(sgt_d, lhs_result, rhs_result, NULL);
+		}
+		else if(this->rel_op == greater_equalto) {
+			comp_stmt = new Compute_IC_Stmt(sge_d, lhs_result, rhs_result, NULL);
+		}
+		else if(this->rel_op == not_equalto) {
+			comp_stmt = new Compute_IC_Stmt(sne_d, lhs_result, rhs_result, NULL);
+		}
 	}
-	else if(this->rel_op == greater_than) {
-		comp_stmt = new Compute_IC_Stmt(sgt, lhs_result, rhs_result, result);
-	}
-	else if(this->rel_op == greater_equalto) {
-		comp_stmt = new Compute_IC_Stmt(sge, lhs_result, rhs_result, result);
-	}
-	else if(this->rel_op == equalto) {
-		comp_stmt = new Compute_IC_Stmt(seq, lhs_result, rhs_result, result);
-	}
-	else if(this->rel_op == not_equalto) {
-		comp_stmt = new Compute_IC_Stmt(sne, lhs_result, rhs_result, result);
-	}
+	lhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
+	rhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
 
 	Code_For_Ast *output = new Code_For_Ast(lhs_code.get_icode_list(), rd);
 	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
 	output->set_reg(rd);
 	output->append_ics(*comp_stmt);
-	lhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
-	rhs_result->get_reg()->reset_use_for_expr_result();	// Free the registers
 	return *output;
 }
 
@@ -339,13 +393,21 @@ Code_For_Ast & Logical_Expr_Ast::compile() {
 	}
 	Code_For_Ast rhs_code =	this->rhs_op->compile(); 
 	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(rhs_code.get_reg());
+
+	Register_Addr_Opd *reg_for_one;
+	if(this->bool_op == _logical_not)
+		reg_for_one = new Register_Addr_Opd(machine_desc_object.get_new_register<int_reg>()); 
+
 	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
 	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
 	
 	Compute_IC_Stmt * comp_stmt;
-	rd = machine_desc_object.get_new_register<int_reg>();
-	result = new Register_Addr_Opd(rd);
 
+	Move_IC_Stmt *load_one_stmt;
+	Const_Opd<int> *constant;
+	// if(this->bool_op == _logical_not)
+	//not is a special case. For !x, load 1, give operands x and a to not(in that order). NOT NULL.
+	//not_t in assembly is sltu. That's the reason for this weird behaviour.
 	if(this->bool_op == _logical_and) {
 		comp_stmt = new Compute_IC_Stmt(and_t, lhs_result, rhs_result, result);
 	}
@@ -353,15 +415,24 @@ Code_For_Ast & Logical_Expr_Ast::compile() {
 		comp_stmt = new Compute_IC_Stmt(or_t, lhs_result, rhs_result, result);
 	}
 	else if(this->bool_op == _logical_not) {
-		comp_stmt = new Compute_IC_Stmt(not_t, NULL, rhs_result, result);
+		constant = new Const_Opd<int>(1);
+		load_one_stmt = new Move_IC_Stmt(imm_load, constant, reg_for_one);
+		comp_stmt = new Compute_IC_Stmt(not_t, reg_for_one, rhs_result, result);
 	}
 
 	Code_For_Ast *output = new Code_For_Ast();
 	output->set_reg(rd);
-	if(this->bool_op != _logical_not)
+	if(this->bool_op == _logical_not) {
+		output->append_ics(*load_one_stmt);
+		reg_for_one->get_reg()->reset_use_for_expr_result(); //Free the registers
+	}
+	if(this->bool_op != _logical_not) {
 		output->get_icode_list().insert(output->get_icode_list().end(),lhs_code.get_icode_list().begin(),lhs_code.get_icode_list().end());	
+		lhs_result->get_reg()->reset_use_for_expr_result(); //Free the registers
+	}
 	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(),rhs_code.get_icode_list().end());
 	output->append_ics(*comp_stmt);
+	rhs_result->get_reg()->reset_use_for_expr_result(); //Free the registers
 	return *output;
 }
 
@@ -375,15 +446,22 @@ Code_For_Ast & Selection_Statement_Ast::compile() {
 	if(this->else_part != NULL) {
 		label2 = new Label_IC_Stmt(j, this->get_new_label());
 		else_code = this->else_part->compile();
-		Register_Addr_Opd *else_result = new Register_Addr_Opd(else_code.get_reg());
+		// Register_Addr_Opd *else_result = new Register_Addr_Opd(else_code.get_reg());
 		jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
 	}
 
 	Register_Addr_Opd *cond_result = new Register_Addr_Opd(cond_code.get_reg());
-	Register_Addr_Opd *then_result = new Register_Addr_Opd(then_code.get_reg());
+	// Register_Addr_Opd *then_result = new Register_Addr_Opd(then_code.get_reg());
 	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
-	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
-	Control_Flow_IC_Stmt *rel_stmt = new Control_Flow_IC_Stmt(beq, cond_result, label1->get_label());
+
+	Control_Flow_IC_Stmt *rel_stmt;
+	//cond->get_data_type() should be float when args are float
+	if(this->cond->get_data_type() == int_data_type) {
+		rel_stmt = new Control_Flow_IC_Stmt(beq, cond_result, label1->get_label());
+	}
+	else {
+		rel_stmt = new Control_Flow_IC_Stmt(bc1f, NULL, label1->get_label());
+	}
 
 	Code_For_Ast *output = new Code_For_Ast(cond_code.get_icode_list(), rd);
 	output->append_ics(*rel_stmt);
@@ -398,6 +476,8 @@ Code_For_Ast & Selection_Statement_Ast::compile() {
 	}
 	
 	output->set_reg(rd);
+	cond_result->get_reg()->reset_use_for_expr_result(); //Free the registers
+	rd->reset_use_for_expr_result();
 	return *output;
 }
 
@@ -411,10 +491,18 @@ Code_For_Ast & Iteration_Statement_Ast::compile() {
 	Control_Flow_IC_Stmt * jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
 
 	Register_Addr_Opd *cond_result = new Register_Addr_Opd(cond_code.get_reg());
-	Register_Addr_Opd *body_result = new Register_Addr_Opd(body_code.get_reg());
+	// Register_Addr_Opd *body_result = new Register_Addr_Opd(body_code.get_reg()); //not necessary?
 	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
-	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
-	Control_Flow_IC_Stmt *control_stmt = new Control_Flow_IC_Stmt(bne, cond_result, label1->get_label());
+	// Register_Addr_Opd *result = new Register_Addr_Opd(rd);
+
+	Control_Flow_IC_Stmt *control_stmt;
+	if(this->cond->get_data_type() == int_data_type) {
+		control_stmt = new Control_Flow_IC_Stmt(bne, cond_result, label1->get_label());
+	}
+	else {
+		control_stmt = new Control_Flow_IC_Stmt(bc1t, NULL, label1->get_label());
+	}
+
 	jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
 
 	Code_For_Ast *output = new Code_For_Ast();
@@ -427,6 +515,8 @@ Code_For_Ast & Iteration_Statement_Ast::compile() {
 	output->get_icode_list().insert(output->get_icode_list().end(), cond_code.get_icode_list().begin(), cond_code.get_icode_list().end());
 	output->append_ics(*control_stmt);
 	
+	cond_result->get_reg()->reset_use_for_expr_result();
+	rd->reset_use_for_expr_result();
 	return *output;
 }
 
@@ -481,5 +571,8 @@ Code_For_Ast & Print_Ast::compile() {
 	output->append_ics(*load1);
 	output->append_ics(*load2);
 	output->append_ics(*print_stmt);
+
+	RAO1->get_reg()->reset_use_for_expr_result();
+	RAO2->get_reg()->reset_use_for_expr_result();
 	return *output;
 }
