@@ -328,11 +328,7 @@ void Control_Flow_IC_Stmt::print_assembly(ostream & file_buffer) {
 	else if(this->op_desc.get_assembly_format() == a_op_st) {
 		file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
 		file_buffer << this->get_label();
-		//doing this to match idiosyncratic reference implementation
-		if(this->op_desc.get_mnemonic() == "j")
-			file_buffer << "\n";
-		else
-			file_buffer << " \n";
+		file_buffer << "\n";
 	}
 }
 

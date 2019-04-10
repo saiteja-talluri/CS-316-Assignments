@@ -10,8 +10,8 @@ void main(){
 	c = 4.0;
 	e = 3.0; 
 
-	if(!(a < b) && (a < d) || (c < e))
-		if(!(a < b) && (a < d) || (c < e))
+	if(!(a < b) && (a < d))
+		if(!(a < b) && (a < d))
 			a = a + a*b;
 		else
 			while(c < e + c)

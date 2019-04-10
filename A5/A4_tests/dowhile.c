@@ -10,5 +10,5 @@ void main() {
 		else
 			i = i + 2.0;
 	}
-	while(i<5.0 && i > 3.0 && i+j*5.0 != 3.0);
+	while(i+j*5.0 != 3.0);
 }

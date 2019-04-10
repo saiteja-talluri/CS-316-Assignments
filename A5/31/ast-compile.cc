@@ -385,10 +385,6 @@ Code_For_Ast & Relational_Expr_Ast::compile() {
 }
 
 Code_For_Ast & Logical_Expr_Ast::compile() {
-	Register_Addr_Opd *reg_for_one;
-	if(this->bool_op == _logical_not)
-		reg_for_one = new Register_Addr_Opd(machine_desc_object.get_new_register<int_reg>()); 
-
 	Code_For_Ast lhs_code;
 	Register_Addr_Opd *lhs_result;
 	if(this->bool_op != _logical_not) {
@@ -398,6 +394,9 @@ Code_For_Ast & Logical_Expr_Ast::compile() {
 	Code_For_Ast rhs_code =	this->rhs_op->compile(); 
 	Register_Addr_Opd *rhs_result = new Register_Addr_Opd(rhs_code.get_reg());
 
+	Register_Addr_Opd *reg_for_one;
+	if(this->bool_op == _logical_not)
+		reg_for_one = new Register_Addr_Opd(machine_desc_object.get_new_register<int_reg>()); 
 
 	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
 	Register_Addr_Opd *result = new Register_Addr_Opd(rd);
@@ -418,7 +417,7 @@ Code_For_Ast & Logical_Expr_Ast::compile() {
 	else if(this->bool_op == _logical_not) {
 		constant = new Const_Opd<int>(1);
 		load_one_stmt = new Move_IC_Stmt(imm_load, constant, reg_for_one);
-		comp_stmt = new Compute_IC_Stmt(not_t, rhs_result, reg_for_one, result);
+		comp_stmt = new Compute_IC_Stmt(not_t, reg_for_one, rhs_result, result);
 	}
 
 	Code_For_Ast *output = new Code_For_Ast();
@@ -461,15 +460,7 @@ Code_For_Ast & Selection_Statement_Ast::compile() {
 		rel_stmt = new Control_Flow_IC_Stmt(beq, cond_result, label1->get_label());
 	}
 	else {
-		list<Icode_Stmt*>::iterator it = cond_code.get_icode_list().end();
-		it--;
-		Tgt_Op opr = ((*it)->get_op()).get_op();
-		if(opr == seq_d || opr == sle_d || opr == slt_d) {
-			rel_stmt = new Control_Flow_IC_Stmt(bc1f, NULL, label1->get_label());
-		}
-		else {
-			rel_stmt = new Control_Flow_IC_Stmt(bc1t, NULL, label1->get_label());	
-		}
+		rel_stmt = new Control_Flow_IC_Stmt(bc1f, NULL, label1->get_label());
 	}
 
 	Code_For_Ast *output = new Code_For_Ast(cond_code.get_icode_list(), rd);
@@ -509,16 +500,7 @@ Code_For_Ast & Iteration_Statement_Ast::compile() {
 		control_stmt = new Control_Flow_IC_Stmt(bne, cond_result, label1->get_label());
 	}
 	else {
-		// control_stmt = new Control_Flow_IC_Stmt(bc1t, NULL, label1->get_label());
-		list<Icode_Stmt*>::iterator it = cond_code.get_icode_list().end();
-		it--;
-		Tgt_Op opr = ((*it)->get_op()).get_op();
-		if(opr == seq_d || opr == sle_d || opr == slt_d) {
-			control_stmt = new Control_Flow_IC_Stmt(bc1t, NULL, label1->get_label());	
-		}
-		else {
-			control_stmt = new Control_Flow_IC_Stmt(bc1f, NULL, label1->get_label());
-		}
+		control_stmt = new Control_Flow_IC_Stmt(bc1t, NULL, label1->get_label());
 	}
 
 	jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
