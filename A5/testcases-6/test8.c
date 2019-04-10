@@ -1,3 +1,0 @@
-main(){
-	double 3;
-}
