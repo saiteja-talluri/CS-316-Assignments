@@ -10,7 +10,6 @@ void main() {
     else
     {
         b=4;
-        a=6;
     }
 
     if(i>j)

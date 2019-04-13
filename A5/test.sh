@@ -1,6 +1,6 @@
 #!/bin/bash
 
-testdir="A4_tests"
+testdir="tests"
 
 if [ ! -d "$testdir" ]; 
 then
@@ -12,25 +12,22 @@ make
 
 for filename in "$testdir"/*.c; do
 
-	# ./mysclp -icode "$filename" 2>"$filename.myerr"
-	# mv "$filename.spim" "$filename.myspim"
-	# mv "$filename.ic" "$filename.myic"
-
-	# ./sclp -icode "$filename" 2>"$filename.err"
-	# DIFF1=$(diff "$filename.spim" "$filename.myspim")
-	# DIFF2=$(diff "$filename.err" "$filename.myerr")
-	# DIFF3=$(diff "$filename.ic" "$filename.myic")
-
-	# without icode
-	./mysclp "$filename" 2>"$filename.myerr"
-	mv "$filename.spim" "$filename.myspim"
-	# mv "$filename.ic" "$filename.myic"
-
-	./sclp "$filename" 2>"$filename.err"
-	DIFF1=$(diff "$filename.spim" "$filename.myspim")
-	DIFF2=$(diff "$filename.err" "$filename.myerr")
-	# DIFF3=$(diff "$filename.ic" "$filename.myic")
-
+	if [ "$#" -eq 1 ]; then
+		./mysclp "$filename" 2>"$filename.myerr"
+		mv "$filename.spim" "$filename.myspim"
+		./sclp "$filename" 2>"$filename.err"
+		DIFF1=$(diff "$filename.spim" "$filename.myspim")
+		DIFF2=$(diff "$filename.err" "$filename.myerr")
+		DIFF3=""
+	else
+		./mysclp -icode "$filename" 2>"$filename.myerr"
+		mv "$filename.spim" "$filename.myspim"
+		mv "$filename.ic" "$filename.myic"
+		./sclp -icode "$filename" 2>"$filename.err"
+		DIFF1=$(diff "$filename.spim" "$filename.myspim")
+		DIFF2=$(diff "$filename.err" "$filename.myerr")
+		DIFF3=$(diff "$filename.ic" "$filename.myic")
+	fi
 
 
 	./mysclp -tokens -ast -symtab -eval "$filename" 2> /dev/null
@@ -41,28 +38,36 @@ for filename in "$testdir"/*.c; do
 
 	./sclp -tokens -ast -symtab -eval "$filename" 2> /dev/null
 	DIFF4=$(diff "$filename.ast" "$filename.myast")
-	# DIFF5=$(diff "$filename.eval" "$filename.myeval")
+	DIFF5=$(diff "$filename.eval" "$filename.myeval")
 	DIFF6=$(diff "$filename.toks" "$filename.mytoks")
+	if grep -q "sclp error:" "$filename.err"; then
+	  DIFF6=""
+	  if grep -q "cs316: Error" "$filename.myerr"; then
+	  	DIFF2=""
+	  fi
+	fi
+	
 	DIFF7=$(diff "$filename.sym" "$filename.mysym")
-		
+	
+	echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
+	echo "filename = $filename"
+	echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
+
 	if [ "$DIFF1" != "" ]
 	then
 		echo "spim code comparison failed on $filename. Continuing further tests."
-		echo "continuing with further tests"
 		echo "Showing diff:"
 		echo "$DIFF1"
-		# exit
+		echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
 	fi
 
 	if [ "$DIFF2" != "" ]
 	then
-		echo "error message comparison failed on $filename. "
+		echo "Error message comparison failed on $filename. "
 		echo "Showing diff:"
 		echo "$DIFF2"
 		echo "Continuing with further tests."
-		echo ""
-		echo ""
-		# exit
+		echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
 	fi	
 
 	if [ "$DIFF3" != "" ]
@@ -70,7 +75,7 @@ for filename in "$testdir"/*.c; do
 		echo "icode comparison failed on $filename. Continuing further tests."
 		echo "Showing diff:"
 		echo "$DIFF3"
-		# exit
+		echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
 	fi
 
 
@@ -79,16 +84,16 @@ for filename in "$testdir"/*.c; do
 		echo "ast comparison failed on $filename. Continuing further tests."
 		echo "Showing diff:"
 		echo "$DIFF4"
-		# exit
+		echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
 	fi
 
-	# if [ "$DIFF5" != "" ]
-	# then
-	# 	echo "eval comparison failed on $filename. Did not run further tests (lexicographic ordering)."
-	# 	echo "Showing diff:"
-	# 	echo "$DIFF5"
-	# 	exit
-	# fi
+	if [ "$DIFF5" != "" ]
+	then
+		echo "eval comparison failed on $filename. Did not run further tests (lexicographic ordering)."
+		echo "Showing diff:"
+		echo "$DIFF5"
+		echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
+	fi
 
 	if [ "$DIFF6" != "" ]
 	then
@@ -98,19 +103,26 @@ for filename in "$testdir"/*.c; do
 			exit
 		fi
 		echo "tokens comparison failed on $filename, but myerr is non-empty. Continuing tests"
-		echo ""
-		# echo "Showing diff:"
-		# echo "$DIFF6"
-		# exit
+		echo "Showing diff:"
+		echo "$DIFF6"
+		echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
 	fi
 
 	if [ "$DIFF7" != "" ]
 	then
-		echo "symtab comparison failed on $filename. Continuing further tests"
+		echo "symtab comparison failed on $filename. Did not run further tests (lexicographic ordering)."
 		echo "Showing diff:"
 		echo "$DIFF7"
-		# exit
+		echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
 	fi
 
+	[ "$DIFF1" == "" ] && [ "$DIFF2" == "" ] && [ "$DIFF3" == "" ] && [ "$DIFF4" == "" ] && [ "$DIFF4" == "" ] && [ "$DIFF5" == "" ] && [ "$DIFF6" == "" ] && [ "$DIFF7" == "" ] && echo "Passed on $filename"
+	!([ "$DIFF1" == "" ] && [ "$DIFF2" == "" ] && [ "$DIFF3" == "" ] && [ "$DIFF4" == "" ] && [ "$DIFF4" == "" ] && [ "$DIFF5" == "" ] && [ "$DIFF6" == "" ] && [ "$DIFF7" == "" ]) && echo "Failed on $filename"
+	echo "------------------------------------------------------------------------------------------------------------------------------------------------------"
+	# exit
 done
-# echo "All tests passed!"
+
+# echo "All testcases passed!"
+
+
+
