@@ -8,6 +8,7 @@
 #include<iomanip>
 #include<typeinfo>
 #include<list>
+#include "reg-alloc.hh"
 
 #define AST_SPACE "         "
 #define AST_NODE_SPACE "            "

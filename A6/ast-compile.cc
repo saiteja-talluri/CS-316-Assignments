@@ -9,7 +9,6 @@ template class Number_Ast<int>;
 Code_For_Ast & Ast::create_store_stmt(Register_Descriptor * store_register) {
 
 }
-//TODO: release registers
 
 Code_For_Ast & Assignment_Ast::compile() {
 	Code_For_Ast rhs_res = rhs->compile();
@@ -300,6 +299,7 @@ Code_For_Ast & Conditional_Expression_Ast::compile() {
 	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(), rhs_code.get_icode_list().end());
 	output->append_ics(*rhs_or_stmt);
 	output->append_ics(*label2);
+
 	lhs_result->get_reg()->reset_use_for_expr_result();  //Free the registers
 	rhs_result->get_reg()->reset_use_for_expr_result();  //Free the registers
 	cond_result->get_reg()->reset_use_for_expr_result(); //Free the registers
@@ -409,6 +409,7 @@ Code_For_Ast & Logical_Expr_Ast::compile() {
 	Move_IC_Stmt *load_one_stmt;
 	Const_Opd<int> *constant;
 
+
 	/* not is a special case. For !x, load 1, give operands x and a to not(in that order). NOT NULL.
 	   not_t in assembly is sltu. That's the reason for this weird behaviour.
 	*/
@@ -491,7 +492,6 @@ Code_For_Ast & Selection_Statement_Ast::compile() {
 }
 
 Code_For_Ast & Iteration_Statement_Ast::compile() {
-	
 	Code_For_Ast cond_code = this->cond->compile(); 
 	Label_IC_Stmt * label1 = new Label_IC_Stmt(j, this->get_new_label()); 
 	Label_IC_Stmt * label2 = new Label_IC_Stmt(j, this->get_new_label()); 

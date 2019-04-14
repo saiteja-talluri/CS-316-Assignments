@@ -3,6 +3,8 @@ void func1();
 float f1,f2;
 int func2(int,float,int);
 float func3(int p,float q,float r);
+int function();
+// void main();
 
 int func4(){
 	i1=4;
@@ -19,12 +21,14 @@ int func2(int a,float b,int i1){
 	i1=5;
 	return a+i1+i2+2;
 }
+// void func5(int x);
 
 float func3(int a,float b,float c){
 	b =b+f2;
 	c=c+10.5;
 	return b+c;
 }
+
 
 void main(){
 	func1();
@@ -36,4 +40,7 @@ void main(){
 	f2 = func3(i1,f1,f2);
 	print f1; print f2;
 
+}
+void func5(int x) {
+	x = 2;
 }

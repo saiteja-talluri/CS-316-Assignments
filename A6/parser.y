@@ -1,4 +1,5 @@
 %{
+	#include "program.hh"
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <string.h>
@@ -60,15 +61,112 @@
 
 %%
 
-program					:	global_variable_declaration_list procedure_definition
+// program					:	global_variable_declaration_list procedure_definition
+// 							{
+// 								(*global_sym_table).set_table_scope(global);
+// 								program_object.set_global_table(*global_sym_table);
+// 								program_object.set_procedure($2, yylineno);
+// 							}
+// 							; 
+
+program					:	declaration_list definition_list
 							{
 								(*global_sym_table).set_table_scope(global);
 								program_object.set_global_table(*global_sym_table);
-								program_object.set_procedure($2, yylineno);
 							}
-							; 
+							;
 
-procedure_definition	:	VOID NAME '(' ')'
+declaration_list		:	declaration_list procedure_declaration
+							{
+
+							}
+							|	declaration_list variable_declaration
+							{
+
+							}
+							|	/*empty */
+							{
+
+							}
+							;
+
+procedure_declaration	:	VOID NAME '(' param_list ')' ';'
+							{
+								$$ = new Procedure(void_data_type, *$2, yylineno);
+								program_object.set_proc_to_map(*$2, $$);
+							}
+							|	INTEGER NAME '(' param_list ')' ';'
+							{
+								$$ = new Procedure(int_data_type, *$2, yylineno);
+								program_object.set_proc_to_map(*$2, $$);
+							}
+							|	FLOAT NAME '(' param_list ')' ';'
+							{
+								$$ = new Procedure(float_data_type, *$2, yylineno);
+								program_object.set_proc_to_map(*$2, $$);
+							}
+							;
+
+declaration_param_list	:	/* empty */
+							{
+								$$ = new Symbol_Table();
+							}
+							|	declaration_param_list ',' INTEGER NAME 
+							{
+								/* TODO */
+							}
+							|	declaration_param_list ',' INTEGER
+							{
+								/* TODO */
+							} 
+							|	declaration_param_list ',' FLOAT NAME 
+							{
+								/* TODO */
+							}
+							|	declaration_param_list ',' FLOAT
+							{
+								/* TODO */
+							}
+							;
+
+param_list				:	/* empty */
+							{
+								$$ = new Symbol_Table();
+							}
+							|	param_list ',' INTEGER NAME 
+							{
+								Symbol_Table_Entry *ste = new Symbol_Table_Entry();
+								/*TODO: */
+							}
+							|	param_list ',' FLOAT NAME 
+							{
+								/*TODO: */
+							}
+							;
+
+procedure_definition_list	:	procedure_definition
+								{
+
+								}
+								| procedure_definition_list procedure_definition 
+								{
+									
+								}
+								;
+
+// procedure_definition	:	VOID NAME '(' ')'
+//                   	   		'{'
+// 									local_variable_declaration_list statement_list
+//         	           		'}' 
+// 							{	
+// 								$$ = new Procedure(void_data_type,*$2, yylineno);
+// 								(*local_sym_table).set_table_scope(local);
+// 								(*$$).set_local_list((*local_sym_table));
+// 								(*$$).set_ast_list(*($7));
+// 							}
+//         	           		;
+
+procedure_definition	:	VOID NAME '(' param_list ')'
                   	   		'{'
 									local_variable_declaration_list statement_list
         	           		'}' 
@@ -77,6 +175,8 @@ procedure_definition	:	VOID NAME '(' ')'
 								(*local_sym_table).set_table_scope(local);
 								(*$$).set_local_list((*local_sym_table));
 								(*$$).set_ast_list(*($7));
+								local_sym_table = new Symbol_Table;
+								program_object.set_procedure($$, yylineno);
 							}
         	           		;
 

@@ -5,7 +5,7 @@ template class Number_Ast<double>;
 template class Number_Ast<int>;
 
 #include "symbol-table.hh"
-
+#include "icode.hh"
 
 Ast::Ast(){}
 
@@ -22,7 +22,7 @@ void Ast::set_data_type(Data_Type dt){
 }
 
 bool Ast::is_value_zero() {
-    return false;  /* TODO: I'm writing this to mitigate errors in check_ast. */
+    return false;
 }
 
 bool Ast::check_ast(){}
@@ -496,10 +496,12 @@ void Sequence_Ast::print(ostream & file_buffer){
     }
 }
 
+
 Print_Ast::Print_Ast(Ast *v, int line) {
     this->var = v;
     this->lineno = line;
 }
+
 
 Print_Ast::~Print_Ast() {}
 
@@ -548,3 +550,77 @@ void Call_Ast::set_actual_param_list(list<Ast *> & param_list){
 }
 
 void Call_Ast::print(ostream & file_buffer){}
+
+
+/*call*/
+Call_Ast::Call_Ast(string name, int line) {
+    this->procedure_name = name;
+    this->lineno = line;
+}
+
+Call_Ast::~Call_Ast() {}
+
+Data_Type Call_Ast::get_data_type() {
+    return this->node_data_type;
+}
+
+void Call_Ast::set_register(Register_Descriptor * reg) {
+    this->return_value_reg = reg;
+}
+
+void Call_Ast::check_actual_formal_param(Symbol_Table & formal_param_list) {
+    list<Ast*>::iterator it = this->actual_param_list.begin();
+    for(; it != this->actual_param_list.end(); it++) {
+        Symbol_Table_Entry actual_var = (*it)->get_symbol_entry();
+        if(formal_param_list.variable_in_formal_list_check(actual_var.get_variable_name())) {
+            if(formal_param_list.get_symbol_table_entry(actual_var.get_variable_name()).get_data_type() 
+            != actual_var.get_data_type() ) 
+            cerr << "cs316: Error: Line "<<lineno<<": Actual and formal parameters do not match\n";
+        }
+    }
+}
+
+void Call_Ast::set_actual_param_list(list<Ast *> & param_list) {
+    this->actual_param_list = param_list;
+}
+
+void Call_Ast::print(ostream & file_buffer) {
+    //TODO:
+}
+
+
+Return_Ast::Return_Ast(Ast * ret_val, string name, int line) {
+    this->return_value = ret_val;
+    this->proc_name = name;
+    this->lineno = line;
+}
+
+
+Return_Ast::~Return_Ast() {}
+
+
+Data_Type Return_Ast::get_data_type() {
+    return this->node_data_type();
+}
+
+void Return_Ast::print(ostream & file_buffer) {
+    //TODO:
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> 53550c70c0f75696d7871e6cdb2c347dda605cc5

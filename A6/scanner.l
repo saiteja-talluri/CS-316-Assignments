@@ -26,6 +26,8 @@ if_kw if
 do_kw do
 else_kw else
 
+return_kw return
+
 /*relational operators*/
 eq ==
 lt <
@@ -113,6 +115,12 @@ print_kw print
 {print_kw}	{
 				store_token_name("PRINT", yytext, yylineno);
 				return PRINT;
+			}
+
+ /*return*/
+{return_kw} {
+				store_token_name("RETURN", yytext, yylineno);
+				return RETURN;
 			}
 
 {name}  	{
