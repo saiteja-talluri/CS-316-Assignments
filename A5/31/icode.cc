@@ -231,7 +231,6 @@ void Compute_IC_Stmt::set_result(Ics_Opd * io) {
 
 void Compute_IC_Stmt::print_icode(ostream & file_buffer) {
 	/* TODO: look for more formats*/
-	// one operand
 	file_buffer << "	" << this->op_desc.get_name() << ":" << string(4, ' ') << "\t";
 	this->result->print_ics_opd(file_buffer);
 	file_buffer << " <- ";
@@ -243,7 +242,6 @@ void Compute_IC_Stmt::print_icode(ostream & file_buffer) {
 
 void Compute_IC_Stmt::print_assembly(ostream & file_buffer) {
 	/* TODO: look for more formats*/
-	// one operand
 	if(op_desc.get_assembly_format() == a_op_r_o1_o2) {
 		file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
 		this->result->print_asm_opd(file_buffer);
@@ -255,8 +253,6 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer) {
 	}
 	else if(op_desc.get_assembly_format() == a_op_o1_o2) {
 		file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
-		// this->result->print_asm_opd(file_buffer);
-		// file_buffer << ", ";
 		this->opd1->print_asm_opd(file_buffer);
 		file_buffer << ", ";
 		this->opd2->print_asm_opd(file_buffer);
@@ -316,7 +312,7 @@ void Control_Flow_IC_Stmt::print_icode(ostream & file_buffer) {
 }
 
 void Control_Flow_IC_Stmt::print_assembly(ostream & file_buffer) {
-	/* TODO: look for more formats*/
+	/* TODO: look for more ormats*/
 	if(this->op_desc.get_assembly_format() == a_op_o1_o2_st) {
 		file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
 		this->opd1->print_asm_opd(file_buffer);
@@ -328,7 +324,11 @@ void Control_Flow_IC_Stmt::print_assembly(ostream & file_buffer) {
 	else if(this->op_desc.get_assembly_format() == a_op_st) {
 		file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
 		file_buffer << this->get_label();
-		file_buffer << "\n";
+		// Doing this to match idiosyncratic reference implementation
+		if(this->op_desc.get_mnemonic() == "j")
+			file_buffer << "\n";
+		else
+			file_buffer << " \n";
 	}
 }
 

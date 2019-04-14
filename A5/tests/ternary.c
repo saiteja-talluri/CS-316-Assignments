@@ -1,10 +1,8 @@
-int a;
+int a,b,c;
+float d,e,f;
 void main() {
-	int a, b, c;
-	a = 3;
-	b = 4;
-	c = 1;
-	c = a < b ? a+b : b;
-	// if(a == b)
-		// a = 1.0;
+    int i,j;
+    i = 1;
+    j = 2;
+    a = i<j ? i : j;
 }

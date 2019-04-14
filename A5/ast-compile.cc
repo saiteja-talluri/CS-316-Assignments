@@ -280,10 +280,6 @@ Code_For_Ast & Conditional_Expression_Ast::compile() {
 	Register_Addr_Opd *zero_reg = new Register_Addr_Opd(machine_desc_object.spim_register_table[zero]);
 	Compute_IC_Stmt* lhs_or_stmt = new Compute_IC_Stmt(or_t, lhs_result, zero_reg, result);
 	Compute_IC_Stmt* rhs_or_stmt = new Compute_IC_Stmt(or_t, rhs_result, zero_reg, result);
-	// Mem_Addr_Opd *memopd1 = new Mem_Addr_Opd()
-	// if(this->lhs->get_data_type() == int_data_type) {
-	// 	Move_IC_Stmt *lhs_move = new Move_IC_Stmt(load, memopd1, result)
-	// }
 
 	Control_Flow_IC_Stmt * branch_stmt;
 	if(this->lhs->get_data_type() == int_data_type) {
@@ -292,7 +288,6 @@ Code_For_Ast & Conditional_Expression_Ast::compile() {
 	if(this->lhs->get_data_type() == double_data_type) {
 		branch_stmt = new Control_Flow_IC_Stmt(bc1f, NULL, label1->get_label());
 	}
-
 
 	Code_For_Ast *output = new Code_For_Ast();
 	output->set_reg(rd);
@@ -305,8 +300,8 @@ Code_For_Ast & Conditional_Expression_Ast::compile() {
 	output->get_icode_list().insert(output->get_icode_list().end(),rhs_code.get_icode_list().begin(), rhs_code.get_icode_list().end());
 	output->append_ics(*rhs_or_stmt);
 	output->append_ics(*label2);
-	lhs_result->get_reg()->reset_use_for_expr_result(); //Free the registers
-	rhs_result->get_reg()->reset_use_for_expr_result(); //Free the registers
+	lhs_result->get_reg()->reset_use_for_expr_result();  //Free the registers
+	rhs_result->get_reg()->reset_use_for_expr_result();  //Free the registers
 	cond_result->get_reg()->reset_use_for_expr_result(); //Free the registers
 	return *output;
 }
@@ -406,9 +401,10 @@ Code_For_Ast & Logical_Expr_Ast::compile() {
 
 	Move_IC_Stmt *load_one_stmt;
 	Const_Opd<int> *constant;
-	// if(this->bool_op == _logical_not)
-	//not is a special case. For !x, load 1, give operands x and a to not(in that order). NOT NULL.
-	//not_t in assembly is sltu. That's the reason for this weird behaviour.
+
+	/* not is a special case. For !x, load 1, give operands x and a to not(in that order). NOT NULL.
+	   not_t in assembly is sltu. That's the reason for this weird behaviour.
+	*/
 	if(this->bool_op == _logical_and) {
 		comp_stmt = new Compute_IC_Stmt(and_t, lhs_result, rhs_result, result);
 	}
@@ -447,16 +443,13 @@ Code_For_Ast & Selection_Statement_Ast::compile() {
 	if(this->else_part != NULL) {
 		label2 = new Label_IC_Stmt(j, this->get_new_label());
 		else_code = this->else_part->compile();
-		// Register_Addr_Opd *else_result = new Register_Addr_Opd(else_code.get_reg());
 		jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
 	}
 
 	Register_Addr_Opd *cond_result = new Register_Addr_Opd(cond_code.get_reg());
-	// Register_Addr_Opd *then_result = new Register_Addr_Opd(then_code.get_reg());
 	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
 
 	Control_Flow_IC_Stmt *rel_stmt;
-	//cond->get_data_type() should be float when args are float
 	if(this->cond->get_data_type() == int_data_type) {
 		rel_stmt = new Control_Flow_IC_Stmt(beq, cond_result, label1->get_label());
 	}
@@ -500,16 +493,13 @@ Code_For_Ast & Iteration_Statement_Ast::compile() {
 	Control_Flow_IC_Stmt * jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
 
 	Register_Addr_Opd *cond_result = new Register_Addr_Opd(cond_code.get_reg());
-	// Register_Addr_Opd *body_result = new Register_Addr_Opd(body_code.get_reg()); //not necessary?
 	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
-	// Register_Addr_Opd *result = new Register_Addr_Opd(rd);
 
 	Control_Flow_IC_Stmt *control_stmt;
 	if(this->cond->get_data_type() == int_data_type) {
 		control_stmt = new Control_Flow_IC_Stmt(bne, cond_result, label1->get_label());
 	}
 	else {
-		// control_stmt = new Control_Flow_IC_Stmt(bc1t, NULL, label1->get_label());
 		list<Icode_Stmt*>::iterator it = cond_code.get_icode_list().end();
 		it--;
 		Tgt_Op opr = ((*it)->get_op()).get_op();

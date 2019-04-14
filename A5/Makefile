@@ -8,8 +8,7 @@ CFLAGS=-std=c++0x
 FLEX=flex
 ALLHEADERS=allheaders.h
 BISON=bison
-# TESTDIR=tests
-TESTDIR=A4_tests
+TESTDIR=tests
 #-----------------------------------------------------------------------------
 
 all: $(MYPROGRAM)
