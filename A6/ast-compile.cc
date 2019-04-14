@@ -9,7 +9,6 @@ template class Number_Ast<int>;
 Code_For_Ast & Ast::create_store_stmt(Register_Descriptor * store_register) {
 
 }
-//TODO: release registers
 
 Code_For_Ast & Assignment_Ast::compile() {
 	Code_For_Ast rhs_res = rhs->compile();
@@ -593,4 +592,24 @@ Code_For_Ast & Print_Ast::compile() {
 	RAO1->get_reg()->reset_use_for_expr_result();
 	RAO2->get_reg()->reset_use_for_expr_result();
 	return *output;
+}
+
+
+
+
+Code_For_Ast & Call_Ast::compile() {
+
+}
+
+Code_For_Ast & Call_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
+
+}
+
+
+Code_For_Ast & Return_Ast::compile() {
+
+}
+
+Code_For_Ast & Return_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
+
 }

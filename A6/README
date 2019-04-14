@@ -53,3 +53,15 @@ For the AST you need to create objects of the following classes:
         - Return_ASt
 
 You will need to submit ONLY the scanner.l, parser.y, ast.cc, local-environment.cc, ast-eval.cc, ast-compile.cc, and icode.cc files.
+
+
+TODO:
+
+Add support for call and return:
+
+modify grammar to support function declarations, function calls, return statements.
+write ast functions for call and return asts.
+eval
+write compile functions for call and return asts.
+
+
