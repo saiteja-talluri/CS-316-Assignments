@@ -511,48 +511,6 @@ void Print_Ast::print(ostream & file_buffer) {
     file_buffer << ") ";
 }
 
-
-Return_Ast::Return_Ast(Ast * ret_val, string name, int line){
-    return_value = ret_val;
-    proc_name = name;
-    lineno = line;
-}
-
-Return_Ast::~Return_Ast(){}
-
-Data_Type Return_Ast::get_data_type() {
-    return node_data_type;
-}
-
-void Return_Ast::print(ostream & file_buffer){}
-
-Call_Ast::Call_Ast(string name, int line){
-    procedure_name = name;
-    lineno = line;
-}
-
-Call_Ast::~Call_Ast(){}
-
-Data_Type Call_Ast::get_data_type() {
-    return node_data_type;
-}
-
-void Call_Ast::set_register(Register_Descriptor * reg){
-    return_value_reg = reg;
-}
-
-void Call_Ast::check_actual_formal_param(Symbol_Table & formal_param_list){
-    /* TODO: */
-}
-
-void Call_Ast::set_actual_param_list(list<Ast *> & param_list){
-    actual_param_list = param_list;
-}
-
-void Call_Ast::print(ostream & file_buffer){}
-
-
-/*call*/
 Call_Ast::Call_Ast(string name, int line) {
     this->procedure_name = name;
     this->lineno = line;
