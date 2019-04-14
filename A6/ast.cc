@@ -606,21 +606,3 @@ Data_Type Return_Ast::get_data_type() {
 void Return_Ast::print(ostream & file_buffer) {
     //TODO:
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> 53550c70c0f75696d7871e6cdb2c347dda605cc5
