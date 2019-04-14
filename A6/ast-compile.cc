@@ -274,7 +274,7 @@ Code_For_Ast & Conditional_Expression_Ast::compile() {
 
 
 	Label_IC_Stmt * label2 = new Label_IC_Stmt(j, this->get_new_label()); 
-	Control_Flow_IC_Stmt * jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
+	Control_Flow_IC_Stmt * jump_stmt = new Control_Flow_IC_Stmt(j, NULL, NULL, label2->get_label());
 
 	Register_Addr_Opd *zero_reg = new Register_Addr_Opd(machine_desc_object.spim_register_table[zero]);
 	Compute_IC_Stmt* lhs_or_stmt = new Compute_IC_Stmt(or_t, lhs_result, zero_reg, result);
@@ -282,10 +282,10 @@ Code_For_Ast & Conditional_Expression_Ast::compile() {
 
 	Control_Flow_IC_Stmt * branch_stmt;
 	if(this->lhs->get_data_type() == int_data_type) {
-		branch_stmt = new Control_Flow_IC_Stmt(beq, cond_result, label1->get_label());
+		branch_stmt = new Control_Flow_IC_Stmt(beq, cond_result, zero_reg, label1->get_label());
 	}
 	if(this->lhs->get_data_type() == double_data_type) {
-		branch_stmt = new Control_Flow_IC_Stmt(bc1f, NULL, label1->get_label());
+		branch_stmt = new Control_Flow_IC_Stmt(bc1f, NULL, NULL, label1->get_label());
 	}
 
 	Code_For_Ast *output = new Code_For_Ast();
@@ -309,6 +309,7 @@ Code_For_Ast & Conditional_Expression_Ast::compile() {
 
 Code_For_Ast & Return_Ast::compile() {
 	//TODO:
+	
 }
 
 Code_For_Ast & Return_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
@@ -317,6 +318,7 @@ Code_For_Ast & Return_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
 
 Code_For_Ast & Call_Ast::compile() {
 	//TODO:
+	
 }
 
 Code_For_Ast & Call_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
@@ -448,28 +450,30 @@ Code_For_Ast & Selection_Statement_Ast::compile() {
 	Label_IC_Stmt * label1 = new Label_IC_Stmt(j, this->get_new_label()); 
 	Label_IC_Stmt * label2;
 	Control_Flow_IC_Stmt *jump_stmt;
+
 	if(this->else_part != NULL) {
 		label2 = new Label_IC_Stmt(j, this->get_new_label());
 		else_code = this->else_part->compile();
-		jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
+		jump_stmt = new Control_Flow_IC_Stmt(j, NULL, NULL, label2->get_label());
 	}
 
 	Register_Addr_Opd *cond_result = new Register_Addr_Opd(cond_code.get_reg());
 	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
+	Register_Addr_Opd *zero_reg = new Register_Addr_Opd(machine_desc_object.spim_register_table[zero]);
 
 	Control_Flow_IC_Stmt *rel_stmt;
 	if(this->cond->get_data_type() == int_data_type) {
-		rel_stmt = new Control_Flow_IC_Stmt(beq, cond_result, label1->get_label());
+		rel_stmt = new Control_Flow_IC_Stmt(beq, zero_reg, cond_result, label1->get_label());
 	}
 	else {
 		list<Icode_Stmt*>::iterator it = cond_code.get_icode_list().end();
 		it--;
 		Tgt_Op opr = ((*it)->get_op()).get_op();
 		if(opr == seq_d || opr == sle_d || opr == slt_d) {
-			rel_stmt = new Control_Flow_IC_Stmt(bc1f, NULL, label1->get_label());
+			rel_stmt = new Control_Flow_IC_Stmt(bc1f, NULL, NULL, label1->get_label());
 		}
 		else {
-			rel_stmt = new Control_Flow_IC_Stmt(bc1t, NULL, label1->get_label());	
+			rel_stmt = new Control_Flow_IC_Stmt(bc1t, NULL, NULL, label1->get_label());	
 		}
 	}
 
@@ -495,30 +499,32 @@ Code_For_Ast & Iteration_Statement_Ast::compile() {
 	Code_For_Ast cond_code = this->cond->compile(); 
 	Label_IC_Stmt * label1 = new Label_IC_Stmt(j, this->get_new_label()); 
 	Label_IC_Stmt * label2 = new Label_IC_Stmt(j, this->get_new_label()); 
+
 	Code_For_Ast body_code = this->body->compile(); 
 
-	Control_Flow_IC_Stmt * jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
+	Control_Flow_IC_Stmt * jump_stmt = new Control_Flow_IC_Stmt(j, NULL, NULL, label2->get_label());
 
 	Register_Addr_Opd *cond_result = new Register_Addr_Opd(cond_code.get_reg());
 	Register_Descriptor *rd = machine_desc_object.get_new_register<int_reg>();
+	Register_Addr_Opd *zero_reg = new Register_Addr_Opd(machine_desc_object.spim_register_table[zero]);
 
 	Control_Flow_IC_Stmt *control_stmt;
 	if(this->cond->get_data_type() == int_data_type) {
-		control_stmt = new Control_Flow_IC_Stmt(bne, cond_result, label1->get_label());
+		control_stmt = new Control_Flow_IC_Stmt(bne, cond_result, zero_reg, label1->get_label());
 	}
 	else {
 		list<Icode_Stmt*>::iterator it = cond_code.get_icode_list().end();
 		it--;
 		Tgt_Op opr = ((*it)->get_op()).get_op();
 		if(opr == seq_d || opr == sle_d || opr == slt_d) {
-			control_stmt = new Control_Flow_IC_Stmt(bc1t, NULL, label1->get_label());	
+			control_stmt = new Control_Flow_IC_Stmt(bc1t, NULL, NULL, label1->get_label());	
 		}
 		else {
-			control_stmt = new Control_Flow_IC_Stmt(bc1f, NULL, label1->get_label());
+			control_stmt = new Control_Flow_IC_Stmt(bc1f, NULL, NULL, label1->get_label());
 		}
 	}
 
-	jump_stmt = new Control_Flow_IC_Stmt(j, NULL, label2->get_label());
+	jump_stmt = new Control_Flow_IC_Stmt(j, NULL, NULL, label2->get_label());
 
 	Code_For_Ast *output = new Code_For_Ast();
 	output->set_reg(rd);

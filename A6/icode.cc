@@ -309,7 +309,9 @@ void Control_Flow_IC_Stmt::print_icode(ostream & file_buffer) {
 	if(this->op_desc.get_ic_format() == i_op_o1_o2_st) {
 		file_buffer << "	" << this->op_desc.get_name() << ":" << string(4, ' ') << "\t";
 		this->opd1->print_ics_opd(file_buffer);
-		file_buffer << " , zero : goto ";
+		file_buffer << " , ";
+		this->opd2->print_ics_opd(file_buffer);
+		file_buffer << " : goto ";
 		file_buffer << this->get_Offset();
 		file_buffer << "\n";
 	}
@@ -327,7 +329,9 @@ void Control_Flow_IC_Stmt::print_assembly(ostream & file_buffer) {
 	if(this->op_desc.get_assembly_format() == a_op_o1_o2_st) {
 		file_buffer << "	" << this->op_desc.get_mnemonic() << " ";
 		this->opd1->print_asm_opd(file_buffer);
-		file_buffer << ", $zero, ";
+		file_buffer << ", ";
+		this->opd2->print_asm_opd(file_buffer);
+		file_buffer << ", ";
 		file_buffer << this->get_Offset();
 		file_buffer << " \n";
 	}

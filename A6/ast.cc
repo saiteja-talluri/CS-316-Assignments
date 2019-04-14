@@ -543,7 +543,13 @@ void Call_Ast::set_actual_param_list(list<Ast *> & param_list) {
 }
 
 void Call_Ast::print(ostream & file_buffer) {
-    //TODO:
+    file_buffer << "\n         FN CALL: " << procedure_name << "(";
+    list<Ast*>::iterator it = this->actual_param_list.begin();
+    for(; it != this->actual_param_list.end(); it++) {
+        file_buffer << "\n            ";
+        (*it)->print(file_buffer);
+    }
+    file_buffer << ")"
 }
 
 
@@ -562,5 +568,9 @@ Data_Type Return_Ast::get_data_type() {
 }
 
 void Return_Ast::print(ostream & file_buffer) {
-    //TODO:
+    file_buffer << "\n         RETURN ";
+    if (return_value != NULL)
+        return_value->print(file_buffer);
+    else
+        file_buffer << "<NOTHING>";
 }
