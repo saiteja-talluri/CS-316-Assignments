@@ -1,4 +1,6 @@
 #include "ast.hh"
+#include "program.hh"
+#include "procedure.hh"
 #include "local-environment.hh"
 #include <stdlib.h>
 template class Number_Ast<double>;
@@ -528,11 +530,12 @@ void Call_Ast::set_register(Register_Descriptor * reg) {
 
 void Call_Ast::check_actual_formal_param(Symbol_Table & formal_param_list) {
     list<Ast*>::iterator it = this->actual_param_list.begin();
+    int i=0;
     for(; it != this->actual_param_list.end(); it++) {
         Symbol_Table_Entry actual_var = (*it)->get_symbol_entry();
-        if(formal_param_list.variable_in_formal_list_check(actual_var.get_variable_name())) {
-            if(formal_param_list.get_symbol_table_entry(actual_var.get_variable_name()).get_data_type() 
-            != actual_var.get_data_type() ) 
+        if(formal_param_list.get_symbol_table_entry_by_index(i).get_data_type() 
+        != actual_var.get_data_type() ) 
+        {
             cerr << "cs316: Error: Line "<<lineno<<": Actual and formal parameters do not match\n";
         }
     }
@@ -549,7 +552,7 @@ void Call_Ast::print(ostream & file_buffer) {
         file_buffer << "\n            ";
         (*it)->print(file_buffer);
     }
-    file_buffer << ")"
+    file_buffer << ")";
 }
 
 
@@ -564,7 +567,7 @@ Return_Ast::~Return_Ast() {}
 
 
 Data_Type Return_Ast::get_data_type() {
-    return this->node_data_type();
+    return this->node_data_type;
 }
 
 void Return_Ast::print(ostream & file_buffer) {
@@ -573,4 +576,9 @@ void Return_Ast::print(ostream & file_buffer) {
         return_value->print(file_buffer);
     else
         file_buffer << "<NOTHING>";
+}
+
+void Program::set_procedure(Procedure *proc, int line) {
+    //??
+    set_proc_to_map(proc->get_proc_name(), proc);
 }

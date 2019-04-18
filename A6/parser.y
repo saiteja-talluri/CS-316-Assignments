@@ -8,6 +8,9 @@
 	extern int yylineno;
 	Symbol_Table* global_sym_table = new Symbol_Table();
 	Symbol_Table* local_sym_table = new Symbol_Table();
+
+	/*current procedure */
+	string current_procedure_name = "";
 %}
 
 %union {
@@ -22,6 +25,8 @@
 	Basic_Block * basic_block;
 	Procedure * procedure;
 	list<Symbol_Table_Entry *> * symbol_entry_list;
+	Data_Type data_type;
+	Call_Ast* call_ast;
 }
 
 %token <integer_value> INTEGER_NUMBER
@@ -33,16 +38,18 @@
 %token EQUAL LESS_THAN GREATER_THAN LESS_THAN_EQUAL GREATER_THAN_EQUAL NOT_EQUAL
 %token AND OR NOT
 
-%type <symbol_entry_list> variable_list	declaration	variable_declaration variable_declaration_list optional_variable_declaration_list
-%type <procedure> procedure_definition
+%type <symbol_entry_list> variable_list	variable_declaration variable_declaration_list optional_variable_declaration_list
+%type <procedure> procedure_definition procedure_declaration
+%type <symbol_table> declaration_param_list formal_param_list optional_formal_param_list
 %type <ast>	assignment_statement arith_expression
 %type <ast> log_expression rel_expression iteration_statement statement selection_statement
 %type <ast> sequence_statement
 /*print*/
 %type <ast> print_statement
-%type <ast_list> statement_list
-
-
+%type <ast_list> statement_list actual_param_list
+%type <call_ast> call_stmt 
+%type <ast> return_stmt
+%type <data_type> type
 
 %right ASSIGN
 %right '?' ':'
@@ -61,88 +68,127 @@
 
 %%
 
-// program					:	global_variable_declaration_list procedure_definition
-// 							{
-// 								(*global_sym_table).set_table_scope(global);
-// 								program_object.set_global_table(*global_sym_table);
-// 								program_object.set_procedure($2, yylineno);
-// 							}
-// 							; 
+ /*
+program					:	global_variable_declaration_list procedure_definition
+							{
+								(*global_sym_table).set_table_scope(global);
+								program_object.set_global_table(*global_sym_table);
+								program_object.set_procedure($2, yylineno);
+							}
+							; 
+ */
 
-program					:	declaration_list definition_list
+
+program					:	dec_def_list
 							{
 								(*global_sym_table).set_table_scope(global);
 								program_object.set_global_table(*global_sym_table);
 							}
+
+dec_def_list			:	procedure_definition_list
+							{
+								/* no actions */
+							}
+							|	variable_declaration dec_def_list
+							{
+								
+								/*push variables in global_symbol_table */
+								for(list<Symbol_Table_Entry*>::iterator it = (*$1).begin(); it != (*$1).end(); it++) {
+									(*it)->set_symbol_scope(global);
+									Symbol_Table x;
+									x.push_symbol(*it);
+									x.set_table_scope(global);
+									(*global_sym_table).append_list(x, (*it)->get_lineno());
+								}
+							}
+							|	procedure_declaration dec_def_list
+							{
+								/*no actions */
+							}
 							;
+// program					:	declaration_list procedure_definition_list
+// 							{
+// 								(*global_sym_table).set_table_scope(global);
+// 								program_object.set_global_table(*global_sym_table);
+// 							}
+// 							;
 
-declaration_list		:	declaration_list procedure_declaration
+// declaration_list		:	declaration_list procedure_declaration
+// 							{
+// 								yyerror("proc declaration");
+// 								/* do nothing */
+// 							}
+// 							|	declaration_list variable_declaration
+// 							{
+// 								for(list<Symbol_Table_Entry*>::iterator it = (*$2).begin(); it != (*$2).end(); it++) {
+// 									(*it)->set_symbol_scope(global);
+// 									Symbol_Table x;
+// 									x.push_symbol(*it);
+// 									x.set_table_scope(global);
+// 									(*global_sym_table).append_list(x, (*it)->get_lineno());
+// 								}	
+// 							}
+// 							|	/*empty */
+// 							{
+// 								/* do nothing */
+// 							}
+// 							;
+
+
+
+
+procedure_declaration	:	type NAME '(' declaration_param_list ')' ';'
 							{
-
+								$$ = new Procedure($1, *$2, yylineno);
+								program_object.set_proc_to_map(*$2, $$);
+								program_object.print();
 							}
-							|	declaration_list variable_declaration
+							|	type NAME '(' optional_formal_param_list ')' ';'
 							{
-
+								$$ = new Procedure($1, *$2, yylineno);
+								program_object.set_proc_to_map(*$2, $$);
+								program_object.print();
 							}
-							|	/*empty */
-							{
-
-							}
-							;
-
-procedure_declaration	:	VOID NAME '(' param_list ')' ';'
+							|	VOID NAME '(' declaration_param_list ')' ';'
 							{
 								$$ = new Procedure(void_data_type, *$2, yylineno);
 								program_object.set_proc_to_map(*$2, $$);
+								program_object.print();
 							}
-							|	INTEGER NAME '(' param_list ')' ';'
+							|	VOID NAME '(' optional_formal_param_list ')' ';'
 							{
-								$$ = new Procedure(int_data_type, *$2, yylineno);
+								$$ = new Procedure(void_data_type, *$2, yylineno);
 								program_object.set_proc_to_map(*$2, $$);
+								program_object.print();
+							}	
+							;
+
+type					:	INTEGER
+							{
+								$$ = int_data_type;
 							}
-							|	FLOAT NAME '(' param_list ')' ';'
+							|	FLOAT
 							{
-								$$ = new Procedure(float_data_type, *$2, yylineno);
-								program_object.set_proc_to_map(*$2, $$);
+								$$ = double_data_type;
 							}
 							;
 
-declaration_param_list	:	/* empty */
-							{
-								$$ = new Symbol_Table();
-							}
-							|	declaration_param_list ',' INTEGER NAME 
-							{
-								/* TODO */
-							}
-							|	declaration_param_list ',' INTEGER
-							{
-								/* TODO */
-							} 
-							|	declaration_param_list ',' FLOAT NAME 
-							{
-								/* TODO */
-							}
-							|	declaration_param_list ',' FLOAT
-							{
-								/* TODO */
-							}
-							;
+declaration_param_list		:	declaration_param_list ',' type
+								{
+									$$ = $1;
+									string d = "dummy";
+									Symbol_Table_Entry *x = new Symbol_Table_Entry(d, $3, yylineno);
+									$$->push_symbol(x);
+								}
+								|	type
+								{
+									$$ = new Symbol_Table();
+									string d = "dummy";
+									Symbol_Table_Entry *x = new Symbol_Table_Entry(d, $1, yylineno);
+									$$->push_symbol(x);
+								}
+								;
 
-param_list				:	/* empty */
-							{
-								$$ = new Symbol_Table();
-							}
-							|	param_list ',' INTEGER NAME 
-							{
-								Symbol_Table_Entry *ste = new Symbol_Table_Entry();
-								/*TODO: */
-							}
-							|	param_list ',' FLOAT NAME 
-							{
-								/*TODO: */
-							}
-							;
 
 procedure_definition_list	:	procedure_definition
 								{
@@ -166,32 +212,159 @@ procedure_definition_list	:	procedure_definition
 // 							}
 //         	           		;
 
-procedure_definition	:	VOID NAME '(' param_list ')'
-                  	   		'{'
+procedure_definition		:	type NAME
+								'(' optional_formal_param_list ')'
+								{
+									current_procedure_name = *$2;
+								} 
+								'{' 
 									local_variable_declaration_list statement_list
-        	           		'}' 
-							{	
-								$$ = new Procedure(void_data_type,*$2, yylineno);
-								(*local_sym_table).set_table_scope(local);
-								(*$$).set_local_list((*local_sym_table));
-								(*$$).set_ast_list(*($7));
-								local_sym_table = new Symbol_Table;
-								program_object.set_procedure($$, yylineno);
-							}
-        	           		;
+								'}' 
+								{	
+									/* TODO: check declarations for this name. If it exists, signature should match.
+									Then set names of parameters, create new local variables for the parameters.
+									if it doesn't exist create new entry in proc map. */
 
+									$$ = new Procedure($1, *$2, yylineno);
+									$$->set_formal_param_list(*$4);
 
-global_variable_declaration_list	: 	optional_variable_declaration_list
-										{
-											for(list<Symbol_Table_Entry*>::iterator it = (*$1).begin(); it != (*$1).end(); it++) {
-												(*it)->set_symbol_scope(global);
-												Symbol_Table x;
-												x.push_symbol(*it);
-												x.set_table_scope(global);
-												(*global_sym_table).append_list(x, (*it)->get_lineno());
+									if(program_object.is_procedure_exists(*$2))
+									{
+										Procedure *declared_proc = program_object.get_procedure_prototype(*$2);
+
+										if(declared_proc->is_proc_defined()) {
+											cerr << "cs316: Error: Line "<<yylineno<<": procedure already defined\n";
+										}
+
+										if($1 != declared_proc->get_return_type()) {
+											cerr << "cs316: Error: Line "<<yylineno<<": return type in declaration and definition not matching\n";
+										}
+
+										list<Symbol_Table_Entry *> decl_table = declared_proc->get_formal_param_list().get_table();
+										list<Symbol_Table_Entry *> def_table = $4->get_table();
+
+										list<Symbol_Table_Entry *>::iterator it1 = decl_table.begin();
+										list<Symbol_Table_Entry *>::iterator it2 = def_table.begin();
+										int i=0;
+										while(it1 != decl_table.end() && it2 != def_table.end()) {
+											if((*it1)->get_data_type() != (*it2)->get_data_type())
+											{
+												cerr << "cs316: Error: Line "<<yylineno<<": Declared and defined parameter types don't match\n";
 											}
 										}
-										;
+										if(it1 != decl_table.end() || it2 != def_table.end()) {
+											cerr << "cs316: Error: Line "<<yylineno<<": Declared and defined parameter counts don't match\n";
+										}
+
+										/*paramter types match */
+									}
+									else {
+										program_object.set_proc_to_map(*$2, $$);
+									}
+
+
+									(*local_sym_table).set_table_scope(local);
+									(*$$).set_local_list((*local_sym_table));
+									(*$$).set_ast_list(*($9));
+
+									local_sym_table = new Symbol_Table;
+									program_object.set_procedure($$, yylineno);
+								}
+								|	VOID NAME
+								'(' optional_formal_param_list ')'
+								{
+									current_procedure_name = *$2;
+								} 
+								'{' 
+									local_variable_declaration_list statement_list
+								'}' 
+								{	
+									/* TODO: check declarations for this name. If it exists, signature should match.
+									Then set names of parameters, create new local variables for the parameters.
+									if it doesn't exist create new entry in proc map. */
+
+									$$ = new Procedure(void_data_type, *$2, yylineno);
+									$$->set_formal_param_list(*$4);
+
+									if(program_object.is_procedure_exists(*$2))
+									{
+										Procedure *declared_proc = program_object.get_procedure_prototype(*$2);
+
+										if(declared_proc->is_proc_defined()) {
+											cerr << "cs316: Error: Line "<<yylineno<<": procedure already defined\n";
+										}
+
+										if(void_data_type != declared_proc->get_return_type()) {
+											cerr << "cs316: Error: Line "<<yylineno<<": return type in declaration and definition not matching\n";
+										}
+
+										list<Symbol_Table_Entry *> decl_table = declared_proc->get_formal_param_list().get_table();
+										list<Symbol_Table_Entry *> def_table = $4->get_table();
+
+										list<Symbol_Table_Entry *>::iterator it1 = decl_table.begin();
+										list<Symbol_Table_Entry *>::iterator it2 = def_table.begin();
+										int i=0;
+										while(it1 != decl_table.end() && it2 != def_table.end()) {
+											if((*it1)->get_data_type() != (*it2)->get_data_type())
+											{
+												cerr << "cs316: Error: Line "<<yylineno<<": Declared and defined parameter types don't match\n";
+											}
+										}
+										if(it1 != decl_table.end() || it2 != def_table.end()) {
+											cerr << "cs316: Error: Line "<<yylineno<<": Declared and defined parameter counts don't match\n";
+										}
+
+										/*paramter types match */
+									}
+									else {
+										program_object.set_proc_to_map(*$2, $$);
+									}
+
+
+									(*local_sym_table).set_table_scope(local);
+									(*$$).set_local_list((*local_sym_table));
+									(*$$).set_ast_list(*($9));
+
+									local_sym_table = new Symbol_Table;
+									program_object.set_procedure($$, yylineno);
+								}
+
+								;
+
+optional_formal_param_list	:	/*empty */
+								{
+									$$ = new Symbol_Table();
+								}
+								|	formal_param_list
+								{
+									$$ = $1;
+								}
+								;
+
+formal_param_list			:	formal_param_list ',' type NAME 
+								{
+									Symbol_Table_Entry *ste = new Symbol_Table_Entry(*$4, $3, yylineno);
+									$$->push_symbol(ste);
+								}
+								|	type NAME
+								{
+									$$ = new Symbol_Table();
+									Symbol_Table_Entry *ste = new Symbol_Table_Entry(*$2, $1, yylineno);
+									$$->push_symbol(ste);
+								}
+							;
+
+// global_variable_declaration_list	: 	optional_variable_declaration_list
+// 										{
+// 											for(list<Symbol_Table_Entry*>::iterator it = (*$1).begin(); it != (*$1).end(); it++) {
+// 												(*it)->set_symbol_scope(global);
+// 												Symbol_Table x;
+// 												x.push_symbol(*it);
+// 												x.set_table_scope(global);
+// 												(*global_sym_table).append_list(x, (*it)->get_lineno());
+// 											}
+// 										}
+// 										;
 
 local_variable_declaration_list		: 	optional_variable_declaration_list
 										{
@@ -228,23 +401,17 @@ variable_declaration_list			:	variable_declaration
 										}
 										;
 
-variable_declaration				:	declaration ';'
-										{
-											$$ = $1;
-										}
-										;
+	/*old*/
+// variable_declaration				:	declaration ';'
+// 										{
+// 											$$ = $1;
+// 										}
+// 										;
 
-declaration							:	INTEGER variable_list
+variable_declaration					:	type variable_list ';'
 										{
 											for(list<Symbol_Table_Entry*>::iterator it = (*$2).begin(); it != (*$2).end(); it++) {
-												(*it)->set_data_type(int_data_type);
-											}
-											$$ = $2;
-										}
-										| FLOAT variable_list 
-										{	
-											for(list<Symbol_Table_Entry*>::iterator it = (*$2).begin(); it != (*$2).end(); it++) {
-												(*it)->set_data_type(double_data_type);
+												(*it)->set_data_type($1);
 											}
 											$$ = $2;
 										}
@@ -279,6 +446,7 @@ statement_list	        :	/* empty */
 							;
 
 
+	/* add call and return statements */
 statement 				:	assignment_statement
 							{
 								$$ = $1;
@@ -293,6 +461,14 @@ statement 				:	assignment_statement
 							}
 							/*print*/
 							|	print_statement
+							{
+								$$ = $1;
+							}
+							|	call_stmt
+							{
+								$$ = $1;
+							}
+							|	return_stmt
 							{
 								$$ = $1;
 							}
@@ -415,7 +591,7 @@ assignment_statement	:	NAME ASSIGN arith_expression ';'
 									(*$$).check_ast();
 								}
 								else{
-									yyerror("cs316: Error: Variable has not been declared");
+									yyerror("cs316: Error: Variable has not been declared/defined");
 									exit(1);
 								}
 							}
@@ -433,11 +609,43 @@ print_statement			:	PRINT NAME ';'
 									$$ = new Print_Ast(var, yylineno);
 								}
 								else{
-									yyerror("cs316: Error: Variable has not been declared");
+									yyerror("cs316: Error: Variable has not been declared/defined");
 									exit(1);
 								}
 							}
 
+actual_param_list		:	actual_param_list ',' arith_expression
+							{
+								$$->push_back($3);
+							}
+							|	/*empty*/
+							{
+								$$ = new list<Ast*>();
+							}
+
+call_stmt				:	NAME '(' actual_param_list ')' ';'
+							{
+								/*what does this check exactly */
+								if(! program_object.is_procedure_exists(*$1)) {
+									yyerror("Unknown procedure.");
+									exit(1);
+								}
+								$$ = new Call_Ast(*$1, yylineno);
+								$$->set_actual_param_list(*$3);
+								Procedure *proc = program_object.get_procedure_prototype(*$1);
+								$$->check_actual_formal_param(proc->get_formal_param_list());
+							}
+
+return_stmt				:	RETURN arith_expression ';'
+							{
+								$$ = new Return_Ast($2, current_procedure_name, yylineno);
+							}
+							|	RETURN ';'
+							{
+								$$ = new Return_Ast(NULL, current_procedure_name, yylineno);
+							}
+
+	/* TODO: add function call to arith expression */
 arith_expression		: 	INTEGER_NUMBER	
 							{
 								$$ = new Number_Ast<int>($1, int_data_type, yylineno);
@@ -456,7 +664,7 @@ arith_expression		: 	INTEGER_NUMBER
 									$$ = new Name_Ast(*$1, (*global_sym_table).get_symbol_table_entry(*$1), yylineno);
 								}
 								else{
-									yyerror("cs316: Error : Variable has not been declared");
+									yyerror("cs316: Error: Variable has not been declared/defined");
 									exit(1);
 								}
 							}

@@ -30,8 +30,8 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef YY_YY_PARSER_TAB_H_INCLUDED
-# define YY_YY_PARSER_TAB_H_INCLUDED
+#ifndef YY_YY_Y_TAB_H_INCLUDED
+# define YY_YY_Y_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -72,6 +72,32 @@ extern int yydebug;
     NOT_ELSE = 282
   };
 #endif
+/* Tokens.  */
+#define INTEGER_NUMBER 258
+#define DOUBLE_NUMBER 259
+#define NAME 260
+#define BBNUM 261
+#define RETURN 262
+#define INTEGER 263
+#define FLOAT 264
+#define ASSIGN 265
+#define VOID 266
+#define UMINUS 267
+#define WHILE 268
+#define IF 269
+#define DO 270
+#define ELSE 271
+#define PRINT 272
+#define EQUAL 273
+#define LESS_THAN 274
+#define GREATER_THAN 275
+#define LESS_THAN_EQUAL 276
+#define GREATER_THAN_EQUAL 277
+#define NOT_EQUAL 278
+#define AND 279
+#define OR 280
+#define NOT 281
+#define NOT_ELSE 282
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -94,7 +120,7 @@ union YYSTYPE
 	Data_Type data_type;
 	Call_Ast* call_ast;
 
-#line 98 "parser.tab.h" /* yacc.c:1909  */
+#line 124 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -107,4 +133,4 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_PARSER_TAB_H_INCLUDED  */
+#endif /* !YY_YY_Y_TAB_H_INCLUDED  */
