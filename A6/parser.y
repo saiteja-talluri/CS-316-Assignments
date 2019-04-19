@@ -87,7 +87,11 @@ program					:	dec_def_list
 
 dec_def_list			:	procedure_definition_list
 							{
-								/* no actions */
+								/* check for parameterless void main function */
+								if(!(program_object.is_procedure_exists("main") && program_object.get_procedure_prototype("main")->get_return_type() == void_data_type)) {
+									cerr << "cs316: Error: Line "<<yylineno<<":  Main should be defined and its type should be void\n";
+									exit(1);
+								}
 							}
 							|	variable_declaration dec_def_list
 							{
@@ -140,24 +144,28 @@ dec_def_list			:	procedure_definition_list
 procedure_declaration	:	type NAME '(' declaration_param_list ')' ';'
 							{
 								$$ = new Procedure($1, *$2, yylineno);
+								$$->set_formal_param_list(*$4);
 								program_object.set_proc_to_map(*$2, $$);
 								program_object.print();
 							}
 							|	type NAME '(' optional_formal_param_list ')' ';'
 							{
 								$$ = new Procedure($1, *$2, yylineno);
+								$$->set_formal_param_list(*$4);
 								program_object.set_proc_to_map(*$2, $$);
 								program_object.print();
 							}
 							|	VOID NAME '(' declaration_param_list ')' ';'
 							{
 								$$ = new Procedure(void_data_type, *$2, yylineno);
+								$$->set_formal_param_list(*$4);
 								program_object.set_proc_to_map(*$2, $$);
 								program_object.print();
 							}
 							|	VOID NAME '(' optional_formal_param_list ')' ';'
 							{
 								$$ = new Procedure(void_data_type, *$2, yylineno);
+								$$->set_formal_param_list(*$4);
 								program_object.set_proc_to_map(*$2, $$);
 								program_object.print();
 							}	
@@ -192,11 +200,11 @@ declaration_param_list		:	declaration_param_list ',' type
 
 procedure_definition_list	:	procedure_definition
 								{
-
+									/*no actions */
 								}
 								| procedure_definition_list procedure_definition 
 								{
-									
+									/*no actions */
 								}
 								;
 
@@ -216,6 +224,7 @@ procedure_definition		:	type NAME
 								'(' optional_formal_param_list ')'
 								{
 									current_procedure_name = *$2;
+									(*local_sym_table).append_list(*$4, yylineno);
 								} 
 								'{' 
 									local_variable_declaration_list statement_list
@@ -234,10 +243,12 @@ procedure_definition		:	type NAME
 
 										if(declared_proc->is_proc_defined()) {
 											cerr << "cs316: Error: Line "<<yylineno<<": procedure already defined\n";
+											exit(1);
 										}
 
 										if($1 != declared_proc->get_return_type()) {
 											cerr << "cs316: Error: Line "<<yylineno<<": return type in declaration and definition not matching\n";
+											exit(1);
 										}
 
 										list<Symbol_Table_Entry *> decl_table = declared_proc->get_formal_param_list().get_table();
@@ -250,13 +261,18 @@ procedure_definition		:	type NAME
 											if((*it1)->get_data_type() != (*it2)->get_data_type())
 											{
 												cerr << "cs316: Error: Line "<<yylineno<<": Declared and defined parameter types don't match\n";
+												exit(1);
 											}
+											it1++;
+											it2++;
 										}
-										if(it1 != decl_table.end() || it2 != def_table.end()) {
+										if(decl_table.size() != def_table.size()) {
+											declared_proc->get_formal_param_list().print(cerr);
 											cerr << "cs316: Error: Line "<<yylineno<<": Declared and defined parameter counts don't match\n";
+											exit(1);
 										}
 
-										/*paramter types match */
+										/*paramters match */
 									}
 									else {
 										program_object.set_proc_to_map(*$2, $$);
@@ -266,14 +282,16 @@ procedure_definition		:	type NAME
 									(*local_sym_table).set_table_scope(local);
 									(*$$).set_local_list((*local_sym_table));
 									(*$$).set_ast_list(*($9));
-
+									// $$->set_proc_is_defined();
 									local_sym_table = new Symbol_Table;
 									program_object.set_procedure($$, yylineno);
 								}
+
 								|	VOID NAME
 								'(' optional_formal_param_list ')'
 								{
 									current_procedure_name = *$2;
+									(*local_sym_table).append_list(*$4, yylineno);
 								} 
 								'{' 
 									local_variable_declaration_list statement_list
@@ -292,10 +310,12 @@ procedure_definition		:	type NAME
 
 										if(declared_proc->is_proc_defined()) {
 											cerr << "cs316: Error: Line "<<yylineno<<": procedure already defined\n";
+											exit(1);
 										}
 
 										if(void_data_type != declared_proc->get_return_type()) {
 											cerr << "cs316: Error: Line "<<yylineno<<": return type in declaration and definition not matching\n";
+											exit(1);
 										}
 
 										list<Symbol_Table_Entry *> decl_table = declared_proc->get_formal_param_list().get_table();
@@ -308,10 +328,14 @@ procedure_definition		:	type NAME
 											if((*it1)->get_data_type() != (*it2)->get_data_type())
 											{
 												cerr << "cs316: Error: Line "<<yylineno<<": Declared and defined parameter types don't match\n";
+												exit(1);
 											}
+											it1++;
+											it2++;
 										}
-										if(it1 != decl_table.end() || it2 != def_table.end()) {
+										if(decl_table.size() != def_table.size()) {
 											cerr << "cs316: Error: Line "<<yylineno<<": Declared and defined parameter counts don't match\n";
+											exit(1);
 										}
 
 										/*paramter types match */
@@ -324,7 +348,8 @@ procedure_definition		:	type NAME
 									(*local_sym_table).set_table_scope(local);
 									(*$$).set_local_list((*local_sym_table));
 									(*$$).set_ast_list(*($9));
-
+									// $$->set_proc_is_defined();
+									local_sym_table->print(cerr);
 									local_sym_table = new Symbol_Table;
 									program_object.set_procedure($$, yylineno);
 								}
@@ -343,11 +368,13 @@ optional_formal_param_list	:	/*empty */
 
 formal_param_list			:	formal_param_list ',' type NAME 
 								{
+									*$4 = *$4 + "_";
 									Symbol_Table_Entry *ste = new Symbol_Table_Entry(*$4, $3, yylineno);
 									$$->push_symbol(ste);
 								}
 								|	type NAME
 								{
+									*$2 = *$2 + "_";
 									$$ = new Symbol_Table();
 									Symbol_Table_Entry *ste = new Symbol_Table_Entry(*$2, $1, yylineno);
 									$$->push_symbol(ste);
