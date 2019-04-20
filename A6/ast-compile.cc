@@ -307,24 +307,6 @@ Code_For_Ast & Conditional_Expression_Ast::compile() {
 }
 
 
-Code_For_Ast & Return_Ast::compile() {
-	//TODO:
-	
-}
-
-Code_For_Ast & Return_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
-	//TODO:
-}
-
-Code_For_Ast & Call_Ast::compile() {
-	//TODO:
-	
-}
-
-Code_For_Ast & Call_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
-	//TODO:
-}
-
 Code_For_Ast & Relational_Expr_Ast::compile() {
 	Code_For_Ast lhs_code =	this->lhs_condition->compile(); 
 	Code_For_Ast rhs_code =	this->rhs_condition->compile(); 
@@ -551,6 +533,132 @@ Code_For_Ast & Sequence_Ast::compile() {
 
 	Code_For_Ast *output = new Code_For_Ast(this->sa_icode_list, NULL);
 	return *output;
+}
+
+Code_For_Ast & Return_Ast::compile() {
+
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+	Control_Flow_IC_Stmt *jump_stmt = new Control_Flow_IC_Stmt(j, NULL, NULL, "epilogue_" + this->proc_name);
+
+	if(this->get_data_type() == void_data_type) {
+		ic_list.push_back(jump_stmt);
+		Code_For_Ast * output = new Code_For_Ast(ic_list, NULL);
+		return *output;
+	}
+
+	Code_For_Ast return_code =	this->return_value->compile();
+	Register_Addr_Opd *return_result = new Register_Addr_Opd(return_code.get_reg());
+
+	Register_Addr_Opd *RAO;
+	Move_IC_Stmt *load;
+	Label_IC_Stmt * label = new Label_IC_Stmt(j, "epilogue_" + this->proc_name);
+
+	if(this->get_data_type() == int_data_type) {
+		RAO = new Register_Addr_Opd(machine_desc_object.spim_register_table[v1]);
+		load = new Move_IC_Stmt(mov, return_result, RAO);
+	}
+
+	if(this->get_data_type() == double_data_type) {
+		RAO = new Register_Addr_Opd(machine_desc_object.spim_register_table[f0]);
+		load = new Move_IC_Stmt(move_d, return_result, RAO);
+	}
+
+	if(!return_code.get_icode_list().empty())
+		ic_list = return_code.get_icode_list();
+
+	ic_list.push_back(load);
+	ic_list.push_back(jump_stmt);
+
+	Code_For_Ast *output = new Code_For_Ast(ic_list, NULL);
+
+	return_result->get_reg()->reset_use_for_expr_result(); 		/* Free the registers */
+
+	return *output;
+}
+
+Code_For_Ast & Return_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
+	//TODO:
+}
+
+Code_For_Ast & Call_Ast::compile() {
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+	Register_Addr_Opd * stack_opd = new Register_Addr_Opd(machine_desc_object.spim_register_table[sp]);
+
+	list<Ast *>::iterator it;
+	int offset = 0;
+
+	for(it = this->actual_param_list.end(); it != this->actual_param_list.begin();) {
+		--it;
+		Code_For_Ast param_code = (*it)->compile();
+		Register_Addr_Opd *param_result = new Register_Addr_Opd(param_code.get_reg());
+		if(!param_code.get_icode_list().empty())
+			ic_list.insert(ic_list.end(), param_code.get_icode_list().begin(), param_code.get_icode_list().end());
+		if((*it)->get_data_type() == int_data_type){
+			offset -= 4;
+			string *x = new string((*it)->get_symbol_entry().get_variable_name());
+			Symbol_Table_Entry	*arg = new Symbol_Table_Entry(*x, int_data_type, (*it)->get_symbol_entry().get_lineno(), sp_ref);
+			arg->set_start_offset(offset);
+			Mem_Addr_Opd *opd  = new Mem_Addr_Opd(*arg);
+			Move_IC_Stmt *store_stmt = new Move_IC_Stmt(store, param_result, opd);
+			ic_list.push_back(store_stmt);
+			// DO INSERTION HERE
+		}
+		else if((*it)->get_data_type() == double_data_type){
+			offset -= 8;
+			string *x = new string((*it)->get_symbol_entry().get_variable_name());
+			Symbol_Table_Entry	*arg = new Symbol_Table_Entry(*x, int_data_type, (*it)->get_symbol_entry().get_lineno(), sp_ref);
+			arg->set_start_offset(offset);
+			Mem_Addr_Opd *opd  = new Mem_Addr_Opd(*arg);
+			Move_IC_Stmt *store_stmt = new Move_IC_Stmt(store_d, param_result, opd);
+			ic_list.push_back(store_stmt);	
+			// DO INSERTION HERE
+		}	
+		param_result->get_reg()->reset_use_for_expr_result(); 		/* Free the registers */
+	}
+
+	Const_Opd<int> * offset_opd = new Const_Opd<int>(-1*offset);
+
+	if(offset != 0) {
+		Compute_IC_Stmt* sub_stmt = new Compute_IC_Stmt(sub, stack_opd, stack_opd, offset_opd);
+		ic_list.push_back(sub_stmt);
+	}
+
+	Control_Flow_IC_Stmt *jump_stmt = new Control_Flow_IC_Stmt(jal, NULL, NULL, this->procedure_name);
+	ic_list.push_back(jump_stmt);
+
+	if(offset != 0) {
+		Compute_IC_Stmt* add_stmt = new Compute_IC_Stmt(add, stack_opd, stack_opd, offset_opd);
+		ic_list.push_back(add_stmt);
+	}
+
+
+	Register_Descriptor* rd;
+	Register_Addr_Opd *RAO, *reg_opd;
+	Move_IC_Stmt *load;
+
+	if(this->get_data_type() == int_data_type) {
+		rd = machine_desc_object.get_new_register<int_reg>();
+		RAO = new Register_Addr_Opd(machine_desc_object.spim_register_table[v1]);
+		reg_opd = new Register_Addr_Opd(rd);
+		load = new Move_IC_Stmt(mov, RAO, reg_opd);
+		ic_list.push_back(load);
+	}
+
+	if(this->get_data_type() == double_data_type) {
+		rd = machine_desc_object.get_new_register<float_reg>();
+		RAO = new Register_Addr_Opd(machine_desc_object.spim_register_table[f0]);
+		reg_opd = new Register_Addr_Opd(rd);
+		load = new Move_IC_Stmt(move_d, RAO, reg_opd);
+		ic_list.push_back(load);
+	}
+
+	Code_For_Ast *output = new Code_For_Ast(ic_list, NULL);
+	machine_desc_object.clear_local_register_mappings(); /* Need to do this failing which may result in weird issues */
+	return *output;
+}
+
+Code_For_Ast & Call_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
+	//TODO:
 }
 
 Code_For_Ast & Print_Ast::compile() {

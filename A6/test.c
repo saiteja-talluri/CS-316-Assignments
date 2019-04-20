@@ -1,16 +1,19 @@
 int a,b,c;
-int f1(int a, int b, int c);
+// int f1(int a);
 
-int main(int c) {
-    int a;
-    int b;
-    a = 1;
-    b = 3;
+int f1(int x, int y) {
+    x = 4;
+    // return a + b;
 }
-int f1(int a, int b, int c) {
-    // int a;
-    // int c;
-    c = 5;
-    a=c;
-    // return a;
+void main() {
+    int a;
+    // a = 1;
+    // a = f1(a);
+    // f1(a);
+    int b;
+    float x;
+    x = 2.0;
+    a = 2;
+    b = 3;
+    f1(a,b);
 }

@@ -11,7 +11,6 @@
 
 	/*current procedure */
 	string current_procedure_name = "";
-	Data_Type current_procedure_type = int_data_type;
 %}
 
 %union {
@@ -100,36 +99,32 @@ dec_def_list			:	procedure_definition_list
 							;
 
 procedure_declaration	:	type NAME '(' declaration_param_list ')' ';'
-							{	
-								if(*$2 != "main")
-									*$2 = *$2 + "_";
+							{
 								$$ = new Procedure($1, *$2, yylineno);
 								$$->set_formal_param_list(*$4);
 								program_object.set_proc_to_map(*$2, $$);
+								program_object.print();
 							}
 							|	type NAME '(' optional_formal_param_list ')' ';'
 							{
-								if(*$2 != "main")
-									*$2 = *$2 + "_";
 								$$ = new Procedure($1, *$2, yylineno);
 								$$->set_formal_param_list(*$4);
 								program_object.set_proc_to_map(*$2, $$);
+								program_object.print();
 							}
 							|	VOID NAME '(' declaration_param_list ')' ';'
 							{
-								if(*$2 != "main")
-									*$2 = *$2 + "_";
 								$$ = new Procedure(void_data_type, *$2, yylineno);
 								$$->set_formal_param_list(*$4);
 								program_object.set_proc_to_map(*$2, $$);
+								program_object.print();
 							}
 							|	VOID NAME '(' optional_formal_param_list ')' ';'
 							{
-								if(*$2 != "main")
-									*$2 = *$2 + "_";
 								$$ = new Procedure(void_data_type, *$2, yylineno);
 								$$->set_formal_param_list(*$4);
 								program_object.set_proc_to_map(*$2, $$);
+								program_object.print();
 							}	
 							;
 
@@ -173,18 +168,14 @@ procedure_definition_list	:	procedure_definition
 procedure_definition		:	type NAME
 								'(' optional_formal_param_list ')'
 								{
-									if(*$2 != "main")
-										*$2 = *$2 + "_";
 									current_procedure_name = *$2;
-									current_procedure_type = $1;
 									(*local_sym_table).append_list(*$4, yylineno);
 								} 
 								'{' 
 									local_variable_declaration_list statement_list
 								'}' 
-								{
+								{	
 									$$ = new Procedure($1, *$2, yylineno);
-									$4->set_table_scope(formal);
 									$$->set_formal_param_list(*$4);
 
 									if(program_object.is_procedure_exists(*$2))
@@ -240,10 +231,7 @@ procedure_definition		:	type NAME
 								|	VOID NAME
 								'(' optional_formal_param_list ')'
 								{
-									if(*$2 != "main")
-										*$2 = *$2 + "_";
 									current_procedure_name = *$2;
-									current_procedure_type = void_data_type;
 									(*local_sym_table).append_list(*$4, yylineno);
 								} 
 								'{' 
@@ -251,7 +239,6 @@ procedure_definition		:	type NAME
 								'}' 
 								{	
 									$$ = new Procedure(void_data_type, *$2, yylineno);
-									$4->set_table_scope(formal);
 									$$->set_formal_param_list(*$4);
 
 									if(program_object.is_procedure_exists(*$2))
@@ -296,6 +283,8 @@ procedure_definition		:	type NAME
 									(*local_sym_table).set_table_scope(local);
 									(*$$).set_local_list((*local_sym_table));
 									(*$$).set_ast_list(*($9));
+									// $$->set_proc_is_defined();
+									local_sym_table->print(cerr);
 									local_sym_table = new Symbol_Table;
 									program_object.set_procedure($$, yylineno);
 								}
@@ -584,12 +573,9 @@ optional_actual_param_list	:	actual_param_list
 								{
 									$$ = new list<Ast*>();
 								}
-								;
 
 call_stmt				:	NAME '(' optional_actual_param_list ')' ';'
 							{
-								if(*$1 != "main")
-										*$1 = *$1 + "_";
 								/* What does this check exactly ? */
 								if(! program_object.is_procedure_exists(*$1)) {
 									cerr << "cs316: Error: Line "<<yylineno<<": Unknown procedure.\n";
@@ -598,31 +584,20 @@ call_stmt				:	NAME '(' optional_actual_param_list ')' ';'
 								$$ = new Call_Ast(*$1, yylineno);
 								$$->set_actual_param_list(*$3);
 								Procedure *proc = program_object.get_procedure_prototype(*$1);
-
-
+								yyerror("test");
 								$$->check_actual_formal_param(proc->get_formal_param_list());
-								// /*debug */
-								// proc->get_formal_param_list().print(cerr);
-								// /*debug */
 							}
-							;
 
 return_stmt				:	RETURN arith_expression ';'
 							{
-								if(!(current_procedure_type == (*$2).get_data_type())) {
-									cerr << "cs316: Error: Line "<<yylineno<<":  Return datatype didn't match with the definition datatype\n";
-									exit(1);
-								}
+								cerr<<"test\n";
 								$$ = new Return_Ast($2, current_procedure_name, yylineno);
 							}
 							|	RETURN ';'
 							{
-								if(!(current_procedure_type == void_data_type)) {
-									cerr << "cs316: Error: Line "<<yylineno<<":  Return datatype didn't match with the definition datatype\n";
-									exit(1);
-								}
 								$$ = new Return_Ast(NULL, current_procedure_name, yylineno);
 							}
+							;
 
 arith_expression		: 	INTEGER_NUMBER	
 							{

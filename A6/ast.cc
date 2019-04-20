@@ -529,15 +529,22 @@ void Call_Ast::set_register(Register_Descriptor * reg) {
 }
 
 void Call_Ast::check_actual_formal_param(Symbol_Table & formal_param_list) {
-    list<Ast*>::iterator it = this->actual_param_list.begin();
-    int i=0;
-    for(; it != this->actual_param_list.end(); it++) {
-        Symbol_Table_Entry actual_var = (*it)->get_symbol_entry();
-        if(formal_param_list.get_symbol_table_entry_by_index(i).get_data_type() 
-        != actual_var.get_data_type() ) 
-        {
-            cerr << "cs316: Error: Line "<<lineno<<": Actual and formal parameters do not match\n";
+    list<Symbol_Table_Entry *> formal_list = formal_param_list.get_table();
+
+    if(formal_list.size() != this->actual_param_list.size()) {
+        cerr << "cs316: Error: Line "<<lineno<<": Actual and formal parameter counts do not match\n";
+        exit(1);
+    }
+
+    list<Ast*>::iterator it1 = this->actual_param_list.begin();
+    list<Symbol_Table_Entry*>::iterator it2 = formal_list.begin();
+    
+    while(it2 != formal_list.end()) {
+        if((*it1)->get_data_type() != (*it2)->get_data_type()) {
+            cerr << "cs316: Error: Line "<<lineno<<": Actual and formal parameter types do not match\n";
+            exit(1);
         }
+        it1++; it2++;
     }
 }
 
@@ -576,6 +583,7 @@ void Return_Ast::print(ostream & file_buffer) {
         return_value->print(file_buffer);
     else
         file_buffer << "<NOTHING>";
+    file_buffer << "\n";
 }
 
 void Program::set_procedure(Procedure *proc, int line) {
