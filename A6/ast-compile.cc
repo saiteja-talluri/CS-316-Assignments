@@ -584,6 +584,9 @@ Code_For_Ast & Return_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
 }
 
 Code_For_Ast & Call_Ast::compile() {
+
+	this->check_actual_formal_param(program_object.get_procedure_prototype(this->procedure_name)->get_formal_param_list());
+
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 	Register_Addr_Opd * stack_opd = new Register_Addr_Opd(machine_desc_object.spim_register_table[sp]);
 
@@ -597,8 +600,8 @@ Code_For_Ast & Call_Ast::compile() {
 		if(!param_code.get_icode_list().empty())
 			ic_list.insert(ic_list.end(), param_code.get_icode_list().begin(), param_code.get_icode_list().end());
 		if((*it)->get_data_type() == int_data_type){
-			string *x = new string((*it)->get_symbol_entry().get_variable_name());
-			Symbol_Table_Entry	*arg = new Symbol_Table_Entry(*x, int_data_type, (*it)->get_symbol_entry().get_lineno(), sp_ref);
+			string x = "dummy";
+			Symbol_Table_Entry	*arg = new Symbol_Table_Entry(x, int_data_type, (*it)->get_symbol_entry().get_lineno(), sp_ref);
 			arg->set_start_offset(offset);
 			offset -= 4; //reduce offset after setting in arg
 			Mem_Addr_Opd *opd  = new Mem_Addr_Opd(*arg);
@@ -607,8 +610,8 @@ Code_For_Ast & Call_Ast::compile() {
 			// DO INSERTION HERE
 		}
 		else if((*it)->get_data_type() == double_data_type){
-			string *x = new string((*it)->get_symbol_entry().get_variable_name());
-			Symbol_Table_Entry	*arg = new Symbol_Table_Entry(*x, int_data_type, (*it)->get_symbol_entry().get_lineno(), sp_ref);
+			string x = "dummy";
+			Symbol_Table_Entry	*arg = new Symbol_Table_Entry(x, int_data_type, (*it)->get_symbol_entry().get_lineno(), sp_ref);
 			arg->set_start_offset(offset);
 			offset -= 8; //reduce offset after setting in arg
 			Mem_Addr_Opd *opd  = new Mem_Addr_Opd(*arg);

@@ -55,14 +55,10 @@ Code_For_Ast & Name_Ast::create_store_stmt(Register_Descriptor * store_register)
 	Mem_Addr_Opd *opd1  = new Mem_Addr_Opd(*this->variable_symbol_entry);
 	Move_IC_Stmt *store_stmt;
 	Code_For_Ast *output = new Code_For_Ast();
-	if(store_register->get_use_category() == int_reg || store_register->get_name() == "v1") {
-		//*********Don't delete this comment**********
-		//this took me 2 hours to find. The initial check was only for category, so when
-		//the category of v1 or f0 came out to be return_reg, store_stmt was coming out empty.
-		//I hate segfaults. Worst debugging session of this semester by far. 
+	if(store_register->get_use_category() == int_reg) {
 		store_stmt = new Move_IC_Stmt(store, result, opd1);
 	}
-	else if(store_register->get_use_category() == float_reg || store_register->get_name() == "f0") {
+	else if(store_register->get_use_category() == float_reg) {
 		store_stmt = new Move_IC_Stmt(store_d, result, opd1);
 	}
 	output->set_reg(store_register);
@@ -448,7 +444,7 @@ Code_For_Ast & Selection_Statement_Ast::compile() {
 
 	Control_Flow_IC_Stmt *rel_stmt;
 	if(this->cond->get_data_type() == int_data_type) {
-		rel_stmt = new Control_Flow_IC_Stmt(beq, zero_reg, cond_result, label1->get_label());
+		rel_stmt = new Control_Flow_IC_Stmt(beq,  cond_result, zero_reg, label1->get_label());
 	}
 	else {
 		list<Icode_Stmt*>::iterator it = cond_code.get_icode_list().end();
@@ -588,6 +584,9 @@ Code_For_Ast & Return_Ast::compile_and_optimize_ast(Lra_Outcome & lra) {
 }
 
 Code_For_Ast & Call_Ast::compile() {
+
+	this->check_actual_formal_param(program_object.get_procedure_prototype(this->procedure_name)->get_formal_param_list());
+
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 	Register_Addr_Opd * stack_opd = new Register_Addr_Opd(machine_desc_object.spim_register_table[sp]);
 
@@ -601,8 +600,8 @@ Code_For_Ast & Call_Ast::compile() {
 		if(!param_code.get_icode_list().empty())
 			ic_list.insert(ic_list.end(), param_code.get_icode_list().begin(), param_code.get_icode_list().end());
 		if((*it)->get_data_type() == int_data_type){
-			string *x = new string((*it)->get_symbol_entry().get_variable_name());
-			Symbol_Table_Entry	*arg = new Symbol_Table_Entry(*x, int_data_type, (*it)->get_symbol_entry().get_lineno(), sp_ref);
+			string x = "dummy";
+			Symbol_Table_Entry	*arg = new Symbol_Table_Entry(x, int_data_type, (*it)->get_symbol_entry().get_lineno(), sp_ref);
 			arg->set_start_offset(offset);
 			offset -= 4; //reduce offset after setting in arg
 			Mem_Addr_Opd *opd  = new Mem_Addr_Opd(*arg);
@@ -611,8 +610,8 @@ Code_For_Ast & Call_Ast::compile() {
 			// DO INSERTION HERE
 		}
 		else if((*it)->get_data_type() == double_data_type){
-			string *x = new string((*it)->get_symbol_entry().get_variable_name());
-			Symbol_Table_Entry	*arg = new Symbol_Table_Entry(*x, int_data_type, (*it)->get_symbol_entry().get_lineno(), sp_ref);
+			string x = "dummy";
+			Symbol_Table_Entry	*arg = new Symbol_Table_Entry(x, int_data_type, (*it)->get_symbol_entry().get_lineno(), sp_ref);
 			arg->set_start_offset(offset);
 			offset -= 8; //reduce offset after setting in arg
 			Mem_Addr_Opd *opd  = new Mem_Addr_Opd(*arg);
@@ -662,6 +661,13 @@ Code_For_Ast & Call_Ast::compile() {
 
 	Code_For_Ast *output = new Code_For_Ast(ic_list, rd);
 	machine_desc_object.clear_local_register_mappings(); /* Need to do this failing which may result in weird issues */
+
+	//*********Don't delete this comment**********
+	//I hope I never have to debug someone else's code.
+	//I did the thing commented out below, and that caused a segfault
+	//because Name_Ast::create_store_stmt only checks for int_reg or float_reg
+	//and this was going out as fn_result. It took me 2 hours to find.
+	//All I actually had to do was change NULL to rd in Code_For_Ast *output above.
 
 	// if(this->get_data_type() == int_data_type) {
 	// 	output->set_reg(machine_desc_object.spim_register_table[v1]);
