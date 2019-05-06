@@ -622,6 +622,10 @@ print_statement			:	PRINT NAME ';'
 									Ast* var = new Name_Ast(*$2, (*global_sym_table).get_symbol_table_entry(*$2), yylineno);
 									$$ = new Print_Ast(var, yylineno);
 								}
+								else if(!(*formal_sym_table).is_empty() && (*formal_sym_table).variable_in_symbol_list_check(*$2)){
+									Ast* var = new Name_Ast(*$2, (*formal_sym_table).get_symbol_table_entry(*$2), yylineno);
+									$$ = new Print_Ast(var, yylineno);
+								}
 								else{
 									yyerror("cs316: Error: Variable has not been declared/defined");
 									exit(1);
