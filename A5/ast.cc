@@ -11,7 +11,7 @@ Ast::Ast(){}
 
 Ast::~Ast(){}
 
-int Ast::labelCounter;
+int Ast::labelCounter = 0;
 
 Data_Type Ast::get_data_type(){
     return node_data_type;
@@ -263,7 +263,7 @@ Relational_Expr_Ast::Relational_Expr_Ast(Ast * lhs, Relational_Op rop, Ast * rhs
     rel_op = rop;
     lineno = line;
     ast_num_child = binary_arity;
-    node_data_type = int_data_type;
+    // node_data_type = int_data_type;
 }
 
 Relational_Expr_Ast::~Relational_Expr_Ast(){}
@@ -278,7 +278,8 @@ void Relational_Expr_Ast::set_data_type(Data_Type dt){
 
 bool Relational_Expr_Ast::check_ast(){
     if(lhs_condition->get_data_type() == rhs_condition->get_data_type()){
-        node_data_type = int_data_type;
+        node_data_type = lhs_condition->get_data_type(); //for float comparisons
+        // node_data_type = int_data_type;
         return true;
     }
     else{
@@ -320,7 +321,7 @@ Logical_Expr_Ast::Logical_Expr_Ast(Ast * lhs, Logical_Op bop, Ast * rhs, int lin
     bool_op = bop;
     lineno = line;
     ast_num_child = binary_arity;
-    node_data_type = int_data_type;
+    // node_data_type = int_data_type;
 }
 
 Logical_Expr_Ast::~Logical_Expr_Ast(){}
@@ -336,6 +337,7 @@ void Logical_Expr_Ast::set_data_type(Data_Type dt){
 bool Logical_Expr_Ast::check_ast(){ /* TODO : Check it again */
     if(bool_op == _logical_not){
         if(rhs_op->check_ast()){
+            this->node_data_type = rhs_op->get_data_type(); //for float comparisons
             return true;
         }
         else{
@@ -346,6 +348,7 @@ bool Logical_Expr_Ast::check_ast(){ /* TODO : Check it again */
     }
     else{
         if(rhs_op->get_data_type() == lhs_op->get_data_type()){
+            this->node_data_type = rhs_op->get_data_type(); //for float comparisons
             return true;
         }
         else{
@@ -505,4 +508,22 @@ void Sequence_Ast::print(ostream & file_buffer){
         file_buffer << "\n" << AST_NODE_SPACE;
         (*it)->print(file_buffer);
     }
+}
+
+/*print*/
+Print_Ast::Print_Ast(Ast *v, int line) {
+    this->var = v;
+    this->lineno = line;
+}
+
+Print_Ast::~Print_Ast() {
+
+}
+
+void Print_Ast::print(ostream & file_buffer) {
+    file_buffer << "\n         Print :\n             (";
+    this->var->print(file_buffer);
+    file_buffer << ") ";
+    // no endline?
+
 }

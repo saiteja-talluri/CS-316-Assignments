@@ -1,7 +1,9 @@
-// int a,b;
+int a,b,c;
+// int f1(int a, int b, int c);
+
 void main() {
-	float x, y, z;
-	x = 1.2;
-	y = 1.3;
-	z = x > y ? x : y;
+    int a;
+    a = 1;
+    // a = f1(a);
+    // f1(a);
 }

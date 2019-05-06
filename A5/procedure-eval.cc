@@ -1,10 +1,16 @@
 
+
 #include<string>
 #include<fstream>
 #include<iostream>
 
 using namespace std;
 
+#include"local-environment.hh"
+#include"symbol-table.hh"
+#include"ast.hh"
+#include"procedure.hh"
+#include"program.hh"
 
 Eval_Result & Procedure::evaluate(ostream & file_buffer)
 {
